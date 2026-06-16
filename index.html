@@ -567,20 +567,269 @@ body {
 }
 @keyframes rot { to { transform: rotate(360deg); } }
 
+/* elementos visíveis só na impressão ficam ocultos na tela */
+.print-only { display: none !important; }
+.cl-print-grid { display: block; }
+.rel-assinatura-linha { display: none; }
+
 /* ═══════════════════════════════════
-   PRINT
+   PRINT — Documento clínico A4
 ═══════════════════════════════════ */
 @media print {
-  body { background: white; }
-  .header, .sidebar, .view-toolbar, .form-wrap, .welcome,
-  .rel-footer .btn, .form-actions { display: none !important; }
-  .layout { display: block; }
-  .main { overflow: visible; }
-  .view-wrap { padding: 0; max-width: 100%; }
-  .relatorio { box-shadow: none; border: none; border-radius: 0; }
-  .rel-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .rel-text { font-size: 11pt; line-height: 1.9; }
-  .rel-sec { page-break-inside: avoid; }
+  /* Reset geral */
+  *, *::before, *::after { box-sizing: border-box !important; }
+
+  html, body {
+    width: 210mm;
+    background: white !important;
+    color: #000 !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ocultar tudo da interface */
+  .header, .sidebar, .view-toolbar,
+  .form-wrap, .welcome, .form-actions,
+  .overlay, .toast, .btn { display: none !important; }
+
+  /* Layout vira bloco simples */
+  .layout { display: block !important; }
+  .main   { overflow: visible !important; background: white !important; }
+
+  /* Container do relatório ocupa página toda */
+  .view-wrap {
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* Card sem sombra/borda de tela */
+  .relatorio {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+  }
+
+  /* ── CABEÇALHO ── */
+  .rel-header {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: linear-gradient(135deg, #3D2B5A 0%, #6C4F8C 60%, #9B7DBF 100%) !important;
+    padding: 18mm 18mm 14mm !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    page-break-inside: avoid !important;
+  }
+
+  .rel-header-logo {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    width: 48pt !important; height: 48pt !important;
+    border-radius: 10pt !important;
+    background: linear-gradient(145deg, #D4A0B0, rgba(255,255,255,0.4)) !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    font-family: 'Times New Roman', serif !important;
+    font-size: 22pt !important; color: white !important; font-weight: bold !important;
+    flex-shrink: 0 !important;
+  }
+
+  .rel-clinic-name {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 16pt !important; color: white !important; font-weight: bold !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .rel-clinic-sub {
+    font-size: 9pt !important; color: rgba(255,255,255,0.8) !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+    margin-top: 3pt !important; letter-spacing: 0.03em !important;
+  }
+  .rel-doc-type {
+    display: inline-block !important;
+    margin-top: 10pt !important;
+    background: rgba(255,255,255,0.18) !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+    border-radius: 20pt !important;
+    padding: 3pt 12pt !important;
+    font-size: 8pt !important; color: white !important; font-weight: bold !important;
+    letter-spacing: 0.08em !important; text-transform: uppercase !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+
+  /* ── SEÇÕES ── */
+  .rel-sec {
+    padding: 10mm 18mm !important;
+    border-bottom: 0.5pt solid #D0C8E8 !important;
+    page-break-inside: avoid !important;
+  }
+  .rel-sec:last-of-type { border-bottom: none !important; }
+
+  .rel-sec-title {
+    display: flex !important; align-items: center !important; gap: 8pt !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 8pt !important; font-weight: 800 !important;
+    letter-spacing: 0.12em !important; text-transform: uppercase !important;
+    color: #6C4F8C !important;
+    margin-bottom: 10pt !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .rel-sec-title::before {
+    content: '' !important;
+    display: inline-block !important;
+    width: 3pt !important; height: 12pt !important;
+    background: #6C4F8C !important;
+    border-radius: 2pt !important; flex-shrink: 0 !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .rel-sec-title::after {
+    content: '' !important; flex: 1 !important;
+    height: 0.5pt !important; background: #D0C8E8 !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+
+  /* ── GRID DE CAMPOS ── */
+  .rel-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 8pt 16pt !important;
+    margin-bottom: 8pt !important;
+  }
+  .rel-grid-3 { grid-template-columns: 1fr 1fr 1fr !important; }
+
+  .rel-field-label {
+    font-family: Arial, sans-serif !important;
+    font-size: 7pt !important; font-weight: 700 !important;
+    color: #7A6899 !important; text-transform: uppercase !important;
+    letter-spacing: 0.06em !important; margin-bottom: 1pt !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .rel-field-val {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 10.5pt !important; color: #1A1625 !important;
+    font-weight: 400 !important;
+  }
+
+  /* ── TEXTOS LONGOS ── */
+  .rel-text {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important; line-height: 1.85 !important;
+    color: #1A1625 !important; text-align: justify !important;
+    text-indent: 1.5em !important;
+    hyphens: auto !important;
+  }
+
+  /* ── ALERTA INSS ── */
+  .inss-alert {
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+    background: #FEF7EC !important;
+    border: 1pt solid #EDCB8A !important;
+    border-radius: 6pt !important;
+    padding: 7pt 12pt !important;
+    margin-bottom: 10pt !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 9pt !important; font-weight: 700 !important; color: #7D5A10 !important;
+    display: flex !important; align-items: center !important; gap: 8pt !important;
+  }
+
+  /* ── CHECKLIST ── */
+  .cl-result-dom { margin-bottom: 8pt !important; page-break-inside: avoid !important; }
+  .cl-result-dom-name {
+    font-family: Arial, sans-serif !important;
+    font-size: 8pt !important; font-weight: 800 !important;
+    color: #6C4F8C !important; text-transform: uppercase !important;
+    letter-spacing: 0.06em !important; margin-bottom: 4pt !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .cl-result-item {
+    display: flex !important; align-items: flex-start !important;
+    gap: 6pt !important; padding: 1.5pt 0 !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 9pt !important; color: #3D3050 !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .cl-result-item::before {
+    content: '✓' !important; color: #2D9E6B !important;
+    font-weight: 900 !important; font-size: 9pt !important;
+    flex-shrink: 0 !important; margin-top: 0 !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+
+  /* ── CHECKLIST CONTAINER ── */
+  .cl-print-box {
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+    background: #E8F8F1 !important;
+    border: 1pt solid #A9DFBF !important;
+    border-radius: 6pt !important;
+    padding: 10pt 14pt !important;
+    margin-bottom: 12pt !important;
+    page-break-inside: avoid !important;
+  }
+  .cl-print-box-title {
+    font-family: Arial, sans-serif !important;
+    font-size: 7.5pt !important; font-weight: 800 !important;
+    color: #2D9E6B !important; text-transform: uppercase !important;
+    letter-spacing: 0.08em !important; margin-bottom: 8pt !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .cl-print-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0 16pt !important;
+  }
+
+  /* ── RODAPÉ ── */
+  .rel-footer {
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+    padding: 8mm 18mm !important;
+    background: #F8F6FC !important;
+    border-top: 1pt solid #D0C8E8 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    page-break-inside: avoid !important;
+  }
+  .rel-footer-left {
+    font-family: Arial, sans-serif !important;
+    font-size: 8pt !important; color: #7A6899 !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .rel-assinatura {
+    text-align: center !important;
+  }
+  .rel-assinatura-linha {
+    width: 160pt !important; border-top: 1pt solid #3D2B5A !important;
+    margin: 0 auto 4pt !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .rel-assinatura-nome {
+    font-family: 'Times New Roman', serif !important;
+    font-size: 9.5pt !important; color: #1A1625 !important; font-style: italic !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .rel-assinatura-crp {
+    font-family: Arial, sans-serif !important;
+    font-size: 8pt !important; color: #7A6899 !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+
+  .sem-texto { display: none !important; }
+
+  /* Quebra de página entre seções longas */
+  .rel-sec.analise-sec { page-break-before: auto !important; }
+
+  /* mostrar/ocultar elementos de tela vs impressão */
+  .print-only { display: block !important; }
+  .print-hide  { display: none !important; }
+  .rel-assinatura-linha { display: block !important; }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
 }
 </style>
 </head>
@@ -1131,68 +1380,137 @@ function buildRel(p){
   const dnasc=p.dnasc?new Date(p.dnasc+'T12:00:00').toLocaleDateString('pt-BR'):'—';
   const fins=(p.fins||[]).join(' · ')||'—';
   const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  const clHtml=(p.cl||[]).map(dom=>`<div class="cl-result-dom">
-    <div class="cl-result-dom-name">${dom.dominio}</div>
-    ${dom.itens.map(i=>`<div class="cl-result-item">${i.label}</div>`).join('')}
-  </div>`).join('');
+
+  // Checklist — tela (lista vertical)
+  const clHtmlTela=(p.cl||[]).map(dom=>`
+    <div class="cl-result-dom">
+      <div class="cl-result-dom-name">${dom.dominio}</div>
+      ${dom.itens.map(i=>`<div class="cl-result-item">${i.label}</div>`).join('')}
+    </div>`).join('');
+
+  // Checklist — impressão (grid 2 colunas, mais compacto)
+  const clHtmlPrint=(p.cl||[]).map(dom=>`
+    <div class="cl-result-dom" style="break-inside:avoid">
+      <div class="cl-result-dom-name">${dom.dominio}</div>
+      <div class="cl-print-grid">
+        ${dom.itens.map(i=>`<div class="cl-result-item">${i.label}</div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  // Extrai nome e CRP separados do campo profissional
+  const profParts=(p.prof||'').split('·');
+  const profNome=profParts[0]?.trim()||'Profissional responsável';
+  const profCrp=profParts[1]?.trim()||'';
 
   return `
   <div class="rel-header">
     <div class="rel-header-logo">C</div>
     <div class="rel-header-text">
       <div class="rel-clinic-name">Cinecleide — Psicóloga</div>
-      <div class="rel-clinic-sub">Reabilitação Infantil · Transtornos do Neurodesenvolvimento</div>
+      <div class="rel-clinic-sub">Reabilitação Infantil · Transtornos do Neurodesenvolvimento · Patu/RN</div>
       <div class="rel-doc-type">Relatório Interprofissional Psicológico</div>
     </div>
   </div>
+
   <div class="rel-body">
+
+    <!-- IDENTIFICAÇÃO -->
     <div class="rel-sec">
-      <div class="rel-sec-title">Identificação</div>
+      <div class="rel-sec-title">Identificação do Paciente</div>
       ${p.inss?`<div class="inss-alert">⚠️ Documento com finalidade previdenciária — INSS · ${p.inss.b} · CID: ${p.inss.cid}</div>`:''}
-      <div class="rel-grid rel-grid-3">
-        <div><div class="rel-field-label">Nome completo</div><div class="rel-field-val">${p.nome||'—'}</div></div>
-        <div><div class="rel-field-label">Data de nascimento</div><div class="rel-field-val">${dnasc}</div></div>
-        <div><div class="rel-field-label">Idade</div><div class="rel-field-val">${p.idade||'—'}</div></div>
-        <div><div class="rel-field-label">Sexo</div><div class="rel-field-val">${p.sexo||'—'}</div></div>
-        <div><div class="rel-field-label">Solicitante</div><div class="rel-field-val">${p.solicitante||'—'}</div></div>
-        <div><div class="rel-field-label">Diagnóstico</div><div class="rel-field-val">${p.diagnostico||'—'}</div></div>
+      <div class="rel-grid rel-grid-3" style="margin-bottom:10px">
+        <div>
+          <div class="rel-field-label">Nome completo</div>
+          <div class="rel-field-val" style="font-weight:600">${p.nome||'—'}</div>
+        </div>
+        <div>
+          <div class="rel-field-label">Data de nascimento</div>
+          <div class="rel-field-val">${dnasc}</div>
+        </div>
+        <div>
+          <div class="rel-field-label">Idade</div>
+          <div class="rel-field-val">${p.idade||'—'}</div>
+        </div>
+        <div>
+          <div class="rel-field-label">Sexo</div>
+          <div class="rel-field-val">${p.sexo||'—'}</div>
+        </div>
+        <div>
+          <div class="rel-field-label">Solicitante</div>
+          <div class="rel-field-val">${p.solicitante||'—'}</div>
+        </div>
+        <div>
+          <div class="rel-field-label">Diagnóstico (CID/DSM)</div>
+          <div class="rel-field-val">${p.diagnostico||'—'}</div>
+        </div>
       </div>
-      <div style="margin-top:10px"><div class="rel-field-label">Finalidade</div><div class="rel-field-val">${fins}</div></div>
+      <div style="margin-top:8px">
+        <div class="rel-field-label">Finalidade do relatório</div>
+        <div class="rel-field-val">${fins}</div>
+      </div>
     </div>
 
+    <!-- DEMANDA -->
+    ${p.txtDemanda?`
     <div class="rel-sec">
       <div class="rel-sec-title">Descrição da Demanda</div>
-      ${p.txtDemanda?`<p class="rel-text">${p.txtDemanda}</p>`:'<p class="sem-texto">Texto não gerado.</p>'}
-    </div>
+      <p class="rel-text">${p.txtDemanda}</p>
+    </div>`:''}
 
+    <!-- PROCEDIMENTO -->
     <div class="rel-sec">
       <div class="rel-sec-title">Procedimento</div>
-      <div class="rel-grid" style="margin-bottom:12px">
-        <div><div class="rel-field-label">Início</div><div class="rel-field-val">${p.anoInicio||'—'}</div></div>
+      <div class="rel-grid rel-grid-3" style="margin-bottom:${p.txtProcedimento?'12px':'0'}">
+        <div><div class="rel-field-label">Início do acompanhamento</div><div class="rel-field-val">${p.anoInicio||'—'}</div></div>
         <div><div class="rel-field-label">Frequência</div><div class="rel-field-val">${p.frequencia||'—'}</div></div>
         <div><div class="rel-field-label">Modalidade</div><div class="rel-field-val">${p.modalidade||'—'}</div></div>
-        <div><div class="rel-field-label">Duração</div><div class="rel-field-val">${p.duracao||'—'}</div></div>
+        <div><div class="rel-field-label">Duração das sessões</div><div class="rel-field-val">${p.duracao||'—'}</div></div>
+        <div><div class="rel-field-label">Áreas envolvidas</div><div class="rel-field-val">${p.areas||'—'}</div></div>
+        <div><div class="rel-field-label">Instrumentos</div><div class="rel-field-val">${p.instrumentos||'—'}</div></div>
       </div>
-      ${p.txtProcedimento?`<p class="rel-text">${p.txtProcedimento}</p>`:'<p class="sem-texto">Texto não gerado.</p>'}
+      ${p.txtProcedimento?`<p class="rel-text">${p.txtProcedimento}</p>`:''}
     </div>
 
-    <div class="rel-sec">
+    <!-- ANÁLISE -->
+    <div class="rel-sec analise-sec">
       <div class="rel-sec-title">Análise Clínica</div>
-      ${clHtml?`<div style="margin-bottom:16px;padding:14px;background:var(--success-bg);border:1.5px solid #A9DFBF;border-radius:10px">
-        <div style="font-size:10px;font-weight:800;color:var(--success);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Itens observados no checklist clínico</div>
-        ${clHtml}
-      </div>`:''}
-      ${p.txtAnalise?`<p class="rel-text">${p.txtAnalise.replace(/\n/g,'<br>')}</p>`:'<p class="sem-texto">Texto não gerado.</p>'}
+
+      ${(p.cl||[]).length?`
+        <!-- CHECKLIST TELA -->
+        <div class="print-hide" style="margin-bottom:16px;padding:14px;background:var(--success-bg);border:1.5px solid #A9DFBF;border-radius:10px">
+          <div style="font-size:10px;font-weight:800;color:var(--success);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Itens observados no checklist clínico</div>
+          ${clHtmlTela}
+        </div>
+        <!-- CHECKLIST IMPRESSÃO -->
+        <div class="cl-print-box print-only">
+          <div class="cl-print-box-title">Itens observados no checklist clínico (faixa etária: ${p.faixa==='a'?'1 a 9 anos':'10 a 15 anos'})</div>
+          ${clHtmlPrint}
+        </div>
+      `:''}
+
+      ${p.txtAnalise?`<p class="rel-text">${p.txtAnalise.replace(/\n\n/g,'</p><p class="rel-text" style="margin-top:0.8em">').replace(/\n/g,'<br>')}</p>`:'<p class="sem-texto">Texto não gerado.</p>'}
     </div>
 
+    <!-- CONCLUSÃO -->
+    ${p.txtConclusao?`
     <div class="rel-sec">
       <div class="rel-sec-title">Conclusão e Recomendações</div>
-      ${p.txtConclusao?`<p class="rel-text">${p.txtConclusao}</p>`:'<p class="sem-texto">Texto não gerado.</p>'}
-    </div>
+      <p class="rel-text">${p.txtConclusao}</p>
+    </div>`:''}
+
   </div>
+
+  <!-- RODAPÉ -->
   <div class="rel-footer">
-    <div class="rel-footer-left">📅 Emitido em ${hoje} · Patu/RN</div>
-    <div class="rel-footer-right">${p.prof||'Profissional responsável'}</div>
+    <div class="rel-footer-left">
+      Emitido em ${hoje}<br>
+      Patu/RN — Documento clínico confidencial
+    </div>
+    <div class="rel-assinatura">
+      <div class="rel-assinatura-linha"></div>
+      <div class="rel-assinatura-nome">${profNome}</div>
+      ${profCrp?`<div class="rel-assinatura-crp">${profCrp}</div>`:''}
+    </div>
   </div>`;
 }
 
