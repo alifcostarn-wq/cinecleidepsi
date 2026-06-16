@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cinecleide Psicóloga · Sistema de Relatórios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brand:       #6C4F8C;
+  --brand-light: #9B7DBF;
+  --brand-dark:  #3D2B5A;
+  --brand-bg:    #F5F0FF;
+  --brand-mid:   #EDE5FF;
+  --accent:      #D4A0B0;
+  --accent-bg:   #FDF0F4;
+  --success:     #2D9E6B;
+  --success-bg:  #E8F8F1;
+  --warn:        #B07D30;
+  --warn-bg:     #FEF7EC;
+  --danger:      #C0392B;
+  --danger-bg:   #FDEDEC;
+  --ink:         #1A1625;
+  --ink-mid:     #5A5271;
+  --ink-light:   #9B92B0;
+  --surface:     #FFFFFF;
+  --surface-2:   #F8F6FC;
+  --surface-3:   #F0EBF8;
+  --border:      #E4DCF5;
+  --border-dark: #C8BBE8;
+  --shadow-sm:   0 1px 4px rgba(108,79,140,0.08);
+  --shadow-md:   0 4px 20px rgba(108,79,140,0.12);
+  --shadow-lg:   0 12px 40px rgba(108,79,140,0.18);
+  --radius:      14px;
+  --radius-sm:   8px;
+  --radius-lg:   20px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #F2EDF9;
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 99px; }
+
+/* ═══════════════════════════════════
+   HEADER
+═══════════════════════════════════ */
+.header {
+  position: sticky; top: 0; z-index: 200;
+  height: 64px;
+  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 100%);
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 1.5rem;
+  box-shadow: 0 2px 20px rgba(61,43,90,0.35);
+}
+
+.logo-mark {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: linear-gradient(145deg, var(--accent) 0%, var(--brand-light) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; color: white; font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+}
+
+.header-name {
+  display: flex; flex-direction: column;
+}
+.header-name-main {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px; color: white; font-weight: 600;
+  letter-spacing: 0.01em; line-height: 1.2;
+}
+.header-name-sub {
+  font-size: 11px; color: rgba(255,255,255,0.6);
+  letter-spacing: 0.06em; text-transform: uppercase; margin-top: 1px;
+}
+
+.header-divider {
+  width: 1px; height: 28px;
+  background: rgba(255,255,255,0.2);
+  margin: 0 4px;
+}
+
+.header-system {
+  font-size: 12px; color: rgba(255,255,255,0.55);
+}
+
+.header-spacer { flex: 1; }
+
+.header-pill {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 99px;
+  padding: 5px 14px;
+  font-size: 12px; color: rgba(255,255,255,0.85);
+  backdrop-filter: blur(4px);
+}
+
+/* ═══════════════════════════════════
+   LAYOUT
+═══════════════════════════════════ */
+.layout { display: flex; min-height: calc(100vh - 64px); }
+
+/* ═══════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════ */
+.sidebar {
+  width: 272px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  box-shadow: 2px 0 12px rgba(108,79,140,0.06);
+}
+
+.sidebar-top { padding: 1rem; border-bottom: 1px solid var(--border); }
+
+.search-wrap {
+  position: relative;
+}
+.search-wrap input {
+  width: 100%;
+  padding: 9px 12px 9px 36px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px; font-family: inherit;
+  background: var(--surface-2);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-wrap input:focus {
+  border-color: var(--brand-light);
+  box-shadow: 0 0 0 3px rgba(108,79,140,0.1);
+  background: white;
+}
+.search-wrap::before {
+  content: '🔍'; position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%); font-size: 13px; pointer-events: none;
+}
+
+.sidebar-section-head {
+  padding: 10px 1rem 6px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sidebar-section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-light);
+}
+
+.btn-novo {
+  display: flex; align-items: center; gap: 4px;
+  padding: 5px 12px;
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
+  color: white; border: none; border-radius: 99px;
+  font-size: 12px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(108,79,140,0.3);
+}
+.btn-novo:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-novo:active { transform: translateY(0); }
+
+.paciente-list { flex: 1; overflow-y: auto; }
+
+.empty-list {
+  padding: 2.5rem 1rem; text-align: center;
+  color: var(--ink-light); font-size: 13px; line-height: 1.7;
+}
+.empty-list-icon { font-size: 36px; display: block; margin-bottom: 8px; opacity: 0.4; }
+
+.pac-item {
+  padding: 12px 1rem;
+  border-bottom: 1px solid var(--surface-3);
+  cursor: pointer;
+  transition: background 0.12s;
+  position: relative;
+}
+.pac-item::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: transparent; border-radius: 0 3px 3px 0;
+  transition: background 0.15s;
+}
+.pac-item:hover { background: var(--brand-bg); }
+.pac-item.ativo { background: var(--brand-mid); }
+.pac-item.ativo::before { background: var(--brand); }
+
+.pac-nome { font-size: 13px; font-weight: 600; color: var(--ink); }
+.pac-meta { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
+.pac-tags { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
+
+.tag {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 99px;
+}
+.tag-diag  { background: var(--brand-bg); color: var(--brand); }
+.tag-inss  { background: var(--warn-bg); color: var(--warn); }
+.tag-esc   { background: var(--success-bg); color: var(--success); }
+
+.sidebar-footer {
+  padding: 10px 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--ink-light);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.sidebar-footer::before { content: '💜'; font-size: 12px; }
+
+/* ═══════════════════════════════════
+   MAIN
+═══════════════════════════════════ */
+.main { flex: 1; overflow-y: auto; background: #F2EDF9; }
+
+/* ── WELCOME ── */
+.welcome {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: 2rem; text-align: center;
+}
+.welcome-card {
+  background: white; border-radius: var(--radius-lg);
+  padding: 3rem 2.5rem; max-width: 420px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+}
+.welcome-avatar {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(145deg, var(--brand-mid), var(--accent-bg));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin: 0 auto 1.25rem;
+  box-shadow: 0 4px 20px rgba(108,79,140,0.2);
+}
+.welcome-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; color: var(--brand-dark);
+  margin-bottom: 8px; font-weight: 600;
+}
+.welcome-card p { font-size: 13px; color: var(--ink-mid); line-height: 1.75; }
+.welcome-card .btn-start {
+  margin-top: 1.5rem;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
+  color: white; border: none; border-radius: 99px;
+  font-size: 14px; font-weight: 600; font-family: inherit;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(108,79,140,0.35);
+  transition: transform 0.15s, opacity 0.15s;
+}
+.welcome-card .btn-start:hover { transform: translateY(-2px); opacity: 0.92; }
+
+/* ═══════════════════════════════════
+   FORMULÁRIO
+═══════════════════════════════════ */
+.form-wrap { padding: 1.75rem 2rem 3rem; max-width: 860px; }
+
+.page-head { margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 14px; }
+.page-head-icon {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(145deg, var(--brand-mid), var(--brand-bg));
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.page-head-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; color: var(--brand-dark); font-weight: 600;
+}
+.page-head-sub { font-size: 13px; color: var(--ink-mid); margin-top: 3px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.125rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.card-head {
+  padding: 13px 1.25rem;
+  background: linear-gradient(90deg, var(--brand-bg) 0%, rgba(245,240,255,0) 100%);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 700; color: var(--brand-dark);
+  letter-spacing: 0.01em;
+}
+.card-head-icon { font-size: 16px; }
+.card-body { padding: 1.25rem; }
+
+/* FIELDS */
+.frow { display: grid; gap: 12px; margin-bottom: 10px; }
+.fr2 { grid-template-columns: 1fr 1fr; }
+.fr3 { grid-template-columns: 1fr 1fr 1fr; }
+.fr4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.frow:last-child { margin-bottom: 0; }
+
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label {
+  font-size: 11px; font-weight: 600; color: var(--ink-light);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.field input, .field select, .field textarea {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px; font-family: inherit;
+  color: var(--ink); background: var(--surface-2);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--brand-light);
+  box-shadow: 0 0 0 3px rgba(108,79,140,0.1);
+  background: white;
+}
+.field textarea { resize: vertical; min-height: 78px; line-height: 1.65; }
+
+/* FINALIDADES */
+.fin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 4px; }
+.fin-opt {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 12px; font-weight: 500;
+  color: var(--ink-mid); background: var(--surface-2);
+  transition: all 0.12s; user-select: none;
+}
+.fin-opt:has(input:checked) {
+  background: var(--brand-mid); border-color: var(--brand-light); color: var(--brand-dark);
+}
+.fin-opt input { width: 14px; height: 14px; accent-color: var(--brand); flex-shrink: 0; }
+.fin-full { grid-column: 1/-1; }
+
+.inss-box {
+  display: none; margin-top: 10px;
+  padding: 14px; background: var(--warn-bg);
+  border: 1.5px solid #EDCB8A; border-radius: var(--radius-sm);
+}
+.inss-box.show { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.inss-box .field label { color: var(--warn); }
+.inss-box .field input, .inss-box .field select { background: white; }
+
+/* CHECKLIST */
+.cl-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+.cl-tab {
+  padding: 7px 18px; border-radius: 99px;
+  border: 1.5px solid var(--border);
+  background: var(--surface-2); font-size: 12px; font-weight: 600;
+  color: var(--ink-mid); cursor: pointer; transition: all 0.15s;
+  font-family: inherit;
+}
+.cl-tab.on { background: var(--success); color: white; border-color: var(--success); box-shadow: 0 2px 8px rgba(45,158,107,0.3); }
+
+.cl-panel { display: none; }
+.cl-panel.on { display: block; }
+
+.dominio {
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom: 7px; overflow: hidden;
+}
+.dom-head {
+  padding: 10px 14px;
+  background: var(--surface-2);
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; user-select: none;
+  font-size: 13px; font-weight: 700; color: var(--brand-dark);
+  transition: background 0.1s;
+}
+.dom-head:hover { background: var(--brand-bg); }
+.dom-cnt { margin-left: auto; font-size: 11px; font-weight: 500; color: var(--ink-light); }
+.dom-arr { font-size: 10px; color: var(--ink-light); transition: transform 0.2s; }
+.dom-body { padding: 8px 14px; display: none; }
+.dom-body.open { display: block; }
+.dom-head.open .dom-arr { transform: rotate(180deg); }
+
+.cl-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 0; border-bottom: 1px solid var(--surface-3);
+}
+.cl-row:last-child { border-bottom: none; }
+.cl-row input[type=checkbox] { margin-top: 2px; width: 14px; height: 14px; flex-shrink: 0; accent-color: var(--success); cursor: pointer; }
+.cl-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.cl-detalhe { font-size: 11px; color: var(--ink-light); margin-top: 1px; line-height: 1.5; }
+
+/* IA BUTTONS */
+.ia-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+.btn-ia {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 99px;
+  border: 1.5px solid var(--brand-light);
+  background: var(--brand-bg); color: var(--brand-dark);
+  font-size: 12px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-ia:hover { background: var(--brand-mid); border-color: var(--brand); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(108,79,140,0.2); }
+.btn-ia:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ACTIONS */
+.form-actions {
+  display: flex; gap: 10px; justify-content: flex-end;
+  margin-top: 1.5rem; padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.btn { padding: 10px 24px; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-prim { background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%); color: white; box-shadow: 0 3px 12px rgba(108,79,140,0.35); }
+.btn-sec { background: var(--surface-2); color: var(--ink-mid); border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
+.btn-del { background: var(--danger-bg); color: var(--danger); border: 1.5px solid #F1948A; }
+
+/* ═══════════════════════════════════
+   VIEW PANEL
+═══════════════════════════════════ */
+.view-wrap { padding: 1.75rem 2rem 3rem; max-width: 900px; }
+
+.view-toolbar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.view-toolbar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; color: var(--brand-dark); flex: 1; font-weight: 600;
+}
+
+/* RELATÓRIO */
+.relatorio {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.rel-header {
+  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 60%, var(--brand-light) 100%);
+  padding: 2rem 2.25rem;
+  display: flex; align-items: flex-start; gap: 1.25rem;
+  position: relative; overflow: hidden;
+}
+.rel-header::after {
+  content: '';
+  position: absolute; right: -40px; top: -40px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+.rel-header-logo {
+  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+  background: linear-gradient(145deg, var(--accent), rgba(255,255,255,0.3));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; color: white; font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+.rel-header-text { flex: 1; }
+.rel-clinic-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; color: white; font-weight: 600; line-height: 1.2;
+}
+.rel-clinic-sub { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 3px; letter-spacing: 0.04em; }
+.rel-doc-type {
+  margin-top: 14px; display: inline-block;
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 99px; padding: 4px 14px;
+  font-size: 11px; color: rgba(255,255,255,0.9); font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+.rel-body { }
+
+.rel-sec { padding: 1.25rem 2rem; border-bottom: 1px solid var(--border); }
+.rel-sec:last-child { border-bottom: none; }
+
+.rel-sec-title {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--brand);
+  margin-bottom: 14px;
+}
+.rel-sec-title::before {
+  content: ''; width: 3px; height: 14px;
+  background: linear-gradient(to bottom, var(--brand), var(--accent));
+  border-radius: 2px; flex-shrink: 0;
+}
+.rel-sec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.rel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rel-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.rel-field-label { font-size: 10px; font-weight: 700; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+.rel-field-val { font-size: 13px; color: var(--ink); }
+
+.rel-text {
+  font-size: 13.5px; line-height: 1.9; color: var(--ink);
+  text-align: justify;
+}
+
+.inss-alert {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--warn-bg); border: 1.5px solid #EDCB8A;
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  margin-bottom: 14px; font-size: 12px; font-weight: 600; color: var(--warn);
+}
+
+.cl-result-dom { margin-bottom: 12px; }
+.cl-result-dom-name { font-size: 11px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
+.cl-result-item { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; color: var(--ink-mid); padding: 2px 0; }
+.cl-result-item::before { content: '✓'; color: var(--success); font-weight: 800; flex-shrink: 0; font-size: 11px; margin-top: 1px; }
+
+.sem-texto { font-size: 13px; color: var(--ink-light); font-style: italic; }
+
+.rel-footer {
+  padding: 1.25rem 2rem;
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 10px;
+}
+.rel-footer-left { font-size: 11px; color: var(--ink-light); }
+.rel-footer-right { font-size: 12px; color: var(--ink-mid); font-style: italic; }
+
+/* ═══════════════════════════════════
+   MODAL
+═══════════════════════════════════ */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(26,22,37,0.6); backdrop-filter: blur(4px);
+  z-index: 500; align-items: center; justify-content: center;
+}
+.overlay.show { display: flex; }
+.modal {
+  background: white; border-radius: var(--radius);
+  padding: 2rem; max-width: 400px; width: 90%;
+  box-shadow: var(--shadow-lg);
+}
+.modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
+.modal p { font-size: 13px; color: var(--ink-mid); line-height: 1.7; margin-bottom: 1.25rem; }
+.modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 600;
+  padding: 12px 20px; border-radius: 99px;
+  background: var(--ink); color: white;
+  font-size: 13px; font-weight: 600;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  transform: translateY(20px) scale(0.95);
+  opacity: 0; transition: all 0.25s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0) scale(1); opacity: 1; }
+.toast.ok { background: var(--success); }
+
+/* ── SPINNER ── */
+.spin {
+  display: inline-block; width: 13px; height: 13px;
+  border: 2px solid currentColor; border-top-color: transparent;
+  border-radius: 50%; animation: rot 0.6s linear infinite; vertical-align: middle;
+}
+@keyframes rot { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════
+   PRINT
+═══════════════════════════════════ */
+@media print {
+  body { background: white; }
+  .header, .sidebar, .view-toolbar, .form-wrap, .welcome,
+  .rel-footer .btn, .form-actions { display: none !important; }
+  .layout { display: block; }
+  .main { overflow: visible; }
+  .view-wrap { padding: 0; max-width: 100%; }
+  .relatorio { box-shadow: none; border: none; border-radius: 0; }
+  .rel-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rel-text { font-size: 11pt; line-height: 1.9; }
+  .rel-sec { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo-mark">C</div>
+  <div class="header-name">
+    <div class="header-name-main">Cinecleide</div>
+    <div class="header-name-sub">Psicóloga · CRP</div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="header-system">Sistema de Relatórios Interprofissionais</div>
+  <div class="header-spacer"></div>
+  <div class="header-pill" id="headerBadge">0 pacientes</div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="search-wrap">
+        <input type="text" id="busca" placeholder="Buscar paciente..." oninput="filtrar()">
+      </div>
+    </div>
+    <div class="sidebar-section-head">
+      <span class="sidebar-section-label">Pacientes</span>
+      <button class="btn-novo" onclick="novoForm()">+ Novo</button>
+    </div>
+    <div class="paciente-list" id="listaPac">
+      <div class="empty-list"><span class="empty-list-icon">🗂️</span>Nenhum paciente cadastrado.<br>Clique em <strong>+ Novo</strong> para começar.</div>
+    </div>
+    <div class="sidebar-footer" id="sfooter">Nenhum relatório salvo</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="mainArea">
+
+    <!-- WELCOME -->
+    <div class="welcome" id="tWelcome">
+      <div class="welcome-card">
+        <div class="welcome-avatar">💜</div>
+        <h2>Bem-vinda, Cinecleide</h2>
+        <p>Gerencie relatórios interprofissionais com apoio de inteligência artificial. Preencha, visualize e imprima documentos clínicos com agilidade e precisão.</p>
+        <button class="btn-start" onclick="novoForm()">✦ Criar primeiro relatório</button>
+      </div>
+    </div>
+
+    <!-- FORMULÁRIO -->
+    <div class="form-wrap" id="tForm" style="display:none">
+      <div class="page-head">
+        <div class="page-head-icon" id="formIcon">📝</div>
+        <div>
+          <div class="page-head-title" id="formTitulo">Novo relatório</div>
+          <div class="page-head-sub" id="formSub">Preencha os dados e gere os textos com IA.</div>
+        </div>
+      </div>
+
+      <!-- IDENTIFICAÇÃO -->
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">👤</span> Identificação do paciente</div>
+        <div class="card-body">
+          <div class="frow fr2">
+            <div class="field"><label>Nome completo *</label><input id="f_nome" placeholder="Nome do paciente"></div>
+            <div class="field"><label>Data de nascimento</label><input type="date" id="f_dnasc"></div>
+          </div>
+          <div class="frow fr4">
+            <div class="field"><label>Idade</label><input id="f_idade" placeholder="Ex: 7 anos"></div>
+            <div class="field"><label>Sexo</label>
+              <select id="f_sexo"><option value="">Selecione</option><option>Feminino</option><option>Masculino</option><option>Não especificado</option></select>
+            </div>
+            <div class="field" style="grid-column:span 2"><label>Solicitante</label><input id="f_solicitante" placeholder="Ex: genitora, responsável legal..."></div>
+          </div>
+          <div class="field">
+            <label>Finalidade do relatório</label>
+            <div class="fin-grid">
+              <label class="fin-opt"><input type="checkbox" id="fin_inter"> Compartilhamento interprofissional</label>
+              <label class="fin-opt"><input type="checkbox" id="fin_escolar"> Encaminhamento escolar</label>
+              <label class="fin-opt"><input type="checkbox" id="fin_medico"> Encaminhamento médico</label>
+              <label class="fin-opt"><input type="checkbox" id="fin_judicial"> Uso judicial</label>
+              <label class="fin-opt fin-full"><input type="checkbox" id="fin_inss" onchange="toggleInss(this)"> Encaminhamento para o INSS / BPC</label>
+            </div>
+            <div class="inss-box" id="inssBox">
+              <div class="field"><label>Tipo de benefício</label>
+                <select id="f_inssB"><option value="BPC">BPC — Benefício de Prestação Continuada (LOAS)</option><option value="aposentadoria">Aposentadoria por invalidez</option><option value="auxilio">Auxílio por incapacidade temporária</option><option value="outro">Outro benefício</option></select>
+              </div>
+              <div class="field"><label>CID para o INSS</label><input id="f_inssCid" placeholder="Ex: F84.0, F70..."></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEMANDA -->
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">📌</span> Descrição da demanda</div>
+        <div class="card-body">
+          <div class="frow fr3">
+            <div class="field" style="grid-column:span 2"><label>Diagnóstico (CID/DSM)</label><input id="f_diagnostico" placeholder="Ex: TEA (CID-11 6A02)"></div>
+            <div class="field"><label>Ano de início</label><input id="f_anoInicio" placeholder="Ex: 2022"></div>
+          </div>
+          <div class="frow fr3">
+            <div class="field"><label>Investigação inicial</label><input id="f_investigacao" placeholder="Ex: neurodesenvolvimento"></div>
+            <div class="field"><label>Frequência</label>
+              <select id="f_frequencia">
+                <option value="1 vez por semana">1 vez por semana</option>
+                <option value="2 vezes por semana">2 vezes por semana</option>
+                <option value="3 vezes por semana">3 vezes por semana</option>
+                <option value="a cada 15 dias">A cada 15 dias</option>
+                <option value="1 vez por mês">1 vez por mês</option>
+              </select>
+            </div>
+            <div class="field"><label>Modalidade</label>
+              <select id="f_modalidade"><option value="grupo">Grupo</option><option value="individual">Individual</option><option value="familiar">Familiar</option></select>
+            </div>
+          </div>
+          <div class="frow fr2">
+            <div class="field"><label>Duração da sessão</label><input id="f_duracao" placeholder="Ex: 30 minutos"></div>
+            <div class="field"><label>Áreas envolvidas</label><input id="f_areas" placeholder="Ex: Psicologia e Psicopedagogia"></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>Contexto clínico adicional</label><textarea id="f_contextoClinico" placeholder="Outras informações sobre a demanda e histórico..."></textarea></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>Instrumentos / abordagens</label><textarea id="f_instrumentos" placeholder="Ex: observação clínica, atividades lúdicas, orientação familiar..."></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANÁLISE -->
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">🔬</span> Análise clínica</div>
+        <div class="card-body">
+          <div class="frow">
+            <div class="field"><label>Histórico gestacional e perinatal</label><textarea id="f_gestacao" placeholder="Ex: gestação sem intercorrências, parto cesárea, APGAR normal..."></textarea></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>Desenvolvimento neuropsicomotor</label><textarea id="f_desenvolvimento" placeholder="Ex: sentou com 6 meses, andou com 14 meses, primeiras palavras..."></textarea></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>Comportamento atual (relatado pela família)</label><textarea id="f_comportamento" placeholder="Ex: dificuldade de concentração, comportamentos repetitivos, sono..."></textarea></div>
+          </div>
+
+          <div style="margin:1.25rem 0 8px; display:flex; align-items:center; gap:8px;">
+            <div style="width:3px;height:16px;background:linear-gradient(to bottom,var(--brand),var(--accent));border-radius:2px"></div>
+            <span style="font-size:13px;font-weight:700;color:var(--brand-dark)">Checklist clínico — acompanhamento psicológico</span>
+          </div>
+          <p style="font-size:12px;color:var(--ink-light);margin-bottom:10px">Selecione a faixa etária e marque os itens observados. Os itens marcados serão integrados na análise gerada pela IA.</p>
+
+          <div class="cl-tabs">
+            <button class="cl-tab on" onclick="setFaixa('a',this)">1 a 9 anos</button>
+            <button class="cl-tab" onclick="setFaixa('b',this)">10 a 15 anos</button>
+          </div>
+          <div id="cl_a" class="cl-panel on"></div>
+          <div id="cl_b" class="cl-panel"></div>
+
+          <div class="frow" style="margin-top:1rem">
+            <div class="field"><label>Observações livres — psicológico</label><textarea id="f_psicologico" placeholder="Complementar ao checklist..."></textarea></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>Observações — psicopedagógico</label><textarea id="f_psicopedagogico" placeholder="Ex: avanços em leitura, escrita, raciocínio lógico..."></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONCLUSÃO -->
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">📝</span> Conclusão e recomendações</div>
+        <div class="card-body">
+          <div class="frow">
+            <div class="field"><label>Síntese clínica</label><textarea id="f_sintese" placeholder="Ex: evolução satisfatória, maior tolerância à frustração..."></textarea></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>Recomendações e encaminhamentos</label><textarea id="f_recomendacoes" placeholder="Ex: manutenção do acompanhamento, avaliação neurológica..."></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IA -->
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">✨</span> Textos gerados por IA</div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--ink-mid);margin-bottom:1rem">Gere cada seção automaticamente ou escreva manualmente. Os textos abaixo compõem o relatório final.</p>
+          <div class="ia-row">
+            <button class="btn-ia" id="bIA_demanda" onclick="gerarIA('demanda')">⚡ Demanda</button>
+            <button class="btn-ia" id="bIA_procedimento" onclick="gerarIA('procedimento')">⚡ Procedimento</button>
+            <button class="btn-ia" id="bIA_analise" onclick="gerarIA('analise')">⚡ Análise</button>
+            <button class="btn-ia" id="bIA_conclusao" onclick="gerarIA('conclusao')">⚡ Conclusão</button>
+          </div>
+          <div class="frow"><div class="field"><label>Texto — Demanda</label><textarea id="f_txtDemanda" rows="4" placeholder="Gerado pela IA ou escreva manualmente..."></textarea></div></div>
+          <div class="frow"><div class="field"><label>Texto — Procedimento</label><textarea id="f_txtProcedimento" rows="4" placeholder="Gerado pela IA ou escreva manualmente..."></textarea></div></div>
+          <div class="frow"><div class="field"><label>Texto — Análise completa</label><textarea id="f_txtAnalise" rows="10" placeholder="Gerado pela IA ou escreva manualmente..."></textarea></div></div>
+          <div class="frow"><div class="field"><label>Texto — Conclusão</label><textarea id="f_txtConclusao" rows="6" placeholder="Gerado pela IA ou escreva manualmente..."></textarea></div></div>
+          <div class="frow"><div class="field"><label>Profissional(is) responsável(is)</label><input id="f_prof" placeholder="Ex: Dra. Cinecleide — CRP 00/00000 · Psicóloga"></div></div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-del" id="bDel" onclick="confirmarDel()" style="display:none">🗑 Excluir</button>
+        <button class="btn btn-sec" onclick="cancelar()">Cancelar</button>
+        <button class="btn btn-prim" onclick="salvar()">💾 Salvar relatório</button>
+      </div>
+    </div>
+
+    <!-- VISUALIZAÇÃO -->
+    <div class="view-wrap" id="tView" style="display:none">
+      <div class="view-toolbar">
+        <div class="view-toolbar-title" id="vTitulo">Relatório</div>
+        <button class="btn btn-sec" onclick="editarAtual()">✏️ Editar</button>
+        <button class="btn btn-prim" onclick="window.print()">🖨️ Imprimir / PDF</button>
+      </div>
+      <div class="relatorio" id="relCard"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3>Excluir relatório</h3>
+    <p>Deseja realmente excluir este relatório? Esta ação não pode ser desfeita.</p>
+    <div class="modal-btns">
+      <button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-del" onclick="deletarOk()">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ STORAGE ═══
+const KEY = 'cinecleide_rel_v1';
+let db = JSON.parse(localStorage.getItem(KEY) || '[]');
+let atual = null;
+let faixa = 'a';
+
+// ═══ CHECKLIST ═══
+const CL = {
+  a:[
+    {id:'cog',t:'Funções Cognitivas',its:[
+      {id:'a1',l:'Atenção e concentração',d:'Manter foco em tarefas dirigidas; distractibilidade; atenção seletiva e sustentada.'},
+      {id:'a2',l:'Memória de trabalho',d:'Seguir sequências de 2–3 instruções, repetir dígitos, recontar histórias.'},
+      {id:'a3',l:'Memória episódica e semântica',d:'Evocação de eventos cotidianos, reconhecimento de conceitos aprendidos.'},
+      {id:'a4',l:'Funções executivas — planejamento',d:'Organizar etapas; antecipar consequências; iniciar e concluir atividades.'},
+      {id:'a5',l:'Funções executivas — flexibilidade',d:'Adaptação a mudanças de rotina; transição entre atividades.'},
+      {id:'a6',l:'Raciocínio lógico e resolução de problemas',d:'Categorizar, ordenar, analogias simples e problemas concretos.'},
+      {id:'a7',l:'Processamento visuoespacial',d:'Reconhecimento de formas, encaixe, construção com blocos, lateralidade.'},
+      {id:'a8',l:'Velocidade de processamento',d:'Rapidez na execução; tempo de reação; fluência em atividades automatizadas.'},
+      {id:'a9',l:'Leitura e escrita emergentes',d:'Consciência fonológica, reconhecimento de letras/números, produção espontânea.'},
+    ]},
+    {id:'com',t:'Comunicação e Linguagem',its:[
+      {id:'c1',l:'Linguagem expressiva',d:'Vocabulário ativo, extensão de frases, uso de verbos, narração de eventos.'},
+      {id:'c2',l:'Linguagem receptiva',d:'Compreensão de instruções orais simples e compostas, histórias.'},
+      {id:'c3',l:'Pragmática da linguagem',d:'Tomar turnos, manter tópico, adequar discurso ao interlocutor.'},
+      {id:'c4',l:'Comunicação não verbal',d:'Gestos, expressões faciais, contato ocular funcional, apontar.'},
+      {id:'c5',l:'Ecolalia / repetição',d:'Presença de ecolalia imediata ou tardia; uso funcional ou não funcional.'},
+      {id:'c6',l:'Narrativa e coerência discursiva',d:'Contar histórias com coerência; descrever figuras e situações.'},
+    ]},
+    {id:'soc',t:'Socialização e Interação',its:[
+      {id:'s1',l:'Interesse por pares e adultos',d:'Iniciativa de interação, imitação social, atenção compartilhada.'},
+      {id:'s2',l:'Jogo simbólico e brincadeira',d:'Faz de conta, uso criativo de objetos, brincadeiras com regras.'},
+      {id:'s3',l:'Reciprocidade emocional',d:'Resposta às emoções dos outros, empatia básica, compartilhamento.'},
+      {id:'s4',l:'Relações familiares e vínculo',d:'Qualidade do apego, reação à separação, reconhecimento familiar.'},
+      {id:'s5',l:'Resolução de conflitos',d:'Estratégias diante de desentendimentos: negociação, agressividade, busca de adulto.'},
+      {id:'s6',l:'Adaptação a ambientes coletivos',d:'Desempenho em sala, recreio; tolerância a barulho e transições.'},
+    ]},
+    {id:'comp',t:'Comportamento e Regulação',its:[
+      {id:'b1',l:'Regulação emocional',d:'Identificar e expressar emoções; estratégias de autorregulação; duração das crises.'},
+      {id:'b2',l:'Comportamentos repetitivos e estereotipados',d:'Movimentos repetitivos, rituais, insistência em rotinas, interesses restritos.'},
+      {id:'b3',l:'Hiperatividade e impulsividade',d:'Dificuldade de permanecer sentado; agir sem pensar; interromper.'},
+      {id:'b4',l:'Comportamentos oposicionistas',d:'Recusa de regras, argumentação excessiva, desafio a autoridade.'},
+      {id:'b5',l:'Ansiedade e medos',d:'Medos específicos, ansiedade de separação, antecipação ansiosa.'},
+      {id:'b6',l:'Sensibilidade sensorial',d:'Hipo/hipersensibilidade a sons, texturas, luz, cheiros, dor.'},
+      {id:'b7',l:'Sono e alimentação',d:'Qualidade do sono; seletividade alimentar; rituais nas refeições.'},
+      {id:'b8',l:'Tolerância à frustração',d:'Reação a erros, perdas, negativas; aceitar limites sem desregulação.'},
+    ]},
+    {id:'mot',t:'Desenvolvimento Motor e Adaptativo',its:[
+      {id:'m1',l:'Motricidade grossa',d:'Equilíbrio, coordenação, marcha, subir/descer escadas, pular.'},
+      {id:'m2',l:'Motricidade fina',d:'Preensão, manipulação de objetos pequenos, uso de talheres, escrita.'},
+      {id:'m3',l:'Habilidades de autocuidado',d:'Autonomia em higiene, vestuário, alimentação; controle esfincteriano.'},
+      {id:'m4',l:'Praxias e planejamento motor',d:'Imitar gestos; executar sequências motoras como abotoar, amarrar.'},
+    ]},
+  ],
+  b:[
+    {id:'cog',t:'Funções Cognitivas',its:[
+      {id:'b_a1',l:'Atenção seletiva, sustentada e alternada',d:'Foco em tarefas longas (30+ min); resistência a distrações; alternância entre matérias.'},
+      {id:'b_a2',l:'Memória de trabalho',d:'Retenção durante raciocínio; textos longos; instruções múltiplas.'},
+      {id:'b_a3',l:'Memória declarativa',d:'Conteúdos escolares, fatos, sequência de acontecimentos autobiográficos.'},
+      {id:'b_a4',l:'Funções executivas — planejamento',d:'Planejar estudos, organizar materiais, cumprir prazos, decompor tarefas.'},
+      {id:'b_a5',l:'Funções executivas — inibição',d:'Inibir respostas automáticas, esperar a vez, resistir a distratores.'},
+      {id:'b_a6',l:'Flexibilidade cognitiva',d:'Adaptação a mudanças; revisão de estratégias diante do erro.'},
+      {id:'b_a7',l:'Raciocínio abstrato e lógico-matemático',d:'Pensamento hipotético-dedutivo; metáforas, alegorias, ironias.'},
+      {id:'b_a8',l:'Processamento visuoespacial',d:'Mapas, gráficos, geometria, orientação espacial em ambientes complexos.'},
+      {id:'b_a9',l:'Velocidade de processamento e fluência',d:'Rapidez na leitura, escrita e cálculo; resposta adequada em provas.'},
+      {id:'b_a10',l:'Leitura, escrita e cálculo',d:'Fluência leitora, compreensão textual, produção escrita, raciocínio aritmético.'},
+    ]},
+    {id:'com',t:'Comunicação e Linguagem',its:[
+      {id:'b_c1',l:'Linguagem expressiva e vocabulário',d:'Riqueza vocabular, argumentação, defender ideias e opiniões.'},
+      {id:'b_c2',l:'Linguagem receptiva e compreensão',d:'Textos complexos, instruções multietapas, discurso acadêmico e abstrato.'},
+      {id:'b_c3',l:'Pragmática e habilidades conversacionais',d:'Linguagem figurada, sarcasmo, humor; respeito a turnos.'},
+      {id:'b_c4',l:'Comunicação não verbal e leitura social',d:'Expressões faciais, gestos, postura e tom de voz em contextos variados.'},
+      {id:'b_c5',l:'Escrita expressiva e produção textual',d:'Organização de ideias, argumentação, uso de conectivos, adequação ao gênero.'},
+      {id:'b_c6',l:'Inferência e leitura de contexto',d:'Fazer inferências, deduzir intenções, interpretar subtextos.'},
+    ]},
+    {id:'soc',t:'Socialização e Interação',its:[
+      {id:'b_s1',l:'Relações com pares e amizades',d:'Qualidade e quantidade de amizades; manter relações; exclusão social.'},
+      {id:'b_s2',l:'Habilidades sociais e assertividade',d:'Expressar necessidades, recusar pedidos inadequados, negociar.'},
+      {id:'b_s3',l:'Percepção das normas sociais',d:'Regras implícitas de convívio; adequação do comportamento ao contexto.'},
+      {id:'b_s4',l:'Teoria da mente e empatia',d:'Inferir estados mentais; perspectiva em conflitos e dilemas.'},
+      {id:'b_s5',l:'Bullying e vitimização',d:'Agressão ou vitimização; exclusão, humilhação, cyberbullying.'},
+      {id:'b_s6',l:'Relação com figuras de autoridade',d:'Comportamento com professores e pais; aceitação de feedback.'},
+      {id:'b_s7',l:'Identidade e autoconceito',d:'Percepção de si, autoestima, senso de competência acadêmica e social.'},
+    ]},
+    {id:'comp',t:'Comportamento e Regulação',its:[
+      {id:'b_b1',l:'Regulação emocional',d:'Amplitude e duração das reações; estratégias; nomear emoções complexas.'},
+      {id:'b_b2',l:'Comportamentos repetitivos e rituais',d:'Rituais, rotinas rígidas, interesses restritos que comprometem funcionalidade.'},
+      {id:'b_b3',l:'Hiperatividade e impulsividade',d:'Manter-se quieto em contextos estruturados; ações sem avaliar consequências.'},
+      {id:'b_b4',l:'Oposição e desafio',d:'Recusa de regras; conflitos com adultos; comportamento desafiador.'},
+      {id:'b_b5',l:'Ansiedade, preocupações e fobias',d:'Ansiedade generalizada, fobia social, ataques de pânico.'},
+      {id:'b_b6',l:'Humor e afeto',d:'Labilidade emocional, tristeza, anedonia, irritabilidade crônica.'},
+      {id:'b_b7',l:'Sensibilidade sensorial',d:'Respostas atípicas que interferem no desempenho escolar ou social.'},
+      {id:'b_b8',l:'Uso de tecnologia e telas',d:'Tempo de uso, dificuldade de limitar, impacto no sono e relações sociais.'},
+      {id:'b_b9',l:'Sono, alimentação e saúde geral',d:'Qualidade do sono, seletividade alimentar, queixas somáticas recorrentes.'},
+    ]},
+    {id:'mot',t:'Desenvolvimento Motor e Adaptativo',its:[
+      {id:'b_m1',l:'Motricidade grossa e esportes',d:'Coordenação em atividades físicas; participação em esportes coletivos.'},
+      {id:'b_m2',l:'Motricidade fina e escrita manual',d:'Qualidade da letra, velocidade, fadiga, preferência por digitação.'},
+      {id:'b_m3',l:'Autonomia e habilidades da vida diária',d:'Independência em higiene, organização de materiais, deslocamento.'},
+      {id:'b_m4',l:'Praxias e coordenação',d:'Atividades que exigem coordenação precisa: manualidades, instrumentos.'},
+    ]},
+  ]
+};
+
+function buildCL(f){
+  const c=document.getElementById('cl_'+f);
+  if(c.innerHTML.trim())return;
+  CL[f].forEach(dom=>{
+    const d=document.createElement('div');
+    d.className='dominio';
+    d.innerHTML=`<div class="dom-head" onclick="togDom(this)">
+      ${dom.t}
+      <span class="dom-cnt" id="cnt_${f}_${dom.id}">0/${dom.its.length}</span>
+      <span class="dom-arr">▼</span>
+    </div>
+    <div class="dom-body" id="db_${f}_${dom.id}">
+      ${dom.its.map(i=>`<div class="cl-row">
+        <input type="checkbox" id="${f}_${i.id}" onchange="updCnt('${f}','${dom.id}')">
+        <div><div class="cl-label">${i.l}</div><div class="cl-detalhe">${i.d}</div></div>
+      </div>`).join('')}
+    </div>`;
+    c.appendChild(d);
+  });
+}
+
+function togDom(h){
+  const b=h.nextElementSibling;
+  b.classList.toggle('open');
+  h.classList.toggle('open');
+}
+
+function setFaixa(f,btn){
+  faixa=f;
+  document.querySelectorAll('.cl-tab').forEach((t,i)=>t.classList.toggle('on',['a','b'][i]===f));
+  document.querySelectorAll('.cl-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('cl_'+f).classList.add('on');
+  buildCL(f);
+}
+
+function updCnt(f,domId){
+  const dom=CL[f].find(d=>d.id===domId);
+  const n=dom.its.filter(i=>document.getElementById(f+'_'+i.id)?.checked).length;
+  const el=document.getElementById('cnt_'+f+'_'+domId);
+  if(el)el.textContent=n+'/'+dom.its.length;
+}
+
+function getCL(){
+  const res=[];
+  CL[faixa].forEach(dom=>{
+    const sel=dom.its.filter(i=>document.getElementById(faixa+'_'+i.id)?.checked);
+    if(sel.length)res.push({dominio:dom.t,itens:sel.map(i=>({label:i.l,detalhe:i.d}))});
+  });
+  return res;
+}
+
+// ═══ UTILS ═══
+const v=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
+const sv=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val||''};
+const chk=id=>{const e=document.getElementById(id);return e?e.checked:false};
+const sChk=(id,v)=>{const e=document.getElementById(id);if(e)e.checked=!!v};
+
+function getFins(){
+  const f=[];
+  if(chk('fin_inter'))f.push('Compartilhamento interprofissional');
+  if(chk('fin_escolar'))f.push('Encaminhamento escolar');
+  if(chk('fin_medico'))f.push('Encaminhamento médico');
+  if(chk('fin_judicial'))f.push('Uso judicial');
+  if(chk('fin_inss'))f.push('INSS — '+v('f_inssB'));
+  return f;
+}
+
+function salvarDB(){localStorage.setItem(KEY,JSON.stringify(db));}
+
+function toast(msg,ok){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show'+(ok?' ok':'');
+  setTimeout(()=>t.className='toast',3000);
+}
+
+function toggleInss(cb){document.getElementById('inssBox').classList.toggle('show',cb.checked);}
+
+// ═══ TELAS ═══
+function tela(nome){
+  ['tWelcome','tForm','tView'].forEach(t=>document.getElementById(t).style.display=t===nome?'':'none');
+}
+
+function novoForm(id){
+  atual=id||null;
+  const ed=!!id;
+  document.getElementById('formTitulo').textContent=ed?'Editar relatório':'Novo relatório';
+  document.getElementById('formSub').textContent=ed?'Atualize os dados e salve.':'Preencha os dados e gere os textos com IA.';
+  document.getElementById('formIcon').textContent=ed?'✏️':'📝';
+  document.getElementById('bDel').style.display=ed?'':'none';
+  clearForm();
+  buildCL('a'); buildCL('b');
+  if(ed){const p=db.find(x=>x.id===id);if(p)fillForm(p);}
+  tela('tForm');
+  document.querySelector('.main').scrollTop=0;
+}
+
+function clearForm(){
+  ['f_nome','f_dnasc','f_idade','f_sexo','f_solicitante','f_diagnostico','f_anoInicio','f_investigacao','f_frequencia','f_modalidade','f_duracao','f_areas','f_contextoClinico','f_instrumentos','f_gestacao','f_desenvolvimento','f_comportamento','f_psicologico','f_psicopedagogico','f_sintese','f_recomendacoes','f_txtDemanda','f_txtProcedimento','f_txtAnalise','f_txtConclusao','f_prof','f_inssB','f_inssCid'].forEach(id=>sv(id,''));
+  ['fin_inter','fin_escolar','fin_medico','fin_judicial','fin_inss'].forEach(id=>sChk(id,false));
+  document.getElementById('inssBox').classList.remove('show');
+  document.querySelectorAll('#cl_a input[type=checkbox],#cl_b input[type=checkbox]').forEach(e=>{e.checked=false;});
+  document.querySelectorAll('.dom-cnt').forEach(e=>{
+    const pts=e.id.split('_');const f=pts[1];const did=pts.slice(2).join('_');
+    const dom=CL[f]?.find(d=>d.id===did);if(dom)e.textContent='0/'+dom.its.length;
+  });
+}
+
+function fillForm(p){
+  sv('f_nome',p.nome);sv('f_dnasc',p.dnasc);sv('f_idade',p.idade);
+  sv('f_sexo',p.sexo);sv('f_solicitante',p.solicitante);
+  sv('f_diagnostico',p.diagnostico);sv('f_anoInicio',p.anoInicio);
+  sv('f_investigacao',p.investigacao);sv('f_frequencia',p.frequencia);
+  sv('f_modalidade',p.modalidade);sv('f_duracao',p.duracao);
+  sv('f_areas',p.areas);sv('f_contextoClinico',p.contextoClinico);
+  sv('f_instrumentos',p.instrumentos);sv('f_gestacao',p.gestacao);
+  sv('f_desenvolvimento',p.desenvolvimento);sv('f_comportamento',p.comportamento);
+  sv('f_psicologico',p.psicologico);sv('f_psicopedagogico',p.psicopedagogico);
+  sv('f_sintese',p.sintese);sv('f_recomendacoes',p.recomendacoes);
+  sv('f_txtDemanda',p.txtDemanda);sv('f_txtProcedimento',p.txtProcedimento);
+  sv('f_txtAnalise',p.txtAnalise);sv('f_txtConclusao',p.txtConclusao);
+  sv('f_prof',p.prof);
+  if(p.inss){sChk('fin_inss',true);sv('f_inssB',p.inss.b);sv('f_inssCid',p.inss.cid);document.getElementById('inssBox').classList.add('show');}
+  (p.fins||[]).forEach(f=>{
+    if(f.includes('interprofissional'))sChk('fin_inter',true);
+    if(f.includes('escolar'))sChk('fin_escolar',true);
+    if(f.includes('médico')||f.includes('medico'))sChk('fin_medico',true);
+    if(f.includes('judicial'))sChk('fin_judicial',true);
+    if(f.includes('INSS'))sChk('fin_inss',true);
+  });
+  faixa=p.faixa||'a';
+  document.querySelectorAll('.cl-tab').forEach((t,i)=>t.classList.toggle('on',['a','b'][i]===faixa));
+  document.querySelectorAll('.cl-panel').forEach(p2=>p2.classList.remove('on'));
+  document.getElementById('cl_'+faixa).classList.add('on');
+  (p.cl||[]).forEach(dom=>{
+    const d=CL[faixa]?.find(x=>x.t===dom.dominio);
+    if(d)dom.itens.forEach(it=>{
+      const ix=d.its.find(x=>x.l===it.label);
+      if(ix){const e=document.getElementById(faixa+'_'+ix.id);if(e){e.checked=true;updCnt(faixa,d.id);}}
+    });
+  });
+}
+
+function cancelar(){
+  if(atual)verRel(atual);
+  else tela('tWelcome');
+}
+
+function salvar(){
+  const nome=v('f_nome');
+  if(!nome){toast('⚠️ Informe o nome do paciente.');return;}
+  const dados={
+    id:atual||Date.now().toString(),
+    nome,dnasc:v('f_dnasc'),idade:v('f_idade'),sexo:v('f_sexo'),
+    solicitante:v('f_solicitante'),fins:getFins(),
+    inss:chk('fin_inss')?{b:v('f_inssB'),cid:v('f_inssCid')}:null,
+    diagnostico:v('f_diagnostico'),anoInicio:v('f_anoInicio'),
+    investigacao:v('f_investigacao'),frequencia:v('f_frequencia'),
+    modalidade:v('f_modalidade'),duracao:v('f_duracao'),
+    areas:v('f_areas'),contextoClinico:v('f_contextoClinico'),
+    instrumentos:v('f_instrumentos'),gestacao:v('f_gestacao'),
+    desenvolvimento:v('f_desenvolvimento'),comportamento:v('f_comportamento'),
+    psicologico:v('f_psicologico'),psicopedagogico:v('f_psicopedagogico'),
+    sintese:v('f_sintese'),recomendacoes:v('f_recomendacoes'),
+    txtDemanda:v('f_txtDemanda'),txtProcedimento:v('f_txtProcedimento'),
+    txtAnalise:v('f_txtAnalise'),txtConclusao:v('f_txtConclusao'),
+    prof:v('f_prof'),faixa,cl:getCL(),
+    data:new Date().toLocaleDateString('pt-BR')
+  };
+  if(atual){const i=db.findIndex(x=>x.id===atual);if(i>=0)db[i]=dados;}
+  else db.unshift(dados);
+  salvarDB();renderLista();atual=dados.id;verRel(dados.id);
+  toast('✅ Relatório salvo!',true);
+}
+
+function confirmarDel(){document.getElementById('overlay').classList.add('show');}
+function fecharModal(){document.getElementById('overlay').classList.remove('show');}
+function deletarOk(){
+  db=db.filter(x=>x.id!==atual);salvarDB();renderLista();fecharModal();
+  atual=null;tela('tWelcome');toast('Relatório excluído.');
+}
+function editarAtual(){novoForm(atual);}
+
+// ═══ LISTA ═══
+function renderLista(filtro){
+  const arr=filtro?db.filter(p=>p.nome.toLowerCase().includes(filtro.toLowerCase())||(p.diagnostico||'').toLowerCase().includes(filtro.toLowerCase())):db;
+  document.getElementById('headerBadge').textContent=db.length+' paciente'+(db.length!==1?'s':'');
+  document.getElementById('sfooter').textContent=db.length+' relatório'+(db.length!==1?'s':'')+' salvos';
+  const lista=document.getElementById('listaPac');
+  if(!arr.length){lista.innerHTML='<div class="empty-list"><span class="empty-list-icon">🔍</span>'+(filtro?'Nenhum resultado encontrado.':'Nenhum paciente cadastrado.<br>Clique em <strong>+ Novo</strong>.')+'</div>';return;}
+  lista.innerHTML=arr.map(p=>`<div class="pac-item ${p.id===atual?'ativo':''}" onclick="verRel('${p.id}')">
+    <div class="pac-nome">${p.nome}</div>
+    <div class="pac-meta">${[p.idade,p.sexo,p.data].filter(Boolean).join(' · ')}</div>
+    <div class="pac-tags">
+      ${p.diagnostico?`<span class="tag tag-diag">${p.diagnostico.substring(0,22)}${p.diagnostico.length>22?'…':''}</span>`:''}
+      ${p.inss?'<span class="tag tag-inss">INSS</span>':''}
+      ${(p.fins||[]).some(f=>f.includes('escolar'))?'<span class="tag tag-esc">Escola</span>':''}
+    </div>
+  </div>`).join('');
+}
+
+function filtrar(){renderLista(v('busca')||undefined);}
+
+// ═══ VISUALIZAÇÃO ═══
+function verRel(id){
+  const p=db.find(x=>x.id===id);if(!p)return;
+  atual=id;renderLista();
+  document.getElementById('vTitulo').textContent=p.nome;
+  document.getElementById('relCard').innerHTML=buildRel(p);
+  tela('tView');document.querySelector('.main').scrollTop=0;
+}
+
+function buildRel(p){
+  const dnasc=p.dnasc?new Date(p.dnasc+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+  const fins=(p.fins||[]).join(' · ')||'—';
+  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const clHtml=(p.cl||[]).map(dom=>`<div class="cl-result-dom">
+    <div class="cl-result-dom-name">${dom.dominio}</div>
+    ${dom.itens.map(i=>`<div class="cl-result-item">${i.label}</div>`).join('')}
+  </div>`).join('');
+
+  return `
+  <div class="rel-header">
+    <div class="rel-header-logo">C</div>
+    <div class="rel-header-text">
+      <div class="rel-clinic-name">Cinecleide — Psicóloga</div>
+      <div class="rel-clinic-sub">Reabilitação Infantil · Transtornos do Neurodesenvolvimento</div>
+      <div class="rel-doc-type">Relatório Interprofissional Psicológico</div>
+    </div>
+  </div>
+  <div class="rel-body">
+    <div class="rel-sec">
+      <div class="rel-sec-title">Identificação</div>
+      ${p.inss?`<div class="inss-alert">⚠️ Documento com finalidade previdenciária — INSS · ${p.inss.b} · CID: ${p.inss.cid}</div>`:''}
+      <div class="rel-grid rel-grid-3">
+        <div><div class="rel-field-label">Nome completo</div><div class="rel-field-val">${p.nome||'—'}</div></div>
+        <div><div class="rel-field-label">Data de nascimento</div><div class="rel-field-val">${dnasc}</div></div>
+        <div><div class="rel-field-label">Idade</div><div class="rel-field-val">${p.idade||'—'}</div></div>
+        <div><div class="rel-field-label">Sexo</div><div class="rel-field-val">${p.sexo||'—'}</div></div>
+        <div><div class="rel-field-label">Solicitante</div><div class="rel-field-val">${p.solicitante||'—'}</div></div>
+        <div><div class="rel-field-label">Diagnóstico</div><div class="rel-field-val">${p.diagnostico||'—'}</div></div>
+      </div>
+      <div style="margin-top:10px"><div class="rel-field-label">Finalidade</div><div class="rel-field-val">${fins}</div></div>
+    </div>
+
+    <div class="rel-sec">
+      <div class="rel-sec-title">Descrição da Demanda</div>
+      ${p.txtDemanda?`<p class="rel-text">${p.txtDemanda}</p>`:'<p class="sem-texto">Texto não gerado.</p>'}
+    </div>
+
+    <div class="rel-sec">
+      <div class="rel-sec-title">Procedimento</div>
+      <div class="rel-grid" style="margin-bottom:12px">
+        <div><div class="rel-field-label">Início</div><div class="rel-field-val">${p.anoInicio||'—'}</div></div>
+        <div><div class="rel-field-label">Frequência</div><div class="rel-field-val">${p.frequencia||'—'}</div></div>
+        <div><div class="rel-field-label">Modalidade</div><div class="rel-field-val">${p.modalidade||'—'}</div></div>
+        <div><div class="rel-field-label">Duração</div><div class="rel-field-val">${p.duracao||'—'}</div></div>
+      </div>
+      ${p.txtProcedimento?`<p class="rel-text">${p.txtProcedimento}</p>`:'<p class="sem-texto">Texto não gerado.</p>'}
+    </div>
+
+    <div class="rel-sec">
+      <div class="rel-sec-title">Análise Clínica</div>
+      ${clHtml?`<div style="margin-bottom:16px;padding:14px;background:var(--success-bg);border:1.5px solid #A9DFBF;border-radius:10px">
+        <div style="font-size:10px;font-weight:800;color:var(--success);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Itens observados no checklist clínico</div>
+        ${clHtml}
+      </div>`:''}
+      ${p.txtAnalise?`<p class="rel-text">${p.txtAnalise.replace(/\n/g,'<br>')}</p>`:'<p class="sem-texto">Texto não gerado.</p>'}
+    </div>
+
+    <div class="rel-sec">
+      <div class="rel-sec-title">Conclusão e Recomendações</div>
+      ${p.txtConclusao?`<p class="rel-text">${p.txtConclusao}</p>`:'<p class="sem-texto">Texto não gerado.</p>'}
+    </div>
+  </div>
+  <div class="rel-footer">
+    <div class="rel-footer-left">📅 Emitido em ${hoje} · Patu/RN</div>
+    <div class="rel-footer-right">${p.prof||'Profissional responsável'}</div>
+  </div>`;
+}
+
+// ═══ IA ═══
+async function gerarIA(tipo){
+  const btn=document.getElementById('bIA_'+tipo);
+  btn.disabled=true;
+  const orig=btn.innerHTML;
+  btn.innerHTML='<span class="spin"></span> Gerando...';
+  const nome=v('f_nome')||'o(a) paciente';
+  const fins=getFins().join(', ')||'compartilhamento interprofissional';
+  const inssOn=chk('fin_inss');
+  const fl=faixa==='a'?'1 a 9 anos':'10 a 15 anos';
+  let prompt='';
+  if(tipo==='demanda'){
+    prompt=`Você é neuropsicóloga. Escreva o parágrafo "Descrição da demanda" de um relatório interprofissional:
+Paciente: ${nome} | Diagnóstico: ${v('f_diagnostico')} | Início: ${v('f_anoInicio')} | Investigação: ${v('f_investigacao')} | Finalidade: ${fins}
+Contexto: ${v('f_contextoClinico')}
+${inssOn?'Mencione que o relatório subsidia solicitação de '+v('f_inssB')+' no INSS, CID: '+v('f_inssCid')+'.':''}
+Linguagem técnica formal, 3ª pessoa, português brasileiro. Máx. 5 frases. Sem títulos.`;
+  } else if(tipo==='procedimento'){
+    prompt=`Você é neuropsicóloga. Escreva o parágrafo "Procedimento":
+Modalidade: ${v('f_modalidade')} | Frequência: ${v('f_frequencia')} | Duração: ${v('f_duracao')} | Áreas: ${v('f_areas')}
+Instrumentos: ${v('f_instrumentos')}
+Linguagem técnica formal, 3ª pessoa, português. Máx. 6 frases. Sem títulos.`;
+  } else if(tipo==='analise'){
+    const cl=getCL();
+    const clStr=cl.length?cl.map(d=>`[${d.dominio}]\n`+d.itens.map(i=>'- '+i.label+': '+i.detalhe).join('\n')).join('\n\n'):'(nenhum item selecionado)';
+    prompt=`Você é uma equipe interprofissional (psicóloga e psicopedagoga). Escreva a seção "Análise" para ${nome} (faixa etária: ${fl}).
+
+DADOS:
+Gestacional: ${v('f_gestacao')}
+Desenvolvimento: ${v('f_desenvolvimento')}
+Comportamento (família): ${v('f_comportamento')}
+
+CHECKLIST:
+${clStr}
+
+Psicológico (livre): ${v('f_psicologico')}
+Psicopedagógico: ${v('f_psicopedagogico')}
+${inssOn?'\nInclua parágrafo sobre impacto funcional nas AVDs para fins do INSS (CID: '+v('f_inssCid')+').':''}
+
+Estruture em:
+1. Parágrafo introdutório: dados gestacionais e desenvolvimento.
+2. "Em acompanhamento Psicológico:" — síntese rica dos domínios do checklist.
+3. "Em acompanhamento Psicopedagógico:" — habilidades cognitivas e aprendizagem.
+${inssOn?'4. "Impacto funcional:" — limitações objetivas para fins previdenciários.':''}
+Parágrafos corridos, sem listas. Linguagem técnica, 3ª pessoa. Português formal.`;
+  } else if(tipo==='conclusao'){
+    prompt=`Neuropsicóloga. Escreva a "Conclusão" do relatório de ${nome}.
+Síntese: ${v('f_sintese')} | Recomendações: ${v('f_recomendacoes')} | Finalidade: ${fins}
+${inssOn?'Inclua parágrafo técnico justificando '+v('f_inssB')+' no INSS, CID '+v('f_inssCid')+'.':''}
+Síntese da evolução, recomendações, natureza dinâmica do desenvolvimento. 3ª pessoa, português formal. Máx. 10 frases.`;
+  }
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    const text=data.content?.map(c=>c.text||'').join('')||'Erro ao gerar.';
+    const mp={demanda:'f_txtDemanda',procedimento:'f_txtProcedimento',analise:'f_txtAnalise',conclusao:'f_txtConclusao'};
+    sv(mp[tipo],text);
+    toast('✅ Texto gerado!',true);
+  }catch(e){toast('Erro ao conectar com a IA.');}
+  btn.disabled=false;
+  btn.innerHTML=orig.replace('⚡','↺');
+}
+
+// ═══ INIT ═══
+buildCL('a');
+renderLista();
+</script>
+</body>
+</html>
