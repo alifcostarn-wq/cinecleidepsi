@@ -1133,7 +1133,7 @@ body {
       <div class="view-toolbar">
         <div class="view-toolbar-title" id="vTitulo">Relatório</div>
         <button class="btn btn-sec" onclick="editarAtual()">✏️ Editar</button>
-        <button class="btn btn-prim" onclick="window.print()">🖨️ Imprimir / PDF</button>
+        <button class="btn btn-prim" id="btnPdf" onclick="baixarPDF()">⬇️ Baixar PDF</button>
       </div>
       <div class="relatorio" id="relCard"></div>
     </div>
@@ -1881,6 +1881,33 @@ async function gerarIA(tipo){
     toast('✅ Texto regenerado!',true);
   }catch(e){toast('❌ Erro: '+e.message);}
   btn.disabled=false;btn.innerHTML=orig;
+}
+
+// ═══ DOWNLOAD PDF ═══
+async function baixarPDF(){
+  const p=db.find(x=>x.id===atual);
+  if(!p){toast('Nenhum paciente selecionado.');return;}
+  const btn=document.getElementById('btnPdf');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spin"></span> Gerando PDF...';
+  try{
+    const res=await fetch('/api/gerar-pdf',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(p)
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e.error||'Erro');}
+    const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`relatorio_${(p.nome||'paciente').replace(/\s+/g,'_').toLowerCase()}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('✅ PDF baixado com sucesso!',true);
+  }catch(e){toast('❌ Erro ao gerar PDF: '+e.message);}
+  btn.disabled=false;
+  btn.innerHTML='⬇️ Baixar PDF';
 }
 
 // ═══ INIT ═══
