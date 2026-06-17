@@ -1,0 +1,11 @@
+{
+  "name": "cinecleide-relatorios",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "pdfkit": "^0.15.0"
+  }
+}
