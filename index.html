@@ -1106,7 +1106,7 @@ body {
       <div class="card">
         <div class="card-head"><span class="card-head-icon">✨</span> Textos gerados por IA</div>
         <div class="card-body">
-          <p style="font-size:13px;color:var(--ink-mid);margin-bottom:1rem">Gere cada seção automaticamente ou escreva manualmente. Os textos abaixo compõem o relatório final.</p>
+          <p style="font-size:13px;color:var(--ink-mid);margin-bottom:1rem">Os textos abaixo são gerados automaticamente ao salvar. Use os botões abaixo apenas para regenerar uma seção específica se quiser ajustar.</p>
           <div class="ia-row">
             <button class="btn-ia" id="bIA_demanda" onclick="gerarIA('demanda')">⚡ Demanda</button>
             <button class="btn-ia" id="bIA_procedimento" onclick="gerarIA('procedimento')">⚡ Procedimento</button>
@@ -1124,7 +1124,7 @@ body {
       <div class="form-actions">
         <button class="btn btn-del" id="bDel" onclick="confirmarDel()" style="display:none">🗑 Excluir</button>
         <button class="btn btn-sec" onclick="cancelar()">Cancelar</button>
-        <button class="btn btn-prim" onclick="salvar()">💾 Salvar relatório</button>
+        <button class="btn btn-prim" onclick="salvar()">✨ Gerar e salvar relatório</button>
       </div>
     </div>
 
@@ -1455,12 +1455,11 @@ function cancelar(){
   else tela('tWelcome');
 }
 
-function salvar(){
-  const nome=v('f_nome');
-  if(!nome){toast('⚠️ Informe o nome do paciente.');return;}
-  const dados={
-    id:atual||Date.now().toString(),
-    nome,dnasc:v('f_dnasc'),idade:v('f_idade'),sexo:v('f_sexo'),
+// Coleta todos os dados do formulário em um objeto
+function coletarDados(id){
+  return {
+    id: id||Date.now().toString(),
+    nome:v('f_nome'),dnasc:v('f_dnasc'),idade:v('f_idade'),sexo:v('f_sexo'),
     solicitante:v('f_solicitante'),fins:getFins(),
     inss:chk('fin_inss')?{b:v('f_inssB'),cid:v('f_inssCid')}:null,
     diagnostico:v('f_diagnostico'),anoInicio:v('f_anoInicio'),
@@ -1476,10 +1475,159 @@ function salvar(){
     prof:v('f_prof'),faixa,cl:getCL(),
     data:new Date().toLocaleDateString('pt-BR')
   };
-  if(atual){const i=db.findIndex(x=>x.id===atual);if(i>=0)db[i]=dados;}
-  else db.unshift(dados);
-  salvarDB();renderLista();atual=dados.id;verRel(dados.id);
-  toast('✅ Relatório salvo!',true);
+}
+
+// Gera um texto via IA a partir de um prompt
+async function chamarIA(prompt, max_tokens=2000){
+  const res = await fetch('/api/gerar',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({prompt, max_tokens})
+  });
+  if(!res.ok){const e=await res.json();throw new Error(e.error||'Erro na IA');}
+  const data=await res.json();
+  return data.text||'';
+}
+
+// Monta os prompts para cada seção
+function montarPrompts(dados){
+  const nome=dados.nome||'o(a) paciente';
+  const fins=dados.fins.join(', ')||'compartilhamento interprofissional';
+  const inssOn=!!dados.inss;
+  const fl=dados.faixa==='a'?'1 a 9 anos':'10 a 15 anos';
+  const cl=dados.cl||[];
+  const clStr=cl.length
+    ?cl.map(d=>`[${d.dominio}]\n`+d.itens.map(i=>'- '+i.label+': '+i.estado+(i.obs?' ('+i.obs+')':'')).join('\n')).join('\n\n')
+    :'(nenhum item avaliado)';
+
+  const demanda=`Você é neuropsicóloga. Escreva o parágrafo "Descrição da demanda" de um relatório interprofissional:
+Paciente: ${nome} | Diagnóstico: ${dados.diagnostico||'não informado'} | Início: ${dados.anoInicio||'não informado'} | Investigação: ${dados.investigacao||'não informado'} | Finalidade: ${fins}
+Contexto adicional: ${dados.contextoClinico||'não informado'}
+${inssOn?'Mencione que o relatório subsidia solicitação de '+dados.inss.b+' no INSS, CID: '+dados.inss.cid+'.':''}
+Linguagem técnica formal, 3ª pessoa, português brasileiro. Máx. 5 frases. Sem títulos.`;
+
+  const procedimento=`Você é neuropsicóloga. Escreva o parágrafo "Procedimento" de um relatório clínico:
+Modalidade: ${dados.modalidade||'não informado'} | Frequência: ${dados.frequencia||'não informado'} | Duração: ${dados.duracao||'não informado'} | Áreas: ${dados.areas||'não informado'}
+Instrumentos/abordagens: ${dados.instrumentos||'não informado'}
+Linguagem técnica formal, 3ª pessoa, português. Máx. 6 frases. Sem títulos.`;
+
+  const analise=`Você é uma equipe interprofissional experiente (psicóloga e psicopedagoga) elaborando a ANÁLISE CLÍNICA INTERPRETATIVA de ${nome} (faixa etária: ${fl}), com diagnóstico de ${dados.diagnostico||'não informado'}.
+
+IMPORTANTE: Você NÃO deve apenas reescrever ou organizar os dados fornecidos. Sua tarefa é ANALISAR CLINICAMENTE o caso — interpretar a significância dos achados, correlacionar os dados entre si, identificar padrões, relacionar o histórico de desenvolvimento com o quadro atual, e discutir o que os achados do checklist revelam sobre o funcionamento global da criança/adolescente. Produza raciocínio clínico genuíno, não um resumo.
+
+REGRA CRÍTICA: NÃO sugira diagnósticos, hipóteses diagnósticas, nem novas linhas de investigação. Analise apenas o quadro ATUAL com base no diagnóstico já estabelecido e nos dados apresentados.
+
+DADOS PARA ANÁLISE:
+Histórico gestacional/perinatal: ${dados.gestacao||'não informado'}
+Desenvolvimento neuropsicomotor: ${dados.desenvolvimento||'não informado'}
+Comportamento atual relatado pela família: ${dados.comportamento||'não informado'}
+
+ACHADOS DO CHECKLIST CLÍNICO (cada função avaliada como Preservada, Parcialmente preservada ou Comprometida):
+${clStr}
+
+Observações do acompanhamento psicológico: ${dados.psicologico||'não informado'}
+Observações do acompanhamento psicopedagógico: ${dados.psicopedagogico||'não informado'}
+${inssOn?'\nInclua análise do impacto funcional nas atividades de vida diária (AVDs) e participação social, relevante para fins de avaliação do INSS (CID: '+dados.inss.cid+').':''}
+
+ESTRUTURE A ANÁLISE ASSIM:
+1. Parágrafo introdutório: correlacione os dados gestacionais e os marcos do desenvolvimento com o quadro atual, interpretando sua relevância clínica.
+2. "Em acompanhamento Psicológico:" — análise interpretativa dos domínios observados. Discuta o que os achados significam para o funcionamento da criança/adolescente, como os domínios se relacionam entre si, e a significância clínica dos padrões (o que está preservado, parcialmente preservado e comprometido, e o que isso implica funcionalmente). NÃO liste itens — integre numa análise fluida e raciocinada.
+3. "Em acompanhamento Psicopedagógico:" — análise das habilidades cognitivas e de aprendizagem, interpretando como o perfil cognitivo impacta o processo de aprendizagem.
+${inssOn?'4. "Impacto funcional:" — análise objetiva e interpretativa das limitações funcionais nas AVDs e participação social.':''}
+
+Linguagem técnica, interpretativa e aprofundada. Parágrafos corridos, sem listas. 3ª pessoa. Português brasileiro formal.`;
+
+  const conclusao=`Você é neuropsicóloga elaborando a CONCLUSÃO de um relatório de ${nome}, com diagnóstico de ${dados.diagnostico||'não informado'}.
+
+Produza uma síntese conclusiva que INTEGRE a análise clínica, articule a evolução observada e fundamente as recomendações com base no quadro analisado. NÃO sugira novos diagnósticos.
+
+Síntese clínica: ${dados.sintese||'não informado'}
+Recomendações: ${dados.recomendacoes||'não informado'}
+Finalidade: ${fins}
+${inssOn?'Inclua parágrafo técnico fundamentando a condição que justifica a solicitação de '+dados.inss.b+' junto ao INSS, CID '+dados.inss.cid+'.':''}
+
+Inclua: síntese integradora da evolução e do quadro atual, fundamentação das recomendações, e a observação sobre a natureza dinâmica do desenvolvimento. Linguagem técnica e conclusiva, 3ª pessoa, português formal. Parágrafos corridos. Máx. 10 frases.`;
+
+  return {demanda, procedimento, analise, conclusao};
+}
+
+// Mostra/esconde tela de progresso
+function showProgresso(etapa, total, msg){
+  let el=document.getElementById('progressOverlay');
+  if(!el){
+    el=document.createElement('div');
+    el.id='progressOverlay';
+    el.style.cssText='position:fixed;inset:0;background:rgba(26,22,37,0.75);backdrop-filter:blur(6px);z-index:999;display:flex;align-items:center;justify-content:center;';
+    el.innerHTML=`<div style="background:white;border-radius:20px;padding:2.5rem 3rem;max-width:400px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+      <div style="font-size:40px;margin-bottom:1rem">✨</div>
+      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:#3D2B5A;margin-bottom:8px">Gerando relatório...</div>
+      <div id="progMsg" style="font-size:13px;color:#5A5271;margin-bottom:1.25rem;min-height:20px"></div>
+      <div style="background:#F0EBF8;border-radius:99px;height:8px;overflow:hidden">
+        <div id="progBar" style="height:100%;background:linear-gradient(90deg,#6C4F8C,#9B7DBF);border-radius:99px;transition:width 0.4s ease;width:0%"></div>
+      </div>
+      <div id="progStep" style="font-size:12px;color:#9B92B0;margin-top:8px"></div>
+    </div>`;
+    document.body.appendChild(el);
+  }
+  el.style.display='flex';
+  document.getElementById('progMsg').textContent=msg;
+  document.getElementById('progBar').style.width=Math.round((etapa/total)*100)+'%';
+  document.getElementById('progStep').textContent=`Etapa ${etapa} de ${total}`;
+}
+
+function hideProgresso(){
+  const el=document.getElementById('progressOverlay');
+  if(el)el.style.display='none';
+}
+
+// SALVAR: coleta dados → gera IA automaticamente → salva → exibe relatório
+async function salvar(){
+  const nome=v('f_nome');
+  if(!nome){toast('⚠️ Informe o nome do paciente.');return;}
+
+  const id=atual||Date.now().toString();
+  const dados=coletarDados(id);
+  const prompts=montarPrompts(dados);
+  const total=4;
+
+  try {
+    // 1. Demanda
+    showProgresso(1,total,'Redigindo a descrição da demanda...');
+    dados.txtDemanda=await chamarIA(prompts.demanda,1200);
+
+    // 2. Procedimento
+    showProgresso(2,total,'Descrevendo os procedimentos e abordagens...');
+    dados.txtProcedimento=await chamarIA(prompts.procedimento,1000);
+
+    // 3. Análise
+    showProgresso(3,total,'Elaborando a análise clínica interpretativa...');
+    dados.txtAnalise=await chamarIA(prompts.analise,2500);
+
+    // 4. Conclusão
+    showProgresso(4,total,'Redigindo a conclusão e recomendações...');
+    dados.txtConclusao=await chamarIA(prompts.conclusao,1500);
+
+    // Atualiza campos de texto no formulário (para edição futura)
+    sv('f_txtDemanda',dados.txtDemanda);
+    sv('f_txtProcedimento',dados.txtProcedimento);
+    sv('f_txtAnalise',dados.txtAnalise);
+    sv('f_txtConclusao',dados.txtConclusao);
+
+    // Salva no banco
+    if(atual){const i=db.findIndex(x=>x.id===atual);if(i>=0)db[i]=dados;}
+    else db.unshift(dados);
+    salvarDB();
+    renderLista();
+    atual=dados.id;
+
+    hideProgresso();
+    verRel(dados.id);
+    toast('✅ Relatório gerado e salvo!',true);
+
+  } catch(e){
+    hideProgresso();
+    toast('❌ Erro ao gerar: '+e.message);
+  }
 }
 
 function confirmarDel(){document.getElementById('overlay').classList.add('show');}
@@ -1719,79 +1867,20 @@ function buildRel(p){
 // ═══ IA ═══
 async function gerarIA(tipo){
   const btn=document.getElementById('bIA_'+tipo);
+  if(!btn)return;
   btn.disabled=true;
   const orig=btn.innerHTML;
   btn.innerHTML='<span class="spin"></span> Gerando...';
-  const nome=v('f_nome')||'o(a) paciente';
-  const fins=getFins().join(', ')||'compartilhamento interprofissional';
-  const inssOn=chk('fin_inss');
-  const fl=faixa==='a'?'1 a 9 anos':'10 a 15 anos';
-  let prompt='';
-  if(tipo==='demanda'){
-    prompt=`Você é neuropsicóloga. Escreva o parágrafo "Descrição da demanda" de um relatório interprofissional:
-Paciente: ${nome} | Diagnóstico: ${v('f_diagnostico')} | Início: ${v('f_anoInicio')} | Investigação: ${v('f_investigacao')} | Finalidade: ${fins}
-Contexto: ${v('f_contextoClinico')}
-${inssOn?'Mencione que o relatório subsidia solicitação de '+v('f_inssB')+' no INSS, CID: '+v('f_inssCid')+'.':''}
-Linguagem técnica formal, 3ª pessoa, português brasileiro. Máx. 5 frases. Sem títulos.`;
-  } else if(tipo==='procedimento'){
-    prompt=`Você é neuropsicóloga. Escreva o parágrafo "Procedimento":
-Modalidade: ${v('f_modalidade')} | Frequência: ${v('f_frequencia')} | Duração: ${v('f_duracao')} | Áreas: ${v('f_areas')}
-Instrumentos: ${v('f_instrumentos')}
-Linguagem técnica formal, 3ª pessoa, português. Máx. 6 frases. Sem títulos.`;
-  } else if(tipo==='analise'){
-    const cl=getCL();
-    const clStr=cl.length?cl.map(d=>`[${d.dominio}]\n`+d.itens.map(i=>'- '+i.label+': '+i.estado+(i.obs?' ('+i.obs+')':'')).join('\n')).join('\n\n'):'(nenhum item avaliado)';
-    prompt=`Você é uma equipe interprofissional experiente (psicóloga e psicopedagoga) elaborando a ANÁLISE CLÍNICA INTERPRETATIVA de ${nome} (faixa etária: ${fl}), com diagnóstico de ${v('f_diagnostico')||'não informado'}.
-
-IMPORTANTE: Você NÃO deve apenas reescrever ou organizar os dados fornecidos. Sua tarefa é ANALISAR CLINICAMENTE o caso — interpretar a significância dos achados, correlacionar os dados entre si, identificar padrões, relacionar o histórico de desenvolvimento com o quadro atual, e discutir o que os achados do checklist revelam sobre o funcionamento global da criança/adolescente. Produza raciocínio clínico, não um resumo.
-
-REGRA CRÍTICA: NÃO sugira diagnósticos, hipóteses diagnósticas, nem novas linhas de investigação. Analise apenas o quadro ATUAL com base no diagnóstico já estabelecido e nos dados apresentados.
-
-DADOS PARA ANÁLISE:
-Histórico gestacional/perinatal: ${v('f_gestacao')||'não informado'}
-Desenvolvimento neuropsicomotor: ${v('f_desenvolvimento')||'não informado'}
-Comportamento atual relatado pela família: ${v('f_comportamento')||'não informado'}
-
-ACHADOS DO CHECKLIST CLÍNICO (cada função avaliada como Preservada, Parcialmente preservada ou Comprometida, com observações quando registradas):
-${clStr}
-
-Observações do acompanhamento psicológico: ${v('f_psicologico')||'não informado'}
-Observações do acompanhamento psicopedagógico: ${v('f_psicopedagogico')||'não informado'}
-${inssOn?'\nInclua análise do impacto funcional nas atividades de vida diária (AVDs) e participação social, relevante para fins de avaliação do INSS (CID: '+v('f_inssCid')+').':''}
-
-ESTRUTURE A ANÁLISE ASSIM:
-1. Parágrafo introdutório: correlacione os dados gestacionais e os marcos do desenvolvimento com o quadro atual, interpretando sua relevância clínica.
-2. "Em acompanhamento Psicológico:" — análise interpretativa dos domínios observados (cognição, comunicação, socialização, comportamento, regulação emocional, motor). Discuta o que os achados significam para o funcionamento da criança, como os domínios se relacionam entre si, e a significância clínica dos padrões observados. NÃO liste itens — integre numa análise fluida e raciocinada.
-3. "Em acompanhamento Psicopedagógico:" — análise das habilidades cognitivas e de aprendizagem, interpretando como o perfil cognitivo impacta o processo de aprendizagem e quais funções estão preservadas ou comprometidas.
-${inssOn?'4. "Impacto funcional:" — análise objetiva e interpretativa das limitações funcionais nas AVDs e participação social.':''}
-
-Linguagem técnica, interpretativa e aprofundada. Parágrafos corridos, sem listas ou marcadores. 3ª pessoa. Português brasileiro formal. Demonstre raciocínio clínico genuíno.`;
-  } else if(tipo==='conclusao'){
-    prompt=`Você é uma neuropsicóloga elaborando a CONCLUSÃO de um relatório de ${nome}, com diagnóstico de ${v('f_diagnostico')||'não informado'}.
-
-Não apenas resuma — produza uma síntese conclusiva que INTEGRE a análise clínica, articule a evolução observada no acompanhamento e fundamente as recomendações com base no quadro analisado.
-
-Síntese clínica informada: ${v('f_sintese')||'não informado'}
-Recomendações: ${v('f_recomendacoes')||'não informado'}
-Finalidade: ${fins}
-${inssOn?'Inclua parágrafo técnico fundamentando a condição que justifica a solicitação de '+v('f_inssB')+' junto ao INSS, CID '+v('f_inssCid')+', com linguagem adequada para fins previdenciários.':''}
-
-Inclua: síntese integradora da evolução e do quadro atual, fundamentação das recomendações e dos encaminhamentos, e a observação sobre a natureza dinâmica do desenvolvimento infantil. NÃO sugira novos diagnósticos. Linguagem técnica e conclusiva, 3ª pessoa, português formal. Parágrafos corridos. Máx. 10 frases.`;
-  }
+  const dados=coletarDados(atual||'_tmp');
+  const prompts=montarPrompts(dados);
+  const mp={demanda:'f_txtDemanda',procedimento:'f_txtProcedimento',analise:'f_txtAnalise',conclusao:'f_txtConclusao'};
+  const tokens={demanda:1200,procedimento:1000,analise:2500,conclusao:1500};
   try{
-    const res=await fetch('/api/gerar',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt,max_tokens:tipo==='analise'?2500:1500})
-    });
-    if(!res.ok){const e=await res.json();throw new Error(e.error||'Erro');}
-    const data=await res.json();
-    const mp={demanda:'f_txtDemanda',procedimento:'f_txtProcedimento',analise:'f_txtAnalise',conclusao:'f_txtConclusao'};
-    sv(mp[tipo],data.text);
-    toast('✅ Texto gerado!',true);
+    const text=await chamarIA(prompts[tipo],tokens[tipo]);
+    sv(mp[tipo],text);
+    toast('✅ Texto regenerado!',true);
   }catch(e){toast('❌ Erro: '+e.message);}
-  btn.disabled=false;
-  btn.innerHTML=orig.replace('⚡','↺');
+  btn.disabled=false;btn.innerHTML=orig;
 }
 
 // ═══ INIT ═══
