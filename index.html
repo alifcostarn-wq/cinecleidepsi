@@ -1897,17 +1897,219 @@ async function baixarPDF(){
       body:JSON.stringify(p)
     });
     if(!res.ok){const e=await res.json();throw new Error(e.error||'Erro');}
-    const blob=await res.blob();
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;
-    a.download=`relatorio_${(p.nome||'paciente').replace(/\s+/g,'_').toLowerCase()}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast('✅ PDF baixado com sucesso!',true);
+    const textos=await res.json();
+    abrirJanelaPDF(p, textos);
+    toast('✅ PDF pronto!',true);
   }catch(e){toast('❌ Erro ao gerar PDF: '+e.message);}
   btn.disabled=false;
   btn.innerHTML='⬇️ Baixar PDF';
+}
+
+function abrirJanelaPDF(p, textos){
+  const dnasc=p.dnasc?new Date(p.dnasc+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+  const fins=(p.fins||[]).join(' · ')||'—';
+  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const profNome=(p.prof||'Dra. Cinecleide — Psicóloga').split('·')[0].trim();
+  const profCrp=((p.prof||'').split('·')[1]||'CRP 17/4961').trim();
+
+  const estadoCor=(e)=>{
+    if(e==='Preservado') return '#1A7A4A';
+    if(e==='Parcialmente preservado') return '#B07D30';
+    if(e==='Comprometido') return '#C0392B';
+    return '#5A5271';
+  };
+  const estadoLabel=(e)=>{
+    if(e==='Parcialmente preservado') return 'Parcial';
+    return e||'N/A';
+  };
+
+  const clHtml=(p.cl||[]).map(dom=>`
+    <div class="cl-dom">
+      <div class="cl-dom-nome">${dom.dominio.toUpperCase()}</div>
+      ${dom.itens.map(i=>`
+        <div class="cl-item-row">
+          <span class="cl-item-label">${i.label}</span>
+          <span class="cl-item-estado" style="color:${estadoCor(i.estado)}">${estadoLabel(i.estado)}</span>
+        </div>
+        ${i.obs?`<div class="cl-item-obs">${i.obs}</div>`:''}
+      `).join('')}
+    </div>`).join('');
+
+  const analiseParagrafos=(textos.txtAnalise||'').split(/\n\n+/).filter(Boolean).map(t=>`<p>${t}</p>`).join('');
+
+  const html=`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório — ${p.nome}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Source Serif 4',Georgia,serif; font-size:11pt; color:#1A1625; background:white; }
+
+  .header{
+    background:linear-gradient(135deg,#3D2B5A 0%,#6C4F8C 60%,#9B7DBF 100%);
+    padding:18mm 18mm 14mm; display:flex; align-items:flex-start; gap:14px;
+    position:relative; overflow:hidden;
+  }
+  .header::after{ content:''; position:absolute; right:-40px; top:-40px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.05); }
+  .header-logo{ width:48pt; height:48pt; border-radius:10pt; background:linear-gradient(145deg,#D4A0B0,rgba(255,255,255,0.3)); display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22pt; color:white; font-weight:600; flex-shrink:0; }
+  .header-nome{ font-family:'Playfair Display',serif; font-size:17pt; color:white; font-weight:600; }
+  .header-sub{ font-size:9pt; color:rgba(255,255,255,0.65); margin-top:3px; }
+  .header-badge{ display:inline-block; margin-top:10px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); border-radius:99px; padding:3px 14px; font-size:8pt; color:rgba(255,255,255,0.9); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; font-family:Arial,sans-serif; }
+
+  .body{ padding:0 18mm; }
+
+  .sec{ margin:0; padding:8mm 0 0; }
+  .sec-titulo{ display:flex; align-items:center; gap:8px; font-family:Arial,sans-serif; font-size:8pt; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#6C4F8C; margin-bottom:10pt; }
+  .sec-titulo::before{ content:''; width:3pt; height:12pt; border-radius:2pt; background:#6C4F8C; flex-shrink:0; }
+  .sec-titulo::after{ content:''; flex:1; height:0.5pt; background:#E4DCF5; }
+
+  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8pt 16pt; margin-bottom:10pt; }
+  .field-lbl{ font-family:Arial,sans-serif; font-size:7.5pt; font-weight:700; color:#5A5271; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2pt; }
+  .field-val{ font-size:11pt; color:#1A1625; }
+  .field-val.bold{ font-weight:600; }
+
+  .bloco{ margin-bottom:8pt; padding:8pt 10pt; background:#F8F6FC; border-left:3pt solid #9B7DBF; page-break-inside:avoid; }
+  .bloco-titulo{ font-family:Arial,sans-serif; font-size:8pt; font-weight:800; color:#3D2B5A; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6pt; }
+  .bloco p,.bloco-texto{ font-size:11pt; line-height:1.85; text-align:justify; margin-bottom:6pt; }
+
+  .cl-box{ background:#E8F8F1; border:0.5pt solid #A9DFBF; padding:10pt 12pt; margin-bottom:8pt; }
+  .cl-box-titulo{ font-family:Arial,sans-serif; font-size:8pt; font-weight:800; color:#1A7A4A; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8pt; }
+  .cl-dom{ margin-bottom:8pt; page-break-inside:avoid; }
+  .cl-dom-nome{ font-family:Arial,sans-serif; font-size:8pt; font-weight:800; color:#6C4F8C; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4pt; }
+  .cl-item-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:8pt; padding:1.5pt 0; }
+  .cl-item-label{ font-family:Arial,sans-serif; font-size:9pt; color:#1A1625; font-weight:500; }
+  .cl-item-estado{ font-family:Arial,sans-serif; font-size:8.5pt; font-weight:700; flex-shrink:0; }
+  .cl-item-obs{ font-family:'Source Serif 4',serif; font-size:8.5pt; color:#5A5271; font-style:italic; padding-left:8pt; margin-bottom:2pt; }
+
+  .analise-texto p{ font-size:11pt; line-height:1.9; text-align:justify; margin-bottom:8pt; text-indent:1.5em; }
+
+  .footer{ background:#F8F6FC; border-top:0.5pt solid #E4DCF5; padding:8mm 18mm; display:flex; justify-content:space-between; align-items:flex-end; margin-top:8mm; }
+  .footer-left{ font-family:Arial,sans-serif; font-size:8.5pt; color:#5A5271; line-height:1.6; }
+  .assinatura{ text-align:center; }
+  .ass-linha{ width:140pt; border-top:0.5pt solid #3D2B5A; margin:0 auto 4pt; }
+  .ass-nome{ font-style:italic; font-size:10pt; }
+  .ass-crp{ font-family:Arial,sans-serif; font-size:8pt; color:#5A5271; }
+
+  .divider{ border:none; border-top:0.5pt solid #E4DCF5; margin:6pt 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">C</div>
+  <div>
+    <div class="header-nome">Cinecleide — Psicóloga</div>
+    <div class="header-sub">Reabilitação Infantil · Transtornos do Neurodesenvolvimento · Patu/RN</div>
+    <div class="header-badge">Relatório Interprofissional Psicológico</div>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="sec">
+    <div class="sec-titulo">Identificação do Paciente</div>
+    ${p.inss?`<div style="background:#FEF7EC;border:0.5pt solid #EDCB8A;border-radius:4pt;padding:7pt 12pt;margin-bottom:10pt;font-family:Arial,sans-serif;font-size:9pt;font-weight:700;color:#7D5A10;">⚠️ Finalidade previdenciária — INSS · ${p.inss.b} · CID: ${p.inss.cid}</div>`:''}
+    <div class="grid3">
+      <div><div class="field-lbl">Nome completo</div><div class="field-val bold">${p.nome||'—'}</div></div>
+      <div><div class="field-lbl">Data de nascimento</div><div class="field-val">${dnasc}</div></div>
+      <div><div class="field-lbl">Idade</div><div class="field-val">${p.idade||'—'}</div></div>
+      <div><div class="field-lbl">Sexo</div><div class="field-val">${p.sexo||'—'}</div></div>
+      <div><div class="field-lbl">Solicitante</div><div class="field-val">${p.solicitante||'—'}</div></div>
+      <div><div class="field-lbl">Diagnóstico (CID/DSM)</div><div class="field-val">${p.diagnostico||'—'}</div></div>
+    </div>
+    <div><div class="field-lbl">Finalidade do relatório</div><div class="field-val">${fins}</div></div>
+  </div>
+
+  ${textos.txtDemanda?`
+  <div class="sec">
+    <div class="sec-titulo">Descrição da Demanda</div>
+    <p style="font-size:11pt;line-height:1.85;text-align:justify;">${textos.txtDemanda}</p>
+  </div>`:''}
+
+  <div class="sec">
+    <div class="sec-titulo">Procedimento</div>
+    <div class="grid3" style="margin-bottom:10pt">
+      <div><div class="field-lbl">Início</div><div class="field-val">${p.anoInicio||'—'}</div></div>
+      <div><div class="field-lbl">Frequência</div><div class="field-val">${p.frequencia||'—'}</div></div>
+      <div><div class="field-lbl">Modalidade</div><div class="field-val">${p.modalidade||'—'}</div></div>
+      <div><div class="field-lbl">Duração</div><div class="field-val">${p.duracao||'—'}</div></div>
+      <div><div class="field-lbl">Áreas</div><div class="field-val">${p.areas||'—'}</div></div>
+      <div><div class="field-lbl">Instrumentos</div><div class="field-val">${p.instrumentos||'—'}</div></div>
+    </div>
+    ${textos.txtProcedimento?`<p style="font-size:11pt;line-height:1.85;text-align:justify;">${textos.txtProcedimento}</p>`:''}
+  </div>
+
+  <div class="sec">
+    <div class="sec-titulo">Análise Clínica</div>
+
+    ${(p.gestacao||p.desenvolvimento)?`
+    <div class="bloco">
+      <div class="bloco-titulo">Informações Maternas e Desenvolvimento</div>
+      ${p.gestacao?`<p class="bloco-texto"><strong>Histórico gestacional/perinatal:</strong> ${p.gestacao}</p>`:''}
+      ${p.desenvolvimento?`<p class="bloco-texto"><strong>Desenvolvimento neuropsicomotor:</strong> ${p.desenvolvimento}</p>`:''}
+    </div>`:''}
+
+    ${p.comportamento?`
+    <div class="bloco">
+      <div class="bloco-titulo">Comportamento e Funcionamento Atual</div>
+      <p class="bloco-texto">${p.comportamento}</p>
+    </div>`:''}
+
+    ${(p.cl||[]).length?`
+    <div class="cl-box">
+      <div class="cl-box-titulo">Checklist Clínico — Faixa etária: ${p.faixa==='a'?'1 a 9 anos':'10 a 15 anos'}</div>
+      ${clHtml}
+    </div>`:''}
+
+    ${textos.txtAnalise?`
+    <div class="bloco">
+      <div class="bloco-titulo">Síntese do Acompanhamento Interprofissional</div>
+      <div class="analise-texto">${analiseParagrafos}</div>
+    </div>`:''}
+
+    ${p.psicologico?`
+    <div class="bloco">
+      <div class="bloco-titulo">Observações — Acompanhamento Psicológico</div>
+      <p class="bloco-texto">${p.psicologico}</p>
+    </div>`:''}
+
+    ${p.psicopedagogico?`
+    <div class="bloco">
+      <div class="bloco-titulo">Observações — Acompanhamento Psicopedagógico</div>
+      <p class="bloco-texto">${p.psicopedagogico}</p>
+    </div>`:''}
+  </div>
+
+  ${textos.txtConclusao?`
+  <div class="sec">
+    <div class="sec-titulo">Conclusão e Recomendações</div>
+    <p style="font-size:11pt;line-height:1.9;text-align:justify;text-indent:1.5em;">${textos.txtConclusao}</p>
+  </div>`:''}
+
+</div>
+
+<div class="footer">
+  <div class="footer-left">
+    Emitido em ${hoje}<br>
+    Patu/RN — Documento clínico confidencial
+  </div>
+  <div class="assinatura">
+    <div class="ass-linha"></div>
+    <div class="ass-nome">${profNome}</div>
+    <div class="ass-crp">${profCrp}</div>
+  </div>
+</div>
+
+<script>window.onload=()=>{window.print();}</script>
+</body>
+</html>`;
+
+  const w=window.open('','_blank','width=900,height=700');
+  w.document.write(html);
+  w.document.close();
 }
 
 // ═══ INIT ═══
