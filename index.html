@@ -1891,7 +1891,7 @@ async function baixarPDF(){
   btn.disabled=true;
   btn.innerHTML='<span class="spin"></span> Gerando PDF...';
   try{
-    const res=await fetch('/api/gerar-pdf',{
+    const res=await fetch('/api/relatoriopdf',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(p)
