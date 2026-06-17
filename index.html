@@ -382,14 +382,35 @@ body {
 .dom-body.open { display: block; }
 .dom-head.open .dom-arr { transform: rotate(180deg); }
 
-.cl-row {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 7px 0; border-bottom: 1px solid var(--surface-3);
+.cl-item-row {
+  padding: 10px 0; border-bottom: 1px solid var(--surface-3);
 }
-.cl-row:last-child { border-bottom: none; }
-.cl-row input[type=checkbox] { margin-top: 2px; width: 14px; height: 14px; flex-shrink: 0; accent-color: var(--success); cursor: pointer; }
+.cl-item-row:last-child { border-bottom: none; }
+.cl-item-row.marcado { background: rgba(108,79,140,0.03); border-radius: 6px; padding: 10px; margin: 2px 0; }
+.cl-item-info { margin-bottom: 7px; }
 .cl-label { font-size: 13px; font-weight: 600; color: var(--ink); }
 .cl-detalhe { font-size: 11px; color: var(--ink-light); margin-top: 1px; line-height: 1.5; }
+.cl-estados { display: flex; gap: 5px; flex-wrap: wrap; }
+.cl-est {
+  padding: 4px 11px; border-radius: 99px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  font-size: 11px; font-weight: 600; font-family: inherit;
+  color: var(--ink-mid); cursor: pointer; transition: all .12s;
+}
+.cl-est:hover { border-color: var(--border-dark); }
+.cl-est-p.on   { background: #E8F8F1; border-color: #2D9E6B; color: #1A7A4A; }
+.cl-est-pp.on  { background: #FEF7EC; border-color: #D9A441; color: #B07D30; }
+.cl-est-c.on   { background: #FDEDEC; border-color: #E08070; color: #C0392B; }
+.cl-est-na.on  { background: var(--surface-3); border-color: var(--ink-light); color: var(--ink-mid); }
+.cl-obs {
+  display: none;
+  width: 100%; margin-top: 7px;
+  padding: 6px 10px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 12px; font-family: inherit;
+  background: var(--surface-2); color: var(--ink); outline: none;
+}
+.cl-item-row.marcado .cl-obs { display: block; }
+.cl-obs:focus { border-color: var(--brand-light); background: white; }
 
 /* IA BUTTONS */
 .ia-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
@@ -514,6 +535,14 @@ body {
 .cl-result-dom-name { font-size: 11px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
 .cl-result-item { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; color: var(--ink-mid); padding: 2px 0; }
 .cl-result-item::before { content: '✓'; color: var(--success); font-weight: 800; flex-shrink: 0; font-size: 11px; margin-top: 1px; }
+.cl-result-item-full { font-size: 12px; color: var(--ink-mid); padding: 4px 0; line-height: 1.6; }
+.cl-ri-label { font-weight: 600; color: var(--ink); }
+.cl-ri-obs { color: var(--ink-light); font-style: italic; }
+.cl-est-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 8px; border-radius: 99px; vertical-align: middle; }
+.cl-est-badge.est-p   { background: #E8F8F1; color: #1A7A4A; }
+.cl-est-badge.est-pp  { background: #FEF7EC; color: #B07D30; }
+.cl-est-badge.est-c   { background: #FDEDEC; color: #C0392B; }
+.cl-est-badge.est-na  { background: var(--surface-3); color: var(--ink-mid); }
 
 .sem-texto { font-size: 13px; color: var(--ink-light); font-style: italic; }
 
@@ -782,6 +811,15 @@ body {
     flex-shrink: 0 !important; margin-top: 0 !important;
     -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
   }
+  .cl-result-item-full {
+    font-family: Arial, sans-serif !important;
+    font-size: 9pt !important; color: #3D3050 !important;
+    padding: 2pt 0 !important; line-height: 1.5 !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  .cl-ri-label { font-weight: 700 !important; color: #1A1625 !important; }
+  .cl-ri-estado { font-weight: 600 !important; color: #6C4F8C !important; }
+  .cl-ri-obs { color: #5A5271 !important; font-style: italic !important; }
 
   /* ── CHECKLIST CONTAINER ── */
   .cl-print-box {
@@ -1233,13 +1271,40 @@ function buildCL(f){
       <span class="dom-arr">▼</span>
     </div>
     <div class="dom-body" id="db_${f}_${dom.id}">
-      ${dom.its.map(i=>`<div class="cl-row">
-        <input type="checkbox" id="${f}_${i.id}" onchange="updCnt('${f}','${dom.id}')">
-        <div><div class="cl-label">${i.l}</div><div class="cl-detalhe">${i.d}</div></div>
+      ${dom.its.map(i=>`<div class="cl-item-row" id="row_${f}_${i.id}">
+        <div class="cl-item-info">
+          <div class="cl-label">${i.l}</div>
+          <div class="cl-detalhe">${i.d}</div>
+        </div>
+        <div class="cl-estados">
+          <button type="button" class="cl-est cl-est-p" data-v="Preservado" onclick="setEstado('${f}','${i.id}','${dom.id}',this)">Preservado</button>
+          <button type="button" class="cl-est cl-est-pp" data-v="Parcialmente preservado" onclick="setEstado('${f}','${i.id}','${dom.id}',this)">Parcial</button>
+          <button type="button" class="cl-est cl-est-c" data-v="Comprometido" onclick="setEstado('${f}','${i.id}','${dom.id}',this)">Comprometido</button>
+          <button type="button" class="cl-est cl-est-na" data-v="Não avaliado" onclick="setEstado('${f}','${i.id}','${dom.id}',this)">N/A</button>
+        </div>
+        <input type="hidden" id="est_${f}_${i.id}" value="">
+        <input type="text" class="cl-obs" id="obs_${f}_${i.id}" placeholder="Observação clínica (opcional)...">
       </div>`).join('')}
     </div>`;
     c.appendChild(d);
   });
+}
+
+function setEstado(f,itemId,domId,btn){
+  const hidden=document.getElementById('est_'+f+'_'+itemId);
+  const row=document.getElementById('row_'+f+'_'+itemId);
+  const val=btn.getAttribute('data-v');
+  if(hidden.value===val){
+    hidden.value='';
+    btn.classList.remove('on');
+    row.classList.remove('marcado');
+  } else {
+    hidden.value=val;
+    row.querySelectorAll('.cl-est').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    row.classList.add('marcado');
+  }
+  updCnt(f,domId);
 }
 
 function togDom(h){
@@ -1258,7 +1323,7 @@ function setFaixa(f,btn){
 
 function updCnt(f,domId){
   const dom=CL[f].find(d=>d.id===domId);
-  const n=dom.its.filter(i=>document.getElementById(f+'_'+i.id)?.checked).length;
+  const n=dom.its.filter(i=>{const e=document.getElementById('est_'+f+'_'+i.id);return e&&e.value;}).length;
   const el=document.getElementById('cnt_'+f+'_'+domId);
   if(el)el.textContent=n+'/'+dom.its.length;
 }
@@ -1266,8 +1331,12 @@ function updCnt(f,domId){
 function getCL(){
   const res=[];
   CL[faixa].forEach(dom=>{
-    const sel=dom.its.filter(i=>document.getElementById(faixa+'_'+i.id)?.checked);
-    if(sel.length)res.push({dominio:dom.t,itens:sel.map(i=>({label:i.l,detalhe:i.d}))});
+    const sel=dom.its.map(i=>{
+      const est=document.getElementById('est_'+faixa+'_'+i.id)?.value||'';
+      const obs=document.getElementById('obs_'+faixa+'_'+i.id)?.value.trim()||'';
+      return est?{label:i.l,detalhe:i.d,estado:est,obs:obs}:null;
+    }).filter(Boolean);
+    if(sel.length)res.push({dominio:dom.t,itens:sel});
   });
   return res;
 }
@@ -1321,7 +1390,11 @@ function clearForm(){
   ['f_nome','f_dnasc','f_idade','f_sexo','f_solicitante','f_diagnostico','f_anoInicio','f_investigacao','f_frequencia','f_modalidade','f_duracao','f_areas','f_contextoClinico','f_instrumentos','f_gestacao','f_desenvolvimento','f_comportamento','f_psicologico','f_psicopedagogico','f_sintese','f_recomendacoes','f_txtDemanda','f_txtProcedimento','f_txtAnalise','f_txtConclusao','f_prof','f_inssB','f_inssCid'].forEach(id=>sv(id,''));
   ['fin_inter','fin_escolar','fin_medico','fin_judicial','fin_inss'].forEach(id=>sChk(id,false));
   document.getElementById('inssBox').classList.remove('show');
-  document.querySelectorAll('#cl_a input[type=checkbox],#cl_b input[type=checkbox]').forEach(e=>{e.checked=false;});
+  // limpar estados, observações e marcações do checklist
+  document.querySelectorAll('[id^="est_"]').forEach(e=>{e.value='';});
+  document.querySelectorAll('.cl-obs').forEach(e=>{e.value='';});
+  document.querySelectorAll('.cl-est.on').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.cl-item-row.marcado').forEach(e=>e.classList.remove('marcado'));
   document.querySelectorAll('.dom-cnt').forEach(e=>{
     const pts=e.id.split('_');const f=pts[1];const did=pts.slice(2).join('_');
     const dom=CL[f]?.find(d=>d.id===did);if(dom)e.textContent='0/'+dom.its.length;
@@ -1358,7 +1431,21 @@ function fillForm(p){
     const d=CL[faixa]?.find(x=>x.t===dom.dominio);
     if(d)dom.itens.forEach(it=>{
       const ix=d.its.find(x=>x.l===it.label);
-      if(ix){const e=document.getElementById(faixa+'_'+ix.id);if(e){e.checked=true;updCnt(faixa,d.id);}}
+      if(ix){
+        const est=document.getElementById('est_'+faixa+'_'+ix.id);
+        const obs=document.getElementById('obs_'+faixa+'_'+ix.id);
+        const row=document.getElementById('row_'+faixa+'_'+ix.id);
+        if(est&&it.estado){
+          est.value=it.estado;
+          if(obs)obs.value=it.obs||'';
+          if(row){
+            row.classList.add('marcado');
+            const btn=[...row.querySelectorAll('.cl-est')].find(b=>b.getAttribute('data-v')===it.estado);
+            if(btn)btn.classList.add('on');
+          }
+          updCnt(faixa,d.id);
+        }
+      }
     });
   });
 }
@@ -1438,19 +1525,23 @@ function buildRel(p){
   const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
 
   // Checklist — tela (lista vertical)
+  // helper: cor/label do estado
+  const estadoTag=(est)=>{
+    const map={'Preservado':'est-p','Parcialmente preservado':'est-pp','Comprometido':'est-c','Não avaliado':'est-na'};
+    return `<span class="cl-est-badge ${map[est]||'est-na'}">${est}</span>`;
+  };
+
   const clHtmlTela=(p.cl||[]).map(dom=>`
     <div class="cl-result-dom">
       <div class="cl-result-dom-name">${dom.dominio}</div>
-      ${dom.itens.map(i=>`<div class="cl-result-item">${i.label}</div>`).join('')}
+      ${dom.itens.map(i=>`<div class="cl-result-item-full"><span class="cl-ri-label">${i.label}</span> ${estadoTag(i.estado)}${i.obs?`<span class="cl-ri-obs"> — ${i.obs}</span>`:''}</div>`).join('')}
     </div>`).join('');
 
-  // Checklist — impressão (grid 2 colunas, mais compacto)
+  // Checklist — impressão (compacto)
   const clHtmlPrint=(p.cl||[]).map(dom=>`
     <div class="cl-result-dom" style="break-inside:avoid">
       <div class="cl-result-dom-name">${dom.dominio}</div>
-      <div class="cl-print-grid">
-        ${dom.itens.map(i=>`<div class="cl-result-item">${i.label}</div>`).join('')}
-      </div>
+      ${dom.itens.map(i=>`<div class="cl-result-item-full"><span class="cl-ri-label">${i.label}:</span> <span class="cl-ri-estado">${i.estado}</span>${i.obs?`<span class="cl-ri-obs"> — ${i.obs}</span>`:''}</div>`).join('')}
     </div>`).join('');
 
   // Extrai nome e CRP separados do campo profissional
@@ -1649,45 +1740,56 @@ Instrumentos: ${v('f_instrumentos')}
 Linguagem técnica formal, 3ª pessoa, português. Máx. 6 frases. Sem títulos.`;
   } else if(tipo==='analise'){
     const cl=getCL();
-    const clStr=cl.length?cl.map(d=>`[${d.dominio}]\n`+d.itens.map(i=>'- '+i.label+': '+i.detalhe).join('\n')).join('\n\n'):'(nenhum item selecionado)';
-    prompt=`Você é uma equipe interprofissional (psicóloga e psicopedagoga). Escreva a seção "Análise" para ${nome} (faixa etária: ${fl}).
+    const clStr=cl.length?cl.map(d=>`[${d.dominio}]\n`+d.itens.map(i=>'- '+i.label+': '+i.estado+(i.obs?' ('+i.obs+')':'')).join('\n')).join('\n\n'):'(nenhum item avaliado)';
+    prompt=`Você é uma equipe interprofissional experiente (psicóloga e psicopedagoga) elaborando a ANÁLISE CLÍNICA INTERPRETATIVA de ${nome} (faixa etária: ${fl}), com diagnóstico de ${v('f_diagnostico')||'não informado'}.
 
-DADOS:
-Gestacional: ${v('f_gestacao')}
-Desenvolvimento: ${v('f_desenvolvimento')}
-Comportamento (família): ${v('f_comportamento')}
+IMPORTANTE: Você NÃO deve apenas reescrever ou organizar os dados fornecidos. Sua tarefa é ANALISAR CLINICAMENTE o caso — interpretar a significância dos achados, correlacionar os dados entre si, identificar padrões, relacionar o histórico de desenvolvimento com o quadro atual, e discutir o que os achados do checklist revelam sobre o funcionamento global da criança/adolescente. Produza raciocínio clínico, não um resumo.
 
-CHECKLIST:
+REGRA CRÍTICA: NÃO sugira diagnósticos, hipóteses diagnósticas, nem novas linhas de investigação. Analise apenas o quadro ATUAL com base no diagnóstico já estabelecido e nos dados apresentados.
+
+DADOS PARA ANÁLISE:
+Histórico gestacional/perinatal: ${v('f_gestacao')||'não informado'}
+Desenvolvimento neuropsicomotor: ${v('f_desenvolvimento')||'não informado'}
+Comportamento atual relatado pela família: ${v('f_comportamento')||'não informado'}
+
+ACHADOS DO CHECKLIST CLÍNICO (cada função avaliada como Preservada, Parcialmente preservada ou Comprometida, com observações quando registradas):
 ${clStr}
 
-Psicológico (livre): ${v('f_psicologico')}
-Psicopedagógico: ${v('f_psicopedagogico')}
-${inssOn?'\nInclua parágrafo sobre impacto funcional nas AVDs para fins do INSS (CID: '+v('f_inssCid')+').':''}
+Observações do acompanhamento psicológico: ${v('f_psicologico')||'não informado'}
+Observações do acompanhamento psicopedagógico: ${v('f_psicopedagogico')||'não informado'}
+${inssOn?'\nInclua análise do impacto funcional nas atividades de vida diária (AVDs) e participação social, relevante para fins de avaliação do INSS (CID: '+v('f_inssCid')+').':''}
 
-Estruture em:
-1. Parágrafo introdutório: dados gestacionais e desenvolvimento.
-2. "Em acompanhamento Psicológico:" — síntese rica dos domínios do checklist.
-3. "Em acompanhamento Psicopedagógico:" — habilidades cognitivas e aprendizagem.
-${inssOn?'4. "Impacto funcional:" — limitações objetivas para fins previdenciários.':''}
-Parágrafos corridos, sem listas. Linguagem técnica, 3ª pessoa. Português formal.`;
+ESTRUTURE A ANÁLISE ASSIM:
+1. Parágrafo introdutório: correlacione os dados gestacionais e os marcos do desenvolvimento com o quadro atual, interpretando sua relevância clínica.
+2. "Em acompanhamento Psicológico:" — análise interpretativa dos domínios observados (cognição, comunicação, socialização, comportamento, regulação emocional, motor). Discuta o que os achados significam para o funcionamento da criança, como os domínios se relacionam entre si, e a significância clínica dos padrões observados. NÃO liste itens — integre numa análise fluida e raciocinada.
+3. "Em acompanhamento Psicopedagógico:" — análise das habilidades cognitivas e de aprendizagem, interpretando como o perfil cognitivo impacta o processo de aprendizagem e quais funções estão preservadas ou comprometidas.
+${inssOn?'4. "Impacto funcional:" — análise objetiva e interpretativa das limitações funcionais nas AVDs e participação social.':''}
+
+Linguagem técnica, interpretativa e aprofundada. Parágrafos corridos, sem listas ou marcadores. 3ª pessoa. Português brasileiro formal. Demonstre raciocínio clínico genuíno.`;
   } else if(tipo==='conclusao'){
-    prompt=`Neuropsicóloga. Escreva a "Conclusão" do relatório de ${nome}.
-Síntese: ${v('f_sintese')} | Recomendações: ${v('f_recomendacoes')} | Finalidade: ${fins}
-${inssOn?'Inclua parágrafo técnico justificando '+v('f_inssB')+' no INSS, CID '+v('f_inssCid')+'.':''}
-Síntese da evolução, recomendações, natureza dinâmica do desenvolvimento. 3ª pessoa, português formal. Máx. 10 frases.`;
+    prompt=`Você é uma neuropsicóloga elaborando a CONCLUSÃO de um relatório de ${nome}, com diagnóstico de ${v('f_diagnostico')||'não informado'}.
+
+Não apenas resuma — produza uma síntese conclusiva que INTEGRE a análise clínica, articule a evolução observada no acompanhamento e fundamente as recomendações com base no quadro analisado.
+
+Síntese clínica informada: ${v('f_sintese')||'não informado'}
+Recomendações: ${v('f_recomendacoes')||'não informado'}
+Finalidade: ${fins}
+${inssOn?'Inclua parágrafo técnico fundamentando a condição que justifica a solicitação de '+v('f_inssB')+' junto ao INSS, CID '+v('f_inssCid')+', com linguagem adequada para fins previdenciários.':''}
+
+Inclua: síntese integradora da evolução e do quadro atual, fundamentação das recomendações e dos encaminhamentos, e a observação sobre a natureza dinâmica do desenvolvimento infantil. NÃO sugira novos diagnósticos. Linguagem técnica e conclusiva, 3ª pessoa, português formal. Parágrafos corridos. Máx. 10 frases.`;
   }
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/gerar',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({prompt,max_tokens:tipo==='analise'?2500:1500})
     });
+    if(!res.ok){const e=await res.json();throw new Error(e.error||'Erro');}
     const data=await res.json();
-    const text=data.content?.map(c=>c.text||'').join('')||'Erro ao gerar.';
     const mp={demanda:'f_txtDemanda',procedimento:'f_txtProcedimento',analise:'f_txtAnalise',conclusao:'f_txtConclusao'};
-    sv(mp[tipo],text);
+    sv(mp[tipo],data.text);
     toast('✅ Texto gerado!',true);
-  }catch(e){toast('Erro ao conectar com a IA.');}
+  }catch(e){toast('❌ Erro: '+e.message);}
   btn.disabled=false;
   btn.innerHTML=orig.replace('⚡','↺');
 }
