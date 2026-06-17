@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Método não permitido' });
   }
 
-  const { prompt, max_tokens = 1500 } = req.body;
+  const { prompt, max_tokens = 2500 } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt obrigatório' });
