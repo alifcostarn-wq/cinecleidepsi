@@ -13,6 +13,7 @@
 ### Melhorado
 - **Explicação por IA mais precisa:** a IA passa a receber o texto das publicações (início e fim de cada uma, onde costuma estar a decisão), e não só o nome das movimentações.
 - Os assuntos do processo aparecem no cabeçalho, logo abaixo da classe.
+- O DJEN costuma oscilar: quando ele responde com erro temporário (HTTP 502/503/504), o sistema tenta de novo automaticamente. Se mesmo assim falhar, a tela mostra os dados do DataJud com um aviso.
 - **Funções do Vercel em São Paulo (`gru1`):** necessário para acessar o DJEN, que só aceita conexões do Brasil. Também deixa mais rápidas as consultas ao DataJud e ao Escavador.
 
 ### Corrigido

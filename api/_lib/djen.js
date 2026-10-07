@@ -49,19 +49,58 @@ function dataISO(it) {
   return br ? `${br[3]}-${br[2]}-${br[1]}` : (String(v).slice(0, 10) || null);
 }
 
-export async function buscarComunicacoesDjen(p) {
+const CABECALHOS = {
+  Accept: 'application/json, text/plain, */*',
+  'Accept-Language': 'pt-BR,pt;q=0.9',
+  'User-Agent': 'ConsultaProcessual/2.1 (+https://cinecleidepsi.vercel.app)'
+};
+
+async function requisicao(p, itensPorPagina) {
   const url = new URL(BASE);
   url.searchParams.set('numeroProcesso', p.digitos);
   url.searchParams.set('pagina', '1');
-  url.searchParams.set('itensPorPagina', '100');
-  const r = await fetchComTimeout(url, { headers: { Accept: 'application/json' } }, 20000, 'Diário de Justiça Eletrônico Nacional (DJEN)');
-  if (r.status === 403) throw new ErroHttp(502, 'O Diário de Justiça Eletrônico Nacional recusou a conexão (ele só aceita acessos a partir do Brasil).', 'DJEN_BLOQUEADO');
-  if (r.status === 429) throw new ErroHttp(429, 'O Diário de Justiça Eletrônico Nacional limitou as consultas. Tente de novo em alguns segundos.', 'DJEN_LIMITE');
-  if (!r.ok) throw new ErroHttp(502, `Erro no Diário de Justiça Eletrônico Nacional (HTTP ${r.status}).`, 'DJEN');
-  const d = await r.json().catch(() => ({}));
-  const itens = (d.items || d.itens || []).filter((it) =>
-    digitos(it.numero_processo || it.numeroProcesso || it.numeroprocessocommascara) === p.digitos);
-  return normalizar(itens);
+  url.searchParams.set('itensPorPagina', String(itensPorPagina));
+  const r = await fetchComTimeout(url, { headers: CABECALHOS }, 15000, 'Diário de Justiça Eletrônico Nacional (DJEN)');
+  let corpo = '';
+  try { corpo = await r.text(); } catch { /* sem corpo */ }
+  return {
+    status: r.status,
+    corpo,
+    diagnostico: {
+      itensPorPagina,
+      status: r.status,
+      server: r.headers.get('server'),
+      cache: r.headers.get('x-cache'),
+      cors: r.headers.get('access-control-allow-origin'),
+      trecho: corpo.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200)
+    }
+  };
+}
+
+export async function buscarComunicacoesDjen(p) {
+  const tentativas = [];
+  // O DJEN costuma oscilar (HTTP 503); tentamos de novo, com uma página menor.
+  for (const itens of [100, 20]) {
+    const r = await requisicao(p, itens);
+    tentativas.push(r.diagnostico);
+    if (r.status === 200) {
+      let d = {};
+      try { d = JSON.parse(r.corpo); } catch { /* corpo inválido */ }
+      const lista = (d.items || d.itens || []).filter((it) =>
+        digitos(it.numero_processo || it.numeroProcesso || it.numeroprocessocommascara) === p.digitos);
+      return normalizar(lista);
+    }
+    if (r.status !== 503 && r.status !== 502 && r.status !== 504) break;
+    await new Promise((ok) => setTimeout(ok, 800));
+  }
+  const ultima = tentativas[tentativas.length - 1];
+  const erro = ultima.status === 403
+    ? new ErroHttp(502, 'O Diário de Justiça Eletrônico Nacional recusou a conexão (ele só aceita acessos a partir do Brasil).', 'DJEN_BLOQUEADO')
+    : ultima.status === 429
+      ? new ErroHttp(429, 'O Diário de Justiça Eletrônico Nacional limitou as consultas. Tente de novo em alguns segundos.', 'DJEN_LIMITE')
+      : new ErroHttp(502, `O Diário de Justiça Eletrônico Nacional está instável no momento (HTTP ${ultima.status}). Tente de novo em alguns minutos.`, 'DJEN');
+  erro.diagnostico = tentativas;
+  throw erro;
 }
 
 function normalizar(itens) {
