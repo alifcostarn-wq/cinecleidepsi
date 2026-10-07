@@ -1,5 +1,25 @@
 # ChangeLog
 
+## [2.2.0] — 2026-10-07
+
+### Implementado
+- **Busca gratuita por nome da parte:** encontra os processos com publicações em nome de uma pessoa ou empresa no Diário de Justiça Eletrônico Nacional (DJEN/CNJ). Funciona como alternativa à busca por CPF/CNPJ, sem precisar do Escavador.
+- **Busca gratuita por advogado (número da OAB + UF):** lista os processos em que o(a) advogado(a) foi intimado(a).
+- **Abas de tipo de busca** na tela inicial: "CPF, CNPJ ou nº do processo", "Nome da parte" e "Advogado (OAB)".
+- **Escolha do período** das publicações: últimos 30 dias, 6 meses, 12 meses (padrão), 2 anos ou todo o período.
+- **Resultados agrupados por processo**, com:
+  - quantidade de publicações;
+  - trecho da última publicação;
+  - partes;
+  - posição da pessoa consultada (polo ativo ou passivo, ou advogado).
+- Ao abrir um processo vindo dessa busca, o sistema carrega os dados completos (DataJud + Diário) e mantém a posição da pessoa consultada, que também vai para a explicação da IA.
+- Aviso sobre homônimos na busca por nome e totais próprios (processos, publicações, tribunais, como autor e como réu).
+- Rota nova `/api/diario`.
+
+### Melhorado
+- O conector do Diário foi reorganizado para que a consulta por número, por nome e por OAB usem a mesma lógica de nova tentativa e de mensagens de erro.
+- Abas com nomes curtos no celular.
+
 ## [2.1.0] — 2026-10-07
 
 ### Implementado

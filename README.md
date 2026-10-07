@@ -8,6 +8,7 @@ Sistema web para consultar processos judiciais por **CPF**, **CNPJ** ou **númer
 |---|---|---|
 | CPF ou CNPJ (inclusive o novo CNPJ alfanumérico) | [API do Escavador](https://api.escavador.com/v2/docs) — reúne processos de todos os tribunais e identifica as partes pelo documento | Pago (créditos por consulta) |
 | Número do processo | Escavador (se configurado) ou, de graça, duas bases do CNJ consultadas juntas: [DataJud](https://datajud-wiki.cnj.jus.br/api-publica/) (dados do processo e lista de movimentações) e [DJEN — Diário de Justiça Eletrônico Nacional](https://comunica.pje.jus.br/) (partes, advogados e texto integral das publicações) | Gratuito |
+| Nome da parte ou número da OAB | [DJEN — Diário de Justiça Eletrônico Nacional](https://comunica.pje.jus.br/): encontra os processos que tiveram publicações em nome da pessoa, empresa ou advogado(a) no período escolhido | Gratuito |
 | Botão "Explicar com IA" | Groq (GPT-OSS 120B) ou Anthropic (Claude) | Conforme o provedor de IA |
 
 > **Por que um provedor pago para CPF/CNPJ?** Os tribunais e o portal JUS.BR só mostram processos por CPF/CNPJ para quem faz login com a conta gov.br da própria pessoa, e a base pública do CNJ (DataJud) não traz os nomes nem os documentos das partes (LGPD). Por isso a busca por documento depende de um agregador como o Escavador.
@@ -37,6 +38,7 @@ index.html              Interface (busca, lista de processos, detalhe, painel da
 api/status.js           GET  — quais integrações estão ativas
 api/consulta.js         GET  ?documento=CPF_OU_CNPJ — processos do documento
 api/processo.js         GET  ?numero=NUMERO_CNJ — dados e movimentações
+api/diario.js           GET  ?nome=NOME ou ?oab=NUMERO&uf=UF [&periodo=30|180|365|730|todos] — processos com publicações no DJEN
 api/explicar.js         POST { processo } — explicação por IA
 api/_lib/util.js        Validação de CPF/CNPJ/número CNJ, mapa de tribunais, erros
 api/_lib/escavador.js   Conector da API v2 do Escavador
@@ -54,4 +56,5 @@ api/_lib/demo.js        Dados fictícios do modo demonstração
 - O DataJud recebe os dados dos tribunais com atraso e pode levar até ~30 segundos para responder.
 - O DJEN só aceita conexões vindas do Brasil. Por isso as funções rodam no datacenter de São Paulo do Vercel (`"regions": ["gru1"]` no `vercel.json`) — não remova essa linha.
 - No DJEN, as "partes" são as pessoas intimadas nas publicações; quem nunca foi intimado não aparece.
+- A busca por nome não usa CPF: pessoas e empresas com o mesmo nome (homônimos) podem aparecer juntas, e processos sem nenhuma publicação no período escolhido não aparecem.
 - Consultar processos de terceiros envolve dados pessoais: use o sistema com finalidade legítima, conforme a LGPD.

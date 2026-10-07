@@ -33,7 +33,7 @@ const corta = (v, max) => {
   return s.length > max ? s.slice(0, max) + '…' : s;
 };
 
-const ROTULO_POLO = { ATIVO: 'polo ativo', PASSIVO: 'polo passivo' };
+const ROTULO_POLO = { ATIVO: 'polo ativo', PASSIVO: 'polo passivo', ADVOGADO: 'advogado(a) de uma das partes' };
 
 export function montarPedido(p, hoje = new Date()) {
   const linhas = [];
