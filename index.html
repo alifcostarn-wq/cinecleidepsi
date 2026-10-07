@@ -151,6 +151,19 @@ main { flex: 1; width: 100%; max-width: 1180px; margin: 0 auto; padding: 22px 16
 .busca-form .btn { height: 54px; padding: 0 24px; font-size: 15.5px; }
 .busca-ajuda { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 13px; color: var(--ink-3); }
 .busca-ajuda b { color: var(--ink-2); font-weight: 600; }
+.modos { display: flex; gap: 2px; margin: -4px 0 14px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.modo { background: none; border: none; padding: 8px 12px 10px; font-weight: 600; font-size: 14px; color: var(--ink-3); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.modo[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--primary); }
+.modo .rot-curto { display: none; }
+.campo input.texto { font-family: Inter, system-ui, sans-serif; padding-right: 16px; letter-spacing: 0; }
+.campo-oab { display: flex; gap: 8px; }
+.campo-oab input { flex: 1; min-width: 0; }
+.campo select { height: 54px; width: 92px; border-radius: 11px; border: 1.5px solid var(--line-strong); background: var(--surface); padding: 0 10px; font-size: 16px; outline: none; }
+.campo select:focus, .busca-opcoes select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+.busca-opcoes { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13.5px; color: var(--ink-2); flex-wrap: wrap; }
+.busca-opcoes select { height: 38px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--surface); padding: 0 10px; font-size: 14px; outline: none; }
+.pc-trecho { margin: -2px 0 10px; font-size: 13px; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.pc-trecho b { color: var(--ink); font-weight: 600; }
 #buscaMsg { margin-top: 14px; }
 .carregando-linha { display: flex; align-items: center; gap: 10px; color: var(--ink-2); font-size: 14px; padding: 6px 2px; }
 
@@ -323,6 +336,9 @@ main { flex: 1; width: 100%; max-width: 1180px; margin: 0 auto; padding: 22px 16
   .status-chip { padding: 5px 7px; }
   .hero { margin-top: 10px; }
   .busca-form { flex-direction: column; }
+  .modo { flex: 1; padding: 8px 6px 10px; }
+  .modo .rot-longo { display: none; }
+  .modo .rot-curto { display: inline; }
   .busca-form .btn { width: 100%; }
   .campo input { font-size: 16px; }
   .passos { grid-template-columns: 1fr; }
@@ -356,7 +372,7 @@ main { flex: 1; width: 100%; max-width: 1180px; margin: 0 auto; padding: 22px 16
       </span>
       <span class="marca-txt">
         <strong>Consulta Processual</strong>
-        <span>Processos por CPF, CNPJ ou número · explicados por IA</span>
+        <span>Processos por CPF, CNPJ, número, nome ou OAB · explicados por IA</span>
       </span>
     </a>
     <div class="topo-esp"></div>
@@ -369,20 +385,44 @@ main { flex: 1; width: 100%; max-width: 1180px; margin: 0 auto; padding: 22px 16
   <section id="telaBusca">
     <div class="hero">
       <h1>Consulte processos judiciais</h1>
-      <p>Digite um CPF, um CNPJ ou o número do processo. Veja os dados, as movimentações e peça para a IA explicar tudo em linguagem simples.</p>
+      <p>Busque por CPF, CNPJ, número do processo, nome da parte ou OAB. Veja os dados, as movimentações e peça para a IA explicar tudo em linguagem simples.</p>
       <div class="card busca-card">
+        <div class="modos" role="tablist" aria-label="Tipo de busca">
+          <button type="button" class="modo" role="tab" data-modo="doc" aria-selected="true"><span class="rot-longo">CPF, CNPJ ou nº do processo</span><span class="rot-curto">CPF/CNPJ/Nº</span></button>
+          <button type="button" class="modo" role="tab" data-modo="nome" aria-selected="false"><span class="rot-longo">Nome da parte</span><span class="rot-curto">Nome</span></button>
+          <button type="button" class="modo" role="tab" data-modo="oab" aria-selected="false"><span class="rot-longo">Advogado (OAB)</span><span class="rot-curto">OAB</span></button>
+        </div>
         <form class="busca-form" id="formBusca" novalidate>
-          <div class="campo">
+          <div class="campo" data-modo-campo="doc">
             <input id="entrada" name="entrada" type="text" autocomplete="off" spellcheck="false" autocapitalize="characters"
                    placeholder="CPF, CNPJ ou nº do processo" aria-label="CPF, CNPJ ou número do processo" aria-describedby="tipoChip">
             <span class="badge tipo-chip" id="tipoChip" hidden></span>
+          </div>
+          <div class="campo" data-modo-campo="nome" hidden>
+            <input id="nomeParte" class="texto" type="text" autocomplete="off" spellcheck="false" maxlength="120"
+                   placeholder="Nome da pessoa ou empresa" aria-label="Nome da parte">
+          </div>
+          <div class="campo campo-oab" data-modo-campo="oab" hidden>
+            <input id="numOab" class="texto" type="text" inputmode="numeric" autocomplete="off" maxlength="8"
+                   placeholder="Número da OAB" aria-label="Número da OAB">
+            <select id="ufOab" aria-label="Estado (UF) da OAB"><option value="">UF</option></select>
           </div>
           <button class="btn btn-prim" type="submit" id="btnBuscar">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
             Consultar
           </button>
         </form>
-        <div class="busca-ajuda">
+        <div class="busca-opcoes" id="opcoesDiario" hidden>
+          <label for="periodo">Procurar publicações dos</label>
+          <select id="periodo">
+            <option value="30">últimos 30 dias</option>
+            <option value="180">últimos 6 meses</option>
+            <option value="365" selected>últimos 12 meses</option>
+            <option value="730">últimos 2 anos</option>
+            <option value="todos">todo o período</option>
+          </select>
+        </div>
+        <div class="busca-ajuda" id="buscaAjuda">
           <span><b>CPF</b> 000.000.000-00</span>
           <span><b>CNPJ</b> 00.000.000/0000-00</span>
           <span><b>Processo</b> 0000000-00.0000.0.00.0000</span>
@@ -394,8 +434,8 @@ main { flex: 1; width: 100%; max-width: 1180px; margin: 0 auto; padding: 22px 16
     <div class="passos">
       <div class="card passo">
         <div class="passo-n">1</div>
-        <h3>Digite o documento</h3>
-        <p>CPF ou CNPJ (inclusive o novo CNPJ com letras) para listar todos os processos em que a pessoa ou empresa aparece.</p>
+        <h3>Escolha como buscar</h3>
+        <p>CPF ou CNPJ (inclusive o novo CNPJ com letras), número do processo, nome da parte ou número da OAB do(a) advogado(a).</p>
       </div>
       <div class="card passo">
         <div class="passo-n">2</div>
@@ -409,7 +449,7 @@ main { flex: 1; width: 100%; max-width: 1180px; margin: 0 auto; padding: 22px 16
       </div>
     </div>
     <p class="fontes-nota">
-      Dados: Escavador (busca por CPF/CNPJ) e DataJud — API pública do CNJ (consulta por número).
+      Dados: Escavador (CPF/CNPJ) e bases públicas do CNJ — DataJud e Diário de Justiça Eletrônico Nacional (número, nome e OAB).
       <button class="btn-link" type="button" id="btnDemo">Ver demonstração com dados fictícios</button>
     </p>
   </section>
@@ -653,7 +693,7 @@ function rota() {
   else if (h === '#/processo' && estado.processo) mostrarTela('telaProcesso');
   else {
     mostrarTela('telaBusca');
-    setTimeout(() => $('#entrada').focus(), 30);
+    setTimeout(() => $({ doc: '#entrada', nome: '#nomeParte', oab: '#numOab' }[estado.modo] || '#entrada').focus(), 30);
   }
 }
 window.addEventListener('hashchange', rota);
@@ -727,7 +767,48 @@ document.addEventListener('click', (ev) => {
   if (acao === 'carregar-mais') carregarMais();
 });
 
+const UFS = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SE', 'SP', 'TO'];
+$('#ufOab').insertAdjacentHTML('beforeend', UFS.map((uf) => `<option>${uf}</option>`).join(''));
+
+const AJUDA_MODO = {
+  doc: $('#buscaAjuda').innerHTML,
+  nome: '<span>Busca gratuita no <b>Diário de Justiça Eletrônico Nacional</b> (CNJ): mostra os processos com publicações em nome da pessoa ou empresa. Nomes comuns podem trazer homônimos.</span>',
+  oab: '<span>Busca gratuita no <b>Diário de Justiça Eletrônico Nacional</b> (CNJ): mostra os processos em que o(a) advogado(a) foi intimado(a).</span>'
+};
+estado.modo = 'doc';
+
+function trocarModo(modo) {
+  estado.modo = modo;
+  for (const b of document.querySelectorAll('.modo')) b.setAttribute('aria-selected', String(b.getAttribute('data-modo') === modo));
+  for (const c of document.querySelectorAll('[data-modo-campo]')) c.hidden = c.getAttribute('data-modo-campo') !== modo;
+  $('#opcoesDiario').hidden = modo === 'doc';
+  $('#buscaAjuda').innerHTML = AJUDA_MODO[modo];
+  msgBusca('');
+  const foco = { doc: '#entrada', nome: '#nomeParte', oab: '#numOab' }[modo];
+  setTimeout(() => $(foco).focus(), 0);
+}
+for (const b of document.querySelectorAll('.modo')) b.addEventListener('click', () => trocarModo(b.getAttribute('data-modo')));
+
+$('#numOab').addEventListener('input', (ev) => {
+  const v = ev.target.value.toUpperCase().replace(/[^0-9A-Z]/g, '');
+  if (v !== ev.target.value) ev.target.value = v;
+});
+
 function buscar() {
+  if (estado.modo === 'nome') {
+    const nome = $('#nomeParte').value.replace(/\s+/g, ' ').trim();
+    if ((nome.match(/\p{L}/gu) || []).length < 4) { msgBusca(htmlErro(new Error('Digite o nome da pessoa ou da empresa (pelo menos 4 letras).'))); $('#nomeParte').focus(); return; }
+    consultarDiario({ nome });
+    return;
+  }
+  if (estado.modo === 'oab') {
+    const oab = $('#numOab').value.trim();
+    const uf = $('#ufOab').value;
+    if (!/^\d{1,7}[A-Z]?$/.test(oab)) { msgBusca(htmlErro(new Error('Digite o número da OAB (só números, com a letra final se houver).'))); $('#numOab').focus(); return; }
+    if (!uf) { msgBusca(htmlErro(new Error('Escolha o estado (UF) da inscrição na OAB.'))); $('#ufOab').focus(); return; }
+    consultarDiario({ oab, uf });
+    return;
+  }
   const a = analisarEntrada(entrada.value);
   if (!a.tipo) { msgBusca(htmlErro(new Error('Digite um CPF, CNPJ ou número de processo.'))); entrada.focus(); return; }
   if (!a.completo) { msgBusca(htmlErro(new Error(`${NOME_TIPO[a.tipo]} incompleto. Confira os números digitados.`))); entrada.focus(); return; }
@@ -742,14 +823,24 @@ function travarBusca(travar, texto) {
   if (travar) msgBusca(`<div class="carregando-linha"><span class="spin"></span>${esc(texto)}</div>`);
 }
 
-async function consultarDocumento(documento, demo) {
-  estado.ultimaAcao = () => consultarDocumento(documento, demo);
+function consultarDocumento(documento, demo) {
+  return executarConsulta('/api/consulta', demo ? { demo: '1' } : { documento },
+    demo ? 'Carregando demonstração…' : 'Consultando processos… isso pode levar alguns segundos.');
+}
+
+function consultarDiario(params) {
+  return executarConsulta('/api/diario', { ...params, periodo: $('#periodo').value },
+    'Procurando publicações no Diário de Justiça Eletrônico Nacional…');
+}
+
+async function executarConsulta(endpoint, params, textoCarregando) {
+  estado.ultimaAcao = () => executarConsulta(endpoint, params, textoCarregando);
   if (location.hash !== '#/' && location.hash !== '') location.hash = '#/';
-  travarBusca(true, demo ? 'Carregando demonstração…' : 'Consultando processos… isso pode levar alguns segundos.');
+  travarBusca(true, textoCarregando);
   try {
-    const qs = new URLSearchParams(demo ? { demo: '1' } : { documento });
-    const r = await api('/api/consulta?' + qs);
-    r.consultaDocumento = documento;
+    const r = await api(endpoint + '?' + new URLSearchParams(params));
+    r.endpoint = endpoint;
+    r.params = params;
     estado.consulta = r;
     msgBusca('');
     for (const id of ['fTexto', 'fTribunal', 'fSituacao', 'fPolo']) $('#' + id).value = '';
@@ -770,8 +861,8 @@ async function carregarMais() {
   renderMais();
   estado.ultimaAcao = carregarMais;
   try {
-    const qs = new URLSearchParams({ documento: c.consultaDocumento, pagina: c.proximaPagina });
-    const r = await api('/api/consulta?' + qs);
+    const qs = new URLSearchParams({ ...c.params, pagina: c.proximaPagina });
+    const r = await api(c.endpoint + '?' + qs);
     const vistos = new Set(c.processos.map((p) => p.numero));
     c.processos.push(...r.processos.filter((p) => !vistos.has(p.numero)));
     c.proximaPagina = r.proximaPagina;
@@ -787,6 +878,10 @@ async function carregarMais() {
 
 /* ═══════════ Resultados ═══════════ */
 function badgeSituacao(p) {
+  if (p.origem === 'DJEN' && !p.situacao) {
+    const n = p.quantidadePublicacoes || 0;
+    return `<span class="badge ia">${n} publicaç${n === 1 ? 'ão' : 'ões'} no Diário</span>`;
+  }
   const cls = { ativo: 'ok', arquivado: '', suspenso: 'warn' }[p.statusCategoria] ?? '';
   const txt = p.situacao || 'Situação não informada';
   return `<span class="badge ${cls}">${esc(txt)}</span>`;
@@ -838,19 +933,42 @@ function processosFiltrados() {
 function renderResultados() {
   const c = estado.consulta;
   const ps = c.processos;
-  $('#resDemo').innerHTML = c.demo ? '<div class="faixa-demo">🧪 Modo demonstração — todos os nomes, números e dados são fictícios.</div>' : '';
+  const diario = c.tipoDocumento === 'NOME' || c.tipoDocumento === 'OAB';
+  $('#resDemo').innerHTML = (c.demo ? '<div class="faixa-demo">🧪 Modo demonstração — todos os nomes, números e dados são fictícios.</div>' : '')
+    + (c.tipoDocumento === 'NOME' ? '<div class="alerta info" style="margin-bottom:14px"><span class="alerta-ico" aria-hidden="true">ℹ️</span><p>Busca por nome no Diário Oficial: pode incluir pessoas ou empresas com o mesmo nome (homônimos) e só mostra processos que tiveram publicações no período escolhido. Confira as partes de cada processo.</p></div>' : '');
   const nome = c.envolvido && c.envolvido.nome;
   const total = c.envolvido && c.envolvido.quantidadeProcessos;
+  const linhaDoc = diario
+    ? `Publicações dos ${esc(c.periodo || 'últimos 12 meses')} · ${esc(c.totalPublicacoes ?? 0)} publicaç${c.totalPublicacoes === 1 ? 'ão' : 'ões'} encontrada${c.totalPublicacoes === 1 ? '' : 's'}`
+    : `<span class="mono">${esc(c.documento)}</span>${c.envolvido && c.envolvido.tipoPessoa ? ` · ${c.envolvido.tipoPessoa === 'JURIDICA' ? 'Pessoa jurídica' : 'Pessoa física'}` : ''}`;
   $('#resCab').innerHTML = `
     <div class="res-cab-info">
-      <small>${esc(c.tipoDocumento || 'Documento')} consultado</small>
+      <small>${esc(c.rotuloConsulta || `${c.tipoDocumento || 'Documento'} consultado`)}</small>
       <h1>${esc(nome || c.documento)}</h1>
-      <div class="doc"><span class="mono">${esc(c.documento)}</span>${c.envolvido && c.envolvido.tipoPessoa ? ` · ${c.envolvido.tipoPessoa === 'JURIDICA' ? 'Pessoa jurídica' : 'Pessoa física'}` : ''}</div>
+      <div class="doc">${linhaDoc}</div>
     </div>
     <div><span class="badge prim">Fonte: ${esc(c.fonte)}</span></div>`;
 
   const conta = (f) => ps.filter(f).length;
   const stat = (n, r) => `<div class="card stat"><strong>${n}</strong><span>${esc(r)}</span></div>`;
+  $('#fSituacao').hidden = diario;
+  $('#fPolo').hidden = c.tipoDocumento === 'OAB';
+  if (diario) {
+    const pubs = ps.reduce((soma, p) => soma + (p.quantidadePublicacoes || 0), 0);
+    $('#resStats').innerHTML = ps.length ? [
+      stat(ps.length, 'processos'),
+      stat(c.totalPublicacoes > pubs ? `${pubs}<small style="font-size:13px;color:var(--ink-3);font-weight:500"> de ${c.totalPublicacoes}</small>` : pubs, 'publicações'),
+      stat(new Set(ps.map((p) => p.tribunal).filter(Boolean)).size, 'tribunais'),
+      ...(c.tipoDocumento === 'NOME' ? [
+        stat(conta((p) => p.papelConsultado && p.papelConsultado.polo === 'ATIVO'), 'como autor'),
+        stat(conta((p) => p.papelConsultado && p.papelConsultado.polo === 'PASSIVO'), 'como réu')
+      ] : [])
+    ].join('') : '';
+    $('#resFiltros').hidden = ps.length < 2;
+    renderLista();
+    renderMais();
+    return;
+  }
   $('#resStats').innerHTML = ps.length ? [
     stat(total && total > ps.length ? `${ps.length}<small style="font-size:13px;color:var(--ink-3);font-weight:500"> de ${total}</small>` : ps.length, 'processos'),
     stat(conta((p) => p.statusCategoria === 'ativo'), 'em andamento'),
@@ -869,7 +987,7 @@ function renderLista() {
   const el = $('#resLista');
   if (!c.processos.length) {
     el.innerHTML = `<div class="card vazio"><p style="font-size:17px;font-weight:600;margin:0 0 4px">Nenhum processo encontrado</p>
-      <p style="margin:0">Não localizamos processos para este ${esc(c.tipoDocumento || 'documento')} na base consultada. Isso não garante que não existam processos — alguns tribunais e processos em segredo de justiça não aparecem em bases abertas.</p></div>`;
+      <p style="margin:0">Não localizamos processos para <b>${esc(c.documento)}</b> na base consultada. Isso não garante que não existam processos — alguns tribunais e processos em segredo de justiça não aparecem em bases abertas.${c.tipoDocumento === 'NOME' || c.tipoDocumento === 'OAB' ? ' Tente aumentar o período ou conferir a grafia.' : ''}</p></div>`;
     return;
   }
   const lista = processosFiltrados();
@@ -883,10 +1001,11 @@ function renderLista() {
       <h3 class="pc-classe">${esc(p.classe || 'Classe não informada')}</h3>
       ${p.assuntos && p.assuntos.length ? `<p class="pc-assunto">${esc(p.assuntos.slice(0, 3).join(' · '))}</p>` : ''}
       <p class="pc-partes">${tituloPartes(p)}</p>
+      ${p.ultimaPublicacao ? `<p class="pc-trecho"><b>${esc(p.ultimaPublicacao.titulo || 'Publicação')}:</b> ${esc(p.ultimaPublicacao.trecho)}</p>` : ''}
       <div class="pc-meta">
-        <span>${esc([p.tribunal, p.grau].filter(Boolean).join(' · '))}</span>
-        <span>Início ${fmtData(p.dataInicio)}</span>
-        <span>Última movimentação ${fmtData(p.dataUltimaMovimentacao)}${p.dataUltimaMovimentacao ? ` (${haQuanto(p.dataUltimaMovimentacao)})` : ''}</span>
+        <span>${esc([p.tribunal, p.grau || p.orgaoJulgador].filter(Boolean).join(' · '))}</span>
+        ${p.dataInicio ? `<span>Início ${fmtData(p.dataInicio)}</span>` : ''}
+        <span>${p.origem === 'DJEN' ? 'Última publicação' : 'Última movimentação'} ${fmtData(p.dataUltimaMovimentacao)}${p.dataUltimaMovimentacao ? ` (${haQuanto(p.dataUltimaMovimentacao)})` : ''}</span>
         ${p.papelConsultado ? `<span class="papel papel-${esc(String(p.papelConsultado.polo || 'outros').toLowerCase())}">${esc(rotuloPapel(p.papelConsultado))}</span>` : ''}
       </div>
     </article>`).join('');
@@ -925,6 +1044,7 @@ function prepararNovoProcesso(p) {
 function abrirDaLista(numero) {
   const p = estado.consulta && estado.consulta.processos.find((x) => x.numero === numero);
   if (!p) return;
+  if (p.abrirCompleto) { abrirPorNumero(p.numero, { papelConsultado: p.papelConsultado }); return; }
   prepararNovoProcesso(p);
   estado.movs = { status: Array.isArray(p.movimentacoes) ? 'ok' : 'carregando', erro: null };
   renderProcesso();
@@ -955,16 +1075,17 @@ async function carregarMovimentacoes() {
   renderProcesso();
 }
 
-async function abrirPorNumero(numero) {
+async function abrirPorNumero(numero, extras) {
   prepararNovoProcesso({ numero, carregando: true });
   estado.movs = { status: 'carregando', erro: null };
-  estado.ultimaAcao = () => abrirPorNumero(numero);
+  estado.ultimaAcao = () => abrirPorNumero(numero, extras);
   renderProcesso();
   location.hash = '#/processo';
   window.scrollTo(0, 0);
   try {
     const r = await api('/api/processo?' + new URLSearchParams({ numero }));
     if (estado.processo.numero !== numero) return;
+    if (extras && extras.papelConsultado && !r.processo.papelConsultado) r.processo.papelConsultado = extras.papelConsultado;
     prepararNovoProcesso(r.processo);
     estado.avisoProcesso = r.aviso;
     estado.movs = { status: 'ok', erro: null };

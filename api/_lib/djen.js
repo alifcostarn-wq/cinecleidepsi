@@ -2,7 +2,7 @@
 // Gratuito e sem chave. Traz o texto integral das intimações e decisões publicadas,
 // com os nomes das partes e dos advogados intimados — o que a base do DataJud não tem.
 // Atenção: o serviço só aceita conexões vindas do Brasil (por isso as funções rodam em gru1).
-import { ErroHttp, fetchComTimeout, normalizarNome } from './util.js';
+import { ErroHttp, fetchComTimeout, normalizarNome, parseCNJ, tribunalDoCNJ } from './util.js';
 
 const BASE = 'https://comunicaapi.pje.jus.br/api/v1/comunicacao';
 const LIMITE_TEXTO = 8000;
@@ -55,11 +55,9 @@ const CABECALHOS = {
   'User-Agent': 'ConsultaProcessual/2.1 (+https://cinecleidepsi.vercel.app)'
 };
 
-async function requisicao(p, itensPorPagina) {
+async function requisicao(params) {
   const url = new URL(BASE);
-  url.searchParams.set('numeroProcesso', p.digitos);
-  url.searchParams.set('pagina', '1');
-  url.searchParams.set('itensPorPagina', String(itensPorPagina));
+  for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, String(v));
   const r = await fetchComTimeout(url, { headers: CABECALHOS }, 15000, 'Diário de Justiça Eletrônico Nacional (DJEN)');
   let corpo = '';
   try { corpo = await r.text(); } catch { /* sem corpo */ }
@@ -67,7 +65,7 @@ async function requisicao(p, itensPorPagina) {
     status: r.status,
     corpo,
     diagnostico: {
-      itensPorPagina,
+      itensPorPagina: params.itensPorPagina,
       status: r.status,
       server: r.headers.get('server'),
       cache: r.headers.get('x-cache'),
@@ -77,37 +75,124 @@ async function requisicao(p, itensPorPagina) {
   };
 }
 
-export async function buscarComunicacoesDjen(p) {
+// Consulta o DJEN com uma nova tentativa em erros temporários (o serviço costuma oscilar).
+// itensNaNovaTentativa: tamanho de página menor usado na segunda tentativa (opcional).
+async function consultarDjen(params, itensNaNovaTentativa) {
   const tentativas = [];
   let ultimaResposta = '';
-  // O DJEN costuma oscilar (HTTP 503); tentamos de novo, com uma página menor.
-  for (const itens of [100, 20]) {
-    const r = await requisicao(p, itens);
+  for (let i = 0; i < 2; i++) {
+    const ps = i === 1 && itensNaNovaTentativa ? { ...params, itensPorPagina: itensNaNovaTentativa } : params;
+    const r = await requisicao(ps);
     tentativas.push(r.diagnostico);
     ultimaResposta = r.corpo;
     if (r.status === 200) {
-      let d = {};
-      try { d = JSON.parse(r.corpo); } catch { /* corpo inválido */ }
-      const lista = (d.items || d.itens || []).filter((it) =>
-        digitos(it.numero_processo || it.numeroProcesso || it.numeroprocessocommascara) === p.digitos);
-      return normalizar(lista);
+      try { return JSON.parse(r.corpo); } catch { return {}; }
     }
     if (r.status !== 503 && r.status !== 502 && r.status !== 504) break;
-    await new Promise((ok) => setTimeout(ok, 800));
+    if (i === 0) await new Promise((ok) => setTimeout(ok, 800));
   }
   const ultima = tentativas[tentativas.length - 1];
   // O DJEN explica o motivo no corpo (ex.: "Sistema em manutencao..."); repassamos ao usuário.
   let motivo = '';
   try { motivo = String(JSON.parse(ultimaResposta).message || '').slice(0, 200); } catch { /* corpo não é JSON */ }
-  const erro = motivo && ultima.status !== 403
-    ? new ErroHttp(502, `O Diário de Justiça Eletrônico Nacional (CNJ) informou: "${motivo}"`, 'DJEN')
-    : ultima.status === 403
-    ? new ErroHttp(502, 'O Diário de Justiça Eletrônico Nacional recusou a conexão (ele só aceita acessos a partir do Brasil).', 'DJEN_BLOQUEADO')
-    : ultima.status === 429
-      ? new ErroHttp(429, 'O Diário de Justiça Eletrônico Nacional limitou as consultas. Tente de novo em alguns segundos.', 'DJEN_LIMITE')
-      : new ErroHttp(502, `O Diário de Justiça Eletrônico Nacional está instável no momento (HTTP ${ultima.status}). Tente de novo em alguns minutos.`, 'DJEN');
+  let erro;
+  if (ultima.status === 403) erro = new ErroHttp(502, 'O Diário de Justiça Eletrônico Nacional recusou a conexão (ele só aceita acessos a partir do Brasil).', 'DJEN_BLOQUEADO');
+  else if (motivo) erro = new ErroHttp(502, `O Diário de Justiça Eletrônico Nacional (CNJ) informou: "${motivo}"`, 'DJEN');
+  else if (ultima.status === 429) erro = new ErroHttp(429, 'O Diário de Justiça Eletrônico Nacional limitou as consultas. Tente de novo em alguns segundos.', 'DJEN_LIMITE');
+  else erro = new ErroHttp(502, `O Diário de Justiça Eletrônico Nacional está instável no momento (HTTP ${ultima.status}). Tente de novo em alguns minutos.`, 'DJEN');
   erro.diagnostico = tentativas;
   throw erro;
+}
+
+const numeroDoItem = (it) => digitos(it.numero_processo || it.numeroProcesso || it.numeroprocessocommascara);
+
+export async function buscarComunicacoesDjen(p) {
+  const d = await consultarDjen({ numeroProcesso: p.digitos, pagina: 1, itensPorPagina: 100 }, 20);
+  return normalizar((d.items || d.itens || []).filter((it) => numeroDoItem(it) === p.digitos));
+}
+
+// ── Busca por nome da parte ou por OAB ──────────────────────
+
+const ITENS_POR_PAGINA = 100;
+const PERIODOS = { 30: 30, 180: 180, 365: 365, 730: 730 };
+
+function dataMenosDias(dias) {
+  return new Date(Date.now() - dias * 86400000).toISOString().slice(0, 10);
+}
+
+// Procura publicações do DJEN pelo nome da parte ou pelo número da OAB e agrupa por processo.
+export async function buscarProcessosNoDiario({ nome, oab, uf, periodo, pagina }) {
+  const params = { pagina: pagina || 1, itensPorPagina: ITENS_POR_PAGINA };
+  if (nome) params.nomeParte = nome;
+  if (oab) Object.assign(params, { numeroOab: oab, ufOab: uf });
+  if (PERIODOS[periodo]) {
+    params.dataDisponibilizacaoInicio = dataMenosDias(PERIODOS[periodo]);
+    params.dataDisponibilizacaoFim = dataMenosDias(0);
+  }
+  const d = await consultarDjen(params);
+  const itens = d.items || d.itens || [];
+  const total = Number(d.count ?? d.total ?? itens.length) || itens.length;
+  const paginaAtual = Number(params.pagina);
+  return {
+    processos: agruparPorProcesso(itens, { nome, oab, uf }),
+    totalPublicacoes: total,
+    proximaPagina: paginaAtual * ITENS_POR_PAGINA < total && itens.length > 0 ? String(paginaAtual + 1) : null
+  };
+}
+
+function identificarPapel(dados, alvo) {
+  if (alvo.oab) {
+    const prefixo = `${alvo.oab}/${alvo.uf}`.toUpperCase();
+    const adv = dados.advogados.find((a) => String(a.oab).toUpperCase() === prefixo);
+    return { nome: adv ? adv.nome : `OAB ${prefixo}`, tipo: 'Advogado(a)', polo: 'ADVOGADO' };
+  }
+  const procurado = normalizarNome(alvo.nome);
+  const parte = dados.partes.find((x) => normalizarNome(x.nome) === procurado)
+    || dados.partes.find((x) => normalizarNome(x.nome).includes(procurado));
+  return parte ? { nome: parte.nome, tipo: null, polo: parte.polo } : null;
+}
+
+function agruparPorProcesso(itens, alvo) {
+  const grupos = new Map();
+  for (const it of itens) {
+    const dig = numeroDoItem(it);
+    if (dig.length !== 20) continue;
+    if (!grupos.has(dig)) grupos.set(dig, []);
+    grupos.get(dig).push(it);
+  }
+  const lista = [];
+  for (const [dig, doProcesso] of grupos) {
+    const dados = normalizar(doProcesso);
+    const cnj = parseCNJ(dig);
+    const trib = cnj ? tribunalDoCNJ(cnj) : {};
+    const ultima = dados.publicacoes[0] || {};
+    lista.push({
+      numero: cnj ? cnj.formatado : dig,
+      tribunal: dados.tribunal || trib.sigla || null,
+      tribunalNome: trib.nome || null,
+      segmento: trib.segmento || null,
+      grau: null,
+      classe: dados.classe,
+      assuntos: [],
+      orgaoJulgador: dados.orgao,
+      situacao: null,
+      statusCategoria: 'desconhecido',
+      dataInicio: null,
+      dataUltimaMovimentacao: ultima.data || null,
+      quantidadePublicacoes: dados.publicacoes.length,
+      ultimaPublicacao: ultima.data ? { data: ultima.data, titulo: ultima.titulo, trecho: String(ultima.descricao || '').replace(/\s+/g, ' ').slice(0, 240) } : null,
+      poloAtivo: tituloPolo(dados.partes, 'ATIVO'),
+      poloPassivo: tituloPolo(dados.partes, 'PASSIVO'),
+      partes: dados.partes,
+      advogados: dados.advogados,
+      papelConsultado: identificarPapel(dados, alvo),
+      segredoJustica: false,
+      movimentacoes: null,
+      abrirCompleto: true,
+      origem: 'DJEN'
+    });
+  }
+  return lista.sort((a, b) => String(b.dataUltimaMovimentacao || '').localeCompare(String(a.dataUltimaMovimentacao || '')));
 }
 
 function normalizar(itens) {
