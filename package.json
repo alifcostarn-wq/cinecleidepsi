@@ -1,11 +1,8 @@
 {
-  "name": "cinecleide-relatorios",
-  "version": "1.0.0",
+  "name": "consulta-processual",
+  "version": "2.0.0",
   "private": true,
+  "description": "Consulta de processos judiciais por CPF, CNPJ ou número CNJ, com explicação por IA.",
   "type": "module",
-  "engines": { "node": ">=18" },
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.24.0",
-    "pdfkit": "^0.15.0"
-  }
+  "engines": { "node": ">=18" }
 }

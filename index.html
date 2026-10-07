@@ -3,2118 +3,1275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinecleide Psicóloga · Sistema de Relatórios</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Consulte processos judiciais por CPF, CNPJ ou número do processo e entenda a situação com ajuda de IA.">
+<title>Consulta Processual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --brand:       #6C4F8C;
-  --brand-light: #9B7DBF;
-  --brand-dark:  #3D2B5A;
-  --brand-bg:    #F5F0FF;
-  --brand-mid:   #EDE5FF;
-  --accent:      #D4A0B0;
-  --accent-bg:   #FDF0F4;
-  --success:     #2D9E6B;
-  --success-bg:  #E8F8F1;
-  --warn:        #B07D30;
-  --warn-bg:     #FEF7EC;
-  --danger:      #C0392B;
-  --danger-bg:   #FDEDEC;
-  --ink:         #1A1625;
-  --ink-mid:     #5A5271;
-  --ink-light:   #9B92B0;
-  --surface:     #FFFFFF;
-  --surface-2:   #F8F6FC;
-  --surface-3:   #F0EBF8;
-  --border:      #E4DCF5;
-  --border-dark: #C8BBE8;
-  --shadow-sm:   0 1px 4px rgba(108,79,140,0.08);
-  --shadow-md:   0 4px 20px rgba(108,79,140,0.12);
-  --shadow-lg:   0 12px 40px rgba(108,79,140,0.18);
-  --radius:      14px;
-  --radius-sm:   8px;
-  --radius-lg:   20px;
+  --bg: #f3f5f9;
+  --surface: #ffffff;
+  --surface-2: #f8f9fc;
+  --line: #e3e7ef;
+  --line-strong: #cbd2df;
+  --ink: #101828;
+  --ink-2: #475467;
+  --ink-3: #667085;
+  --primary: #1747a6;
+  --primary-strong: #0f3684;
+  --primary-soft: #eaf0fc;
+  --btn-prim: #1747a6;
+  --btn-prim-hover: #0f3684;
+  --header-1: #0b1d42;
+  --header-2: #15377a;
+  --ok: #0f7a52;
+  --ok-soft: #e4f5ec;
+  --warn: #9a5b00;
+  --warn-soft: #fff3dc;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+  --neutral-soft: #eef0f4;
+  --ia: #6232c8;
+  --ia-strong: #4a1fa8;
+  --ia-soft: #f2edfd;
+  --ia-line: #ddd0fa;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .08);
+  --shadow-md: 0 6px 24px rgba(16, 24, 40, .08);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1220; --surface: #151c2e; --surface-2: #1a2236; --line: #263049; --line-strong: #35415e;
+    --ink: #edf1f8; --ink-2: #b6c0d4; --ink-3: #8f9bb3;
+    --primary: #7aa2ff; --primary-strong: #a3bfff; --primary-soft: #1b2a4d; --btn-prim: #2f5fd0; --btn-prim-hover: #3d6ce0;
+    --header-1: #070c18; --header-2: #10234d;
+    --ok: #4cc79a; --ok-soft: #12352a; --warn: #f0b45a; --warn-soft: #3a2c12;
+    --danger: #ff8a7f; --danger-soft: #3d1a18; --neutral-soft: #222b40;
+    --ia: #b597ff; --ia-strong: #cdb8ff; --ia-soft: #231b3d; --ia-line: #3b2f63;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.4); --shadow-md: 0 6px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1220; --surface: #151c2e; --surface-2: #1a2236; --line: #263049; --line-strong: #35415e;
+  --ink: #edf1f8; --ink-2: #b6c0d4; --ink-3: #8f9bb3;
+  --primary: #7aa2ff; --primary-strong: #a3bfff; --primary-soft: #1b2a4d; --btn-prim: #2f5fd0; --btn-prim-hover: #3d6ce0;
+  --header-1: #070c18; --header-2: #10234d;
+  --ok: #4cc79a; --ok-soft: #12352a; --warn: #f0b45a; --warn-soft: #3a2c12;
+  --danger: #ff8a7f; --danger-soft: #3d1a18; --neutral-soft: #222b40;
+  --ia: #b597ff; --ia-strong: #cdb8ff; --ia-soft: #231b3d; --ia-line: #3b2f63;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4); --shadow-md: 0 6px 24px rgba(0,0,0,.35);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background: #F2EDF9;
-  color: var(--ink);
-  min-height: 100vh;
-  line-height: 1.5;
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px; line-height: 1.5; color: var(--ink); background: var(--bg);
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--primary); }
+[hidden] { display: none !important; }
+.num, .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+
+/* ── Topo ── */
+.topo {
+  position: sticky; top: 0; z-index: 50;
+  background: linear-gradient(120deg, var(--header-1), var(--header-2));
+  color: #fff; box-shadow: 0 2px 14px rgba(5, 15, 40, .35);
+}
+.topo-in { max-width: 1180px; margin: 0 auto; padding: 0 16px; height: 62px; display: flex; align-items: center; gap: 14px; }
+.marca { display: flex; align-items: center; gap: 11px; text-decoration: none; color: inherit; min-width: 0; }
+.marca-ico { width: 38px; height: 38px; border-radius: 11px; background: rgba(255,255,255,.12); display: grid; place-items: center; flex-shrink: 0; }
+.marca-txt { display: flex; flex-direction: column; min-width: 0; }
+.marca-txt strong { font-size: 16px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; }
+.marca-txt span { font-size: 11.5px; color: rgba(255,255,255,.65); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topo-esp { flex: 1; }
+.status-lista { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.status-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; padding: 4px 9px; border-radius: 99px; background: rgba(255,255,255,.1); color: rgba(255,255,255,.88); white-space: nowrap; }
+.status-chip i { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 3px rgba(74,222,128,.18); }
+.status-chip.off i { background: #fbbf24; box-shadow: 0 0 0 3px rgba(251,191,36,.18); }
+
+main { flex: 1; width: 100%; max-width: 1180px; margin: 0 auto; padding: 22px 16px 40px; }
+
+/* ── Cartões e botões ── */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: var(--radius-sm); padding: 10px 16px; font-weight: 600; font-size: 14px; line-height: 1.2; text-decoration: none; transition: background .15s, border-color .15s, transform .05s; }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn-prim { background: var(--btn-prim); color: #fff; }
+.btn-prim:hover:not(:disabled) { background: var(--btn-prim-hover); }
+.btn-sec { background: var(--surface); border-color: var(--line-strong); color: var(--ink); }
+.btn-sec:hover:not(:disabled) { background: var(--surface-2); }
+.btn-ia { background: linear-gradient(135deg, #6d3ae0, #4a1fa8); color: #fff; box-shadow: 0 4px 14px rgba(98,50,200,.28); }
+.btn-ia:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-link { background: none; border: none; padding: 6px 2px; color: var(--primary); font-weight: 600; }
+.btn-link:hover { text-decoration: underline; }
+.btn-sm { padding: 7px 11px; font-size: 13px; }
+.spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: gira .7s linear infinite; flex-shrink: 0; }
+@keyframes gira { to { transform: rotate(360deg); } }
+
+.badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: var(--neutral-soft); color: var(--ink-2); white-space: nowrap; }
+.badge.ok { background: var(--ok-soft); color: var(--ok); }
+.badge.warn { background: var(--warn-soft); color: var(--warn); }
+.badge.danger { background: var(--danger-soft); color: var(--danger); }
+.badge.prim { background: var(--primary-soft); color: var(--primary); }
+.badge.ia { background: var(--ia-soft); color: var(--ia); }
+.badge.demo { background: #fde68a; color: #713f12; }
+
+.alerta { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: var(--radius-sm); border: 1px solid; font-size: 14px; }
+.alerta p { margin: 0; }
+.alerta .alerta-acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.alerta.erro { background: var(--danger-soft); border-color: color-mix(in srgb, var(--danger) 30%, transparent); color: var(--ink); }
+.alerta.aviso { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 30%, transparent); color: var(--ink); }
+.alerta.info { background: var(--primary-soft); border-color: color-mix(in srgb, var(--primary) 25%, transparent); color: var(--ink); }
+.alerta-ico { font-size: 18px; line-height: 1.2; flex-shrink: 0; }
+.faixa-demo { background: #fef3c7; color: #713f12; border: 1px solid #fcd34d; border-radius: var(--radius-sm); padding: 9px 14px; font-size: 13.5px; font-weight: 600; margin-bottom: 14px; display: flex; gap: 8px; align-items: center; }
+
+/* ── Tela de busca ── */
+.hero { max-width: 760px; margin: 28px auto 0; text-align: center; }
+.hero h1 { font-size: clamp(26px, 4.4vw, 38px); line-height: 1.15; margin: 0 0 10px; letter-spacing: -.025em; font-weight: 800; }
+.hero > p { margin: 0 auto 26px; color: var(--ink-2); font-size: 16px; max-width: 560px; }
+.busca-card { padding: 18px; text-align: left; }
+.busca-form { display: flex; gap: 10px; }
+.campo { position: relative; flex: 1; min-width: 0; }
+.campo input {
+  width: 100%; height: 54px; padding: 0 118px 0 16px; border-radius: 11px;
+  border: 1.5px solid var(--line-strong); background: var(--surface); font-size: 18px;
+  font-family: var(--mono); letter-spacing: .01em; outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.campo input::placeholder { color: var(--ink-3); font-family: Inter, system-ui, sans-serif; font-size: 16px; letter-spacing: 0; }
+.campo input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+.campo .tipo-chip { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.busca-form .btn { height: 54px; padding: 0 24px; font-size: 15.5px; }
+.busca-ajuda { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 13px; color: var(--ink-3); }
+.busca-ajuda b { color: var(--ink-2); font-weight: 600; }
+#buscaMsg { margin-top: 14px; }
+.carregando-linha { display: flex; align-items: center; gap: 10px; color: var(--ink-2); font-size: 14px; padding: 6px 2px; }
+
+.passos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 34px auto 0; max-width: 960px; }
+.passo { padding: 18px; }
+.passo-n { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font-weight: 700; font-size: 14px; background: var(--primary-soft); color: var(--primary); margin-bottom: 10px; }
+.passo.ia .passo-n { background: var(--ia-soft); color: var(--ia); }
+.passo h3 { margin: 0 0 4px; font-size: 15px; }
+.passo p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+.fontes-nota { max-width: 960px; margin: 18px auto 0; font-size: 12.5px; color: var(--ink-3); text-align: center; }
+.fontes-nota button { font-size: 12.5px; }
+
+/* ── Resultados ── */
+.voltar { margin-bottom: 10px; }
+.res-cab { padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; }
+.res-cab-info { flex: 1; min-width: 240px; }
+.res-cab small { display: block; color: var(--ink-3); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.res-cab h1 { margin: 2px 0 2px; font-size: 22px; letter-spacing: -.015em; }
+.res-cab .doc { color: var(--ink-2); font-size: 14px; }
+.stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 14px 0; }
+.stat { padding: 12px 14px; }
+.stat strong { display: block; font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+.stat span { font-size: 12.5px; color: var(--ink-3); }
+.filtros { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.filtros input, .filtros select, .mov-filtro {
+  height: 42px; border-radius: var(--radius-sm); border: 1px solid var(--line-strong); background: var(--surface); padding: 0 12px; font-size: 14px; outline: none; width: 100%; min-width: 0;
+}
+.filtros input:focus, .filtros select:focus, .mov-filtro:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+.lista { display: grid; gap: 10px; }
+.proc-card { padding: 16px 18px; cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .1s; outline: none; }
+.proc-card:hover, .proc-card:focus-visible { border-color: var(--primary); box-shadow: var(--shadow-md); }
+.pc-topo { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; }
+.pc-topo .num { font-weight: 600; color: var(--primary); font-size: 14.5px; }
+.pc-classe { margin: 6px 0 2px; font-size: 16px; font-weight: 650; letter-spacing: -.01em; }
+.pc-assunto { margin: 0 0 6px; color: var(--ink-2); font-size: 13.5px; }
+.pc-partes { margin: 0 0 10px; font-size: 14px; color: var(--ink); overflow-wrap: anywhere; }
+.x { color: var(--ink-3); margin: 0 6px; font-weight: 600; }
+.pc-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink-3); align-items: center; }
+.papel { font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--neutral-soft); color: var(--ink-2); }
+.papel-ativo { background: var(--primary-soft); color: var(--primary); }
+.papel-passivo { background: var(--warn-soft); color: var(--warn); }
+.vazio { text-align: center; padding: 36px 16px; color: var(--ink-2); }
+.mais { text-align: center; margin-top: 16px; }
+
+/* ── Processo ── */
+.proc-cab { padding: 20px 22px; }
+.proc-num-linha { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.proc-num-linha .num { font-size: 18px; font-weight: 700; color: var(--ink); }
+.copiar { border: 1px solid var(--line); background: var(--surface-2); border-radius: 7px; padding: 4px 8px; font-size: 12px; color: var(--ink-2); }
+.copiar:hover { border-color: var(--line-strong); }
+.proc-badges { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 8px; }
+.proc-cab h1 { margin: 4px 0 4px; font-size: clamp(19px, 2.6vw, 24px); letter-spacing: -.02em; line-height: 1.25; }
+.proc-partes-tit { font-size: 15px; color: var(--ink-2); margin: 0; overflow-wrap: anywhere; }
+.proc-partes-tit b { color: var(--ink); font-weight: 600; }
+.proc-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 14px; font-size: 13.5px; color: var(--ink-2); }
+.proc-meta div span { display: block; font-size: 11.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+.proc-meta div b { font-weight: 600; color: var(--ink); }
+.papel-banner { margin-top: 14px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--primary-soft); font-size: 14px; }
+.papel-banner.passivo { background: var(--warn-soft); }
+.proc-acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+
+.proc-grid { display: grid; grid-template-columns: minmax(0, 1fr) 400px; grid-template-areas: "principal ia"; gap: 16px; margin-top: 16px; align-items: start; }
+.proc-principal { grid-area: principal; min-width: 0; }
+.proc-ia { grid-area: ia; min-width: 0; }
+.abas { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 12px; overflow-x: auto; }
+.aba { background: none; border: none; padding: 10px 14px; font-weight: 600; font-size: 14px; color: var(--ink-3); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.aba[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--primary); }
+.aba .cont { font-weight: 500; font-size: 12px; background: var(--neutral-soft); padding: 1px 7px; border-radius: 99px; margin-left: 4px; color: var(--ink-2); }
+.aba-painel { padding: 18px 20px; }
+.dados-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; margin: 0; }
+.dados-grid > div { padding: 10px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.dados-grid dt { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; margin-bottom: 2px; }
+.dados-grid dd { margin: 0; font-size: 14.5px; overflow-wrap: anywhere; }
+.dados-grid .largo { grid-column: 1 / -1; }
+.obs { margin-top: 14px; font-size: 13px; color: var(--ink-2); background: var(--surface-2); border: 1px dashed var(--line-strong); padding: 10px 12px; border-radius: var(--radius-sm); }
+.polo-grupo + .polo-grupo { margin-top: 18px; }
+.polo-grupo h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.parte { padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); }
+.parte + .parte { margin-top: 8px; }
+.parte-nome { font-weight: 600; overflow-wrap: anywhere; }
+.parte-tipo { font-size: 13px; color: var(--ink-2); }
+.parte-adv { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+.parte.consultado { border-color: var(--primary); background: var(--primary-soft); }
+
+.mov-topo { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+.mov-topo .mov-filtro { flex: 1; min-width: 180px; }
+.mov-topo small { color: var(--ink-3); }
+.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+.timeline::before { content: ""; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+.mov { position: relative; padding: 0 0 18px 28px; }
+.mov::before { content: ""; position: absolute; left: 2px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line-strong); }
+.mov:first-child::before { border-color: var(--primary); background: var(--primary); }
+.mov-data { font-size: 12.5px; color: var(--ink-3); font-weight: 600; }
+.mov-tit { font-weight: 600; font-size: 14.5px; margin-top: 1px; }
+.mov-desc { font-size: 13.5px; color: var(--ink-2); margin-top: 3px; white-space: pre-line; overflow-wrap: anywhere; }
+.mov-desc.cortado { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.mov-fonte { font-size: 12px; color: var(--ink-3); margin-top: 3px; }
+.mov-vermais { font-size: 12.5px; padding: 2px 0; }
+
+/* ── Painel da IA ── */
+.ia-painel { background: var(--surface); border: 1px solid var(--ia-line); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+.ia-topo { padding: 18px 18px 14px; background: linear-gradient(160deg, var(--ia-soft), var(--surface) 85%); border-bottom: 1px solid var(--ia-line); }
+.ia-topo-l { display: flex; gap: 12px; align-items: center; }
+.ia-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, #7c4dff, #4a1fa8); color: #fff; flex-shrink: 0; }
+.ia-topo h2 { margin: 0; font-size: 17px; letter-spacing: -.01em; }
+.ia-topo p { margin: 2px 0 0; font-size: 13px; color: var(--ink-2); }
+.ia-corpo { padding: 16px 18px 18px; }
+.ia-cta p { font-size: 14px; color: var(--ink-2); margin: 0 0 14px; }
+.ia-cta ul { margin: 0 0 16px; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); }
+.ia-cta .btn { width: 100%; padding: 12px 16px; font-size: 15px; }
+.ia-fase { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--ia-soft); border: 1px solid var(--ia-line); margin-bottom: 16px; }
+.ia-fase span { font-size: 11.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--ia); font-weight: 700; }
+.ia-fase strong { font-size: 16px; }
+.ia-bloco { margin-bottom: 18px; }
+.ia-bloco h3 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 700; }
+.ia-bloco p { margin: 0; font-size: 14.5px; line-height: 1.6; }
+.ia-tl { list-style: none; margin: 0; padding: 0; }
+.ia-tl li { display: grid; grid-template-columns: 82px 1fr; gap: 8px; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 14px; }
+.ia-tl li:last-child { border-bottom: none; }
+.ia-tl time { font-size: 12.5px; color: var(--ink-3); font-weight: 600; padding-top: 1px; }
+.ia-passos { list-style: none; margin: 0; padding: 0; counter-reset: passo; }
+.ia-passos li { position: relative; padding: 12px 12px 12px 44px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); counter-increment: passo; }
+.ia-passos li + li { margin-top: 8px; }
+.ia-passos li::before { content: counter(passo); position: absolute; left: 12px; top: 12px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--ia); color: #fff; font-size: 12px; font-weight: 700; }
+.passo-tit { display: flex; gap: 8px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+.passo-tit strong { font-size: 14.5px; }
+.ia-passos p { margin: 4px 0 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }
+.ia-passos small { display: block; margin-top: 6px; font-size: 12.5px; color: var(--ink-3); }
+.ia-atencao { margin: 0; padding: 12px 14px 12px 32px; background: var(--warn-soft); border-radius: var(--radius-sm); font-size: 14px; }
+.ia-atencao li + li { margin-top: 6px; }
+.ia-glossario summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--ia); }
+.ia-glossario dl { margin: 10px 0 0; }
+.ia-glossario dt { font-weight: 600; font-size: 14px; }
+.ia-glossario dd { margin: 0 0 8px; font-size: 13.5px; color: var(--ink-2); }
+.ia-reco { display: flex; gap: 10px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--ok-soft); font-size: 14px; margin-bottom: 14px; }
+.ia-rodape { font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 12px; }
+.ia-rodape-acoes { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.ia-carregando { text-align: center; padding: 18px 6px 8px; }
+.ia-carregando .pulso { width: 54px; height: 54px; margin: 0 auto 14px; border-radius: 16px; background: linear-gradient(135deg, #7c4dff, #4a1fa8); display: grid; place-items: center; color: #fff; animation: pulsa 1.4s ease-in-out infinite; }
+@keyframes pulsa { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124,77,255,.35); } 50% { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(124,77,255,0); } }
+.ia-carregando p { margin: 0; color: var(--ink-2); font-size: 14px; }
+.esqueleto { height: 12px; border-radius: 6px; background: linear-gradient(90deg, var(--neutral-soft), var(--line), var(--neutral-soft)); background-size: 200% 100%; animation: brilho 1.2s linear infinite; margin-top: 10px; }
+@keyframes brilho { to { background-position: -200% 0; } }
+
+/* ── Rodapé, modal, toast ── */
+.rodape { border-top: 1px solid var(--line); background: var(--surface); }
+.rodape-in { max-width: 1180px; margin: 0 auto; padding: 16px; font-size: 12.5px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 6px 20px; justify-content: space-between; }
+.modal-fundo { position: fixed; inset: 0; background: rgba(8, 14, 30, .55); display: grid; place-items: center; z-index: 100; padding: 16px; }
+.modal { width: 100%; max-width: 380px; padding: 22px; }
+.modal h2 { margin: 0 0 6px; font-size: 18px; }
+.modal p { margin: 0 0 14px; color: var(--ink-2); font-size: 14px; }
+.modal input { width: 100%; height: 44px; border-radius: var(--radius-sm); border: 1px solid var(--line-strong); padding: 0 12px; background: var(--surface); outline: none; }
+.modal input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+.modal .btn { width: 100%; margin-top: 12px; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 120; max-width: calc(100vw - 32px); }
+.toast.mostra { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Responsivo ── */
+@media (max-width: 1000px) {
+  .proc-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "ia" "principal"; }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .topo-in { height: 56px; }
+  .marca-txt span, .status-chip .rot { display: none; }
+  .status-chip { padding: 5px 7px; }
+  .hero { margin-top: 10px; }
+  .busca-form { flex-direction: column; }
+  .busca-form .btn { width: 100%; }
+  .campo input { font-size: 16px; }
+  .passos { grid-template-columns: 1fr; }
+  .filtros { grid-template-columns: 1fr 1fr; }
+  .filtros input { grid-column: 1 / -1; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dados-grid { grid-template-columns: minmax(0, 1fr); }
+  .proc-cab, .aba-painel { padding: 16px; }
+  .ia-tl li { grid-template-columns: 1fr; gap: 0; }
 }
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 99px; }
-
-/* ═══════════════════════════════════
-   HEADER
-═══════════════════════════════════ */
-.header {
-  position: sticky; top: 0; z-index: 200;
-  height: 64px;
-  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 100%);
-  display: flex; align-items: center; gap: 14px;
-  padding: 0 1.5rem;
-  box-shadow: 0 2px 20px rgba(61,43,90,0.35);
-}
-
-.logo-mark {
-  width: 40px; height: 40px; border-radius: 12px;
-  background: linear-gradient(145deg, var(--accent) 0%, var(--brand-light) 100%);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Playfair Display', serif;
-  font-size: 18px; color: white; font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  flex-shrink: 0;
-}
-
-.header-name {
-  display: flex; flex-direction: column;
-}
-.header-name-main {
-  font-family: 'Playfair Display', serif;
-  font-size: 17px; color: white; font-weight: 600;
-  letter-spacing: 0.01em; line-height: 1.2;
-}
-.header-name-sub {
-  font-size: 11px; color: rgba(255,255,255,0.6);
-  letter-spacing: 0.06em; text-transform: uppercase; margin-top: 1px;
-}
-
-.header-divider {
-  width: 1px; height: 28px;
-  background: rgba(255,255,255,0.2);
-  margin: 0 4px;
-}
-
-.header-system {
-  font-size: 12px; color: rgba(255,255,255,0.55);
-}
-
-.header-spacer { flex: 1; }
-
-.header-pill {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 99px;
-  padding: 5px 14px;
-  font-size: 12px; color: rgba(255,255,255,0.85);
-  backdrop-filter: blur(4px);
-}
-
-/* ═══════════════════════════════════
-   LAYOUT
-═══════════════════════════════════ */
-.layout { display: flex; min-height: calc(100vh - 64px); }
-
-/* ═══════════════════════════════════
-   SIDEBAR
-═══════════════════════════════════ */
-.sidebar {
-  width: 272px; flex-shrink: 0;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  box-shadow: 2px 0 12px rgba(108,79,140,0.06);
-}
-
-.sidebar-top { padding: 1rem; border-bottom: 1px solid var(--border); }
-
-.search-wrap {
-  position: relative;
-}
-.search-wrap input {
-  width: 100%;
-  padding: 9px 12px 9px 36px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 13px; font-family: inherit;
-  background: var(--surface-2);
-  color: var(--ink);
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.search-wrap input:focus {
-  border-color: var(--brand-light);
-  box-shadow: 0 0 0 3px rgba(108,79,140,0.1);
-  background: white;
-}
-.search-wrap::before {
-  content: '🔍'; position: absolute; left: 10px; top: 50%;
-  transform: translateY(-50%); font-size: 13px; pointer-events: none;
-}
-
-.sidebar-section-head {
-  padding: 10px 1rem 6px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.sidebar-section-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--ink-light);
-}
-
-.btn-novo {
-  display: flex; align-items: center; gap: 4px;
-  padding: 5px 12px;
-  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
-  color: white; border: none; border-radius: 99px;
-  font-size: 12px; font-weight: 600; font-family: inherit;
-  cursor: pointer; transition: opacity 0.15s, transform 0.1s;
-  box-shadow: 0 2px 8px rgba(108,79,140,0.3);
-}
-.btn-novo:hover { opacity: 0.9; transform: translateY(-1px); }
-.btn-novo:active { transform: translateY(0); }
-
-.paciente-list { flex: 1; overflow-y: auto; }
-
-.empty-list {
-  padding: 2.5rem 1rem; text-align: center;
-  color: var(--ink-light); font-size: 13px; line-height: 1.7;
-}
-.empty-list-icon { font-size: 36px; display: block; margin-bottom: 8px; opacity: 0.4; }
-
-.pac-item {
-  padding: 12px 1rem;
-  border-bottom: 1px solid var(--surface-3);
-  cursor: pointer;
-  transition: background 0.12s;
-  position: relative;
-}
-.pac-item::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 3px; background: transparent; border-radius: 0 3px 3px 0;
-  transition: background 0.15s;
-}
-.pac-item:hover { background: var(--brand-bg); }
-.pac-item.ativo { background: var(--brand-mid); }
-.pac-item.ativo::before { background: var(--brand); }
-
-.pac-nome { font-size: 13px; font-weight: 600; color: var(--ink); }
-.pac-meta { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
-.pac-tags { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
-
-.tag {
-  font-size: 10px; font-weight: 600;
-  padding: 2px 8px; border-radius: 99px;
-}
-.tag-diag  { background: var(--brand-bg); color: var(--brand); }
-.tag-inss  { background: var(--warn-bg); color: var(--warn); }
-.tag-esc   { background: var(--success-bg); color: var(--success); }
-
-.sidebar-footer {
-  padding: 10px 1rem;
-  border-top: 1px solid var(--border);
-  font-size: 11px; color: var(--ink-light);
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.sidebar-footer::before { content: '💜'; font-size: 12px; }
-
-/* ═══════════════════════════════════
-   MAIN
-═══════════════════════════════════ */
-.main { flex: 1; overflow-y: auto; background: #F2EDF9; }
-
-/* ── WELCOME ── */
-.welcome {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  min-height: calc(100vh - 64px);
-  padding: 2rem; text-align: center;
-}
-.welcome-card {
-  background: white; border-radius: var(--radius-lg);
-  padding: 3rem 2.5rem; max-width: 420px;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border);
-}
-.welcome-avatar {
-  width: 80px; height: 80px; border-radius: 50%;
-  background: linear-gradient(145deg, var(--brand-mid), var(--accent-bg));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 36px; margin: 0 auto 1.25rem;
-  box-shadow: 0 4px 20px rgba(108,79,140,0.2);
-}
-.welcome-card h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px; color: var(--brand-dark);
-  margin-bottom: 8px; font-weight: 600;
-}
-.welcome-card p { font-size: 13px; color: var(--ink-mid); line-height: 1.75; }
-.welcome-card .btn-start {
-  margin-top: 1.5rem;
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 12px 28px;
-  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
-  color: white; border: none; border-radius: 99px;
-  font-size: 14px; font-weight: 600; font-family: inherit;
-  cursor: pointer; box-shadow: 0 4px 16px rgba(108,79,140,0.35);
-  transition: transform 0.15s, opacity 0.15s;
-}
-.welcome-card .btn-start:hover { transform: translateY(-2px); opacity: 0.92; }
-
-/* ═══════════════════════════════════
-   FORMULÁRIO
-═══════════════════════════════════ */
-.form-wrap { padding: 1.75rem 2rem 3rem; max-width: 860px; }
-
-.page-head { margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 14px; }
-.page-head-icon {
-  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-  background: linear-gradient(145deg, var(--brand-mid), var(--brand-bg));
-  display: flex; align-items: center; justify-content: center; font-size: 20px;
-  box-shadow: var(--shadow-sm);
-}
-.page-head-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px; color: var(--brand-dark); font-weight: 600;
-}
-.page-head-sub { font-size: 13px; color: var(--ink-mid); margin-top: 3px; }
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin-bottom: 1.125rem;
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-}
-
-.card-head {
-  padding: 13px 1.25rem;
-  background: linear-gradient(90deg, var(--brand-bg) 0%, rgba(245,240,255,0) 100%);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-  font-size: 13px; font-weight: 700; color: var(--brand-dark);
-  letter-spacing: 0.01em;
-}
-.card-head-icon { font-size: 16px; }
-.card-body { padding: 1.25rem; }
-
-/* FIELDS */
-.frow { display: grid; gap: 12px; margin-bottom: 10px; }
-.fr2 { grid-template-columns: 1fr 1fr; }
-.fr3 { grid-template-columns: 1fr 1fr 1fr; }
-.fr4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
-.frow:last-child { margin-bottom: 0; }
-
-.field { display: flex; flex-direction: column; gap: 4px; }
-.field label {
-  font-size: 11px; font-weight: 600; color: var(--ink-light);
-  text-transform: uppercase; letter-spacing: 0.05em;
-}
-.field input, .field select, .field textarea {
-  padding: 9px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 13px; font-family: inherit;
-  color: var(--ink); background: var(--surface-2);
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-}
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--brand-light);
-  box-shadow: 0 0 0 3px rgba(108,79,140,0.1);
-  background: white;
-}
-.field textarea { resize: vertical; min-height: 78px; line-height: 1.65; }
-
-/* FINALIDADES */
-.fin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 4px; }
-.fin-opt {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 12px;
-  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-  cursor: pointer; font-size: 12px; font-weight: 500;
-  color: var(--ink-mid); background: var(--surface-2);
-  transition: all 0.12s; user-select: none;
-}
-.fin-opt:has(input:checked) {
-  background: var(--brand-mid); border-color: var(--brand-light); color: var(--brand-dark);
-}
-.fin-opt input { width: 14px; height: 14px; accent-color: var(--brand); flex-shrink: 0; }
-.fin-full { grid-column: 1/-1; }
-
-.inss-box {
-  display: none; margin-top: 10px;
-  padding: 14px; background: var(--warn-bg);
-  border: 1.5px solid #EDCB8A; border-radius: var(--radius-sm);
-}
-.inss-box.show { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.inss-box .field label { color: var(--warn); }
-.inss-box .field input, .inss-box .field select { background: white; }
-
-/* CHECKLIST */
-.cl-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
-.cl-tab {
-  padding: 7px 18px; border-radius: 99px;
-  border: 1.5px solid var(--border);
-  background: var(--surface-2); font-size: 12px; font-weight: 600;
-  color: var(--ink-mid); cursor: pointer; transition: all 0.15s;
-  font-family: inherit;
-}
-.cl-tab.on { background: var(--success); color: white; border-color: var(--success); box-shadow: 0 2px 8px rgba(45,158,107,0.3); }
-
-.cl-panel { display: none; }
-.cl-panel.on { display: block; }
-
-.dominio {
-  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-  margin-bottom: 7px; overflow: hidden;
-}
-.dom-head {
-  padding: 10px 14px;
-  background: var(--surface-2);
-  display: flex; align-items: center; gap: 8px;
-  cursor: pointer; user-select: none;
-  font-size: 13px; font-weight: 700; color: var(--brand-dark);
-  transition: background 0.1s;
-}
-.dom-head:hover { background: var(--brand-bg); }
-.dom-cnt { margin-left: auto; font-size: 11px; font-weight: 500; color: var(--ink-light); }
-.dom-arr { font-size: 10px; color: var(--ink-light); transition: transform 0.2s; }
-.dom-body { padding: 8px 14px; display: none; }
-.dom-body.open { display: block; }
-.dom-head.open .dom-arr { transform: rotate(180deg); }
-
-.cl-item-row {
-  padding: 10px 0; border-bottom: 1px solid var(--surface-3);
-}
-.cl-item-row:last-child { border-bottom: none; }
-.cl-item-row.marcado { background: rgba(108,79,140,0.03); border-radius: 6px; padding: 10px; margin: 2px 0; }
-.cl-item-info { margin-bottom: 7px; }
-.cl-label { font-size: 13px; font-weight: 600; color: var(--ink); }
-.cl-detalhe { font-size: 11px; color: var(--ink-light); margin-top: 1px; line-height: 1.5; }
-.cl-estados { display: flex; gap: 5px; flex-wrap: wrap; }
-.cl-est {
-  padding: 4px 11px; border-radius: 99px;
-  border: 1.5px solid var(--border); background: var(--surface);
-  font-size: 11px; font-weight: 600; font-family: inherit;
-  color: var(--ink-mid); cursor: pointer; transition: all .12s;
-}
-.cl-est:hover { border-color: var(--border-dark); }
-.cl-est-p.on   { background: #E8F8F1; border-color: #2D9E6B; color: #1A7A4A; }
-.cl-est-pp.on  { background: #FEF7EC; border-color: #D9A441; color: #B07D30; }
-.cl-est-c.on   { background: #FDEDEC; border-color: #E08070; color: #C0392B; }
-.cl-est-na.on  { background: var(--surface-3); border-color: var(--ink-light); color: var(--ink-mid); }
-.cl-obs {
-  display: none;
-  width: 100%; margin-top: 7px;
-  padding: 6px 10px; border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm); font-size: 12px; font-family: inherit;
-  background: var(--surface-2); color: var(--ink); outline: none;
-}
-.cl-item-row.marcado .cl-obs { display: block; }
-.cl-obs:focus { border-color: var(--brand-light); background: white; }
-
-/* IA BUTTONS */
-.ia-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
-.btn-ia {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 16px; border-radius: 99px;
-  border: 1.5px solid var(--brand-light);
-  background: var(--brand-bg); color: var(--brand-dark);
-  font-size: 12px; font-weight: 600; font-family: inherit;
-  cursor: pointer; transition: all 0.15s;
-}
-.btn-ia:hover { background: var(--brand-mid); border-color: var(--brand); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(108,79,140,0.2); }
-.btn-ia:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-/* ACTIONS */
-.form-actions {
-  display: flex; gap: 10px; justify-content: flex-end;
-  margin-top: 1.5rem; padding-top: 1rem;
-  border-top: 1px solid var(--border);
-}
-.btn { padding: 10px 24px; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
-.btn:hover { transform: translateY(-1px); }
-.btn:active { transform: translateY(0); }
-.btn-prim { background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%); color: white; box-shadow: 0 3px 12px rgba(108,79,140,0.35); }
-.btn-sec { background: var(--surface-2); color: var(--ink-mid); border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
-.btn-del { background: var(--danger-bg); color: var(--danger); border: 1.5px solid #F1948A; }
-
-/* ═══════════════════════════════════
-   VIEW PANEL
-═══════════════════════════════════ */
-.view-wrap { padding: 1.75rem 2rem 3rem; max-width: 900px; }
-
-.view-toolbar {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 1.5rem; flex-wrap: wrap;
-}
-.view-toolbar-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px; color: var(--brand-dark); flex: 1; font-weight: 600;
-}
-
-/* RELATÓRIO */
-.relatorio {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-}
-
-.rel-header {
-  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 60%, var(--brand-light) 100%);
-  padding: 2rem 2.25rem;
-  display: flex; align-items: flex-start; gap: 1.25rem;
-  position: relative; overflow: hidden;
-}
-.rel-header::after {
-  content: '';
-  position: absolute; right: -40px; top: -40px;
-  width: 200px; height: 200px; border-radius: 50%;
-  background: rgba(255,255,255,0.05);
-}
-.rel-header-logo {
-  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
-  background: linear-gradient(145deg, var(--accent), rgba(255,255,255,0.3));
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Playfair Display', serif;
-  font-size: 22px; color: white; font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-}
-.rel-header-text { flex: 1; }
-.rel-clinic-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px; color: white; font-weight: 600; line-height: 1.2;
-}
-.rel-clinic-sub { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 3px; letter-spacing: 0.04em; }
-.rel-doc-type {
-  margin-top: 14px; display: inline-block;
-  background: rgba(255,255,255,0.15); backdrop-filter: blur(4px);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 99px; padding: 4px 14px;
-  font-size: 11px; color: rgba(255,255,255,0.9); font-weight: 600;
-  letter-spacing: 0.06em; text-transform: uppercase;
-}
-
-.rel-body { }
-
-.rel-sec { padding: 1.25rem 2rem; border-bottom: 1px solid var(--border); }
-.rel-sec:last-child { border-bottom: none; }
-
-.rel-sec-title {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--brand);
-  margin-bottom: 14px;
-}
-.rel-sec-title::before {
-  content: ''; width: 3px; height: 14px;
-  background: linear-gradient(to bottom, var(--brand), var(--accent));
-  border-radius: 2px; flex-shrink: 0;
-}
-.rel-sec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-.rel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.rel-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-.rel-field-label { font-size: 10px; font-weight: 700; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-.rel-field-val { font-size: 13px; color: var(--ink); }
-
-.rel-text {
-  font-size: 13.5px; line-height: 1.9; color: var(--ink);
-  text-align: justify;
-}
-
-.inss-alert {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--warn-bg); border: 1.5px solid #EDCB8A;
-  border-radius: var(--radius-sm); padding: 10px 14px;
-  margin-bottom: 14px; font-size: 12px; font-weight: 600; color: var(--warn);
-}
-
-.cl-result-dom { margin-bottom: 12px; }
-.cl-result-dom-name { font-size: 11px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
-.cl-result-item { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; color: var(--ink-mid); padding: 2px 0; }
-.cl-result-item::before { content: '✓'; color: var(--success); font-weight: 800; flex-shrink: 0; font-size: 11px; margin-top: 1px; }
-.cl-result-item-full { font-size: 12px; color: var(--ink-mid); padding: 4px 0; line-height: 1.6; }
-.cl-ri-label { font-weight: 600; color: var(--ink); }
-.cl-ri-obs { color: var(--ink-light); font-style: italic; }
-.cl-est-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 8px; border-radius: 99px; vertical-align: middle; }
-.cl-est-badge.est-p   { background: #E8F8F1; color: #1A7A4A; }
-.cl-est-badge.est-pp  { background: #FEF7EC; color: #B07D30; }
-.cl-est-badge.est-c   { background: #FDEDEC; color: #C0392B; }
-.cl-est-badge.est-na  { background: var(--surface-3); color: var(--ink-mid); }
-
-.sem-texto { font-size: 13px; color: var(--ink-light); font-style: italic; }
-
-/* ── SUBSEÇÕES DE ANÁLISE ── */
-.rel-subsec {
-  margin-bottom: 1rem;
-  padding: 12px 14px;
-  background: var(--surface-2);
-  border-left: 3px solid var(--brand-light);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-}
-.rel-subsec:last-child { margin-bottom: 0; }
-.rel-subsec-title {
-  font-size: 11px; font-weight: 700;
-  color: var(--brand-dark); text-transform: uppercase;
-  letter-spacing: 0.06em; margin-bottom: 8px;
-}
-.rel-field-block { margin-bottom: 8px; }
-.rel-field-block:last-child { margin-bottom: 0; }
-.rel-field-text {
-  font-size: 13px; line-height: 1.75;
-  color: var(--ink); text-align: justify;
-}
-.rel-text-block {
-  font-size: 13.5px; line-height: 1.9;
-  color: var(--ink); text-align: justify;
-}
-
-.rel-footer {
-  padding: 1.25rem 2rem;
-  background: var(--surface-2);
-  border-top: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
-  flex-wrap: wrap; gap: 10px;
-}
-.rel-footer-left { font-size: 11px; color: var(--ink-light); }
-.rel-footer-right { font-size: 12px; color: var(--ink-mid); font-style: italic; }
-
-/* ═══════════════════════════════════
-   MODAL
-═══════════════════════════════════ */
-.overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(26,22,37,0.6); backdrop-filter: blur(4px);
-  z-index: 500; align-items: center; justify-content: center;
-}
-.overlay.show { display: flex; }
-.modal {
-  background: white; border-radius: var(--radius);
-  padding: 2rem; max-width: 400px; width: 90%;
-  box-shadow: var(--shadow-lg);
-}
-.modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
-.modal p { font-size: 13px; color: var(--ink-mid); line-height: 1.7; margin-bottom: 1.25rem; }
-.modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
-
-/* ── TOAST ── */
-.toast {
-  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 600;
-  padding: 12px 20px; border-radius: 99px;
-  background: var(--ink); color: white;
-  font-size: 13px; font-weight: 600;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-  transform: translateY(20px) scale(0.95);
-  opacity: 0; transition: all 0.25s cubic-bezier(.34,1.56,.64,1);
-  pointer-events: none;
-}
-.toast.show { transform: translateY(0) scale(1); opacity: 1; }
-.toast.ok { background: var(--success); }
-
-/* ── SPINNER ── */
-.spin {
-  display: inline-block; width: 13px; height: 13px;
-  border: 2px solid currentColor; border-top-color: transparent;
-  border-radius: 50%; animation: rot 0.6s linear infinite; vertical-align: middle;
-}
-@keyframes rot { to { transform: rotate(360deg); } }
-
-/* elementos visíveis só na impressão ficam ocultos na tela */
-.print-only { display: none !important; }
-.cl-print-grid { display: block; }
-.rel-assinatura-linha { display: none; }
-
-/* ═══════════════════════════════════
-   PRINT — Documento clínico A4
-═══════════════════════════════════ */
 @media print {
-  /* Reset geral */
-  *, *::before, *::after { box-sizing: border-box !important; }
-
-  html, body {
-    width: 210mm;
-    background: white !important;
-    color: #000 !important;
-    font-family: 'Times New Roman', Times, serif !important;
-    font-size: 11pt !important;
-    line-height: 1.6 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Ocultar tudo da interface */
-  .header, .sidebar, .view-toolbar,
-  .form-wrap, .welcome, .form-actions,
-  .overlay, .toast, .btn { display: none !important; }
-
-  /* Layout vira bloco simples */
-  .layout { display: block !important; }
-  .main   { overflow: visible !important; background: white !important; }
-
-  /* Container do relatório ocupa página toda */
-  .view-wrap {
-    padding: 0 !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-  }
-
-  /* Card sem sombra/borda de tela */
-  .relatorio {
-    box-shadow: none !important;
-    border: none !important;
-    border-radius: 0 !important;
-    width: 100% !important;
-  }
-
-  /* ── CABEÇALHO ── */
-  .rel-header {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    background: linear-gradient(135deg, #3D2B5A 0%, #6C4F8C 60%, #9B7DBF 100%) !important;
-    padding: 18mm 18mm 14mm !important;
-    display: flex !important;
-    align-items: flex-start !important;
-    gap: 14px !important;
-    page-break-inside: avoid !important;
-  }
-
-  .rel-header-logo {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    width: 48pt !important; height: 48pt !important;
-    border-radius: 10pt !important;
-    background: linear-gradient(145deg, #D4A0B0, rgba(255,255,255,0.4)) !important;
-    display: flex !important; align-items: center !important; justify-content: center !important;
-    font-family: 'Times New Roman', serif !important;
-    font-size: 22pt !important; color: white !important; font-weight: bold !important;
-    flex-shrink: 0 !important;
-  }
-
-  .rel-clinic-name {
-    font-family: 'Times New Roman', Times, serif !important;
-    font-size: 16pt !important; color: white !important; font-weight: bold !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .rel-clinic-sub {
-    font-size: 9pt !important; color: rgba(255,255,255,0.8) !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-    margin-top: 3pt !important; letter-spacing: 0.03em !important;
-  }
-  .rel-doc-type {
-    display: inline-block !important;
-    margin-top: 10pt !important;
-    background: rgba(255,255,255,0.18) !important;
-    border: 1px solid rgba(255,255,255,0.3) !important;
-    border-radius: 20pt !important;
-    padding: 3pt 12pt !important;
-    font-size: 8pt !important; color: white !important; font-weight: bold !important;
-    letter-spacing: 0.08em !important; text-transform: uppercase !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-
-  /* ── SEÇÕES ── */
-  .rel-sec {
-    padding: 10mm 18mm !important;
-    border-bottom: 0.5pt solid #D0C8E8 !important;
-    page-break-inside: avoid !important;
-  }
-  .rel-sec:last-of-type { border-bottom: none !important; }
-
-  .rel-sec-title {
-    display: flex !important; align-items: center !important; gap: 8pt !important;
-    font-family: Arial, sans-serif !important;
-    font-size: 8pt !important; font-weight: 800 !important;
-    letter-spacing: 0.12em !important; text-transform: uppercase !important;
-    color: #6C4F8C !important;
-    margin-bottom: 10pt !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .rel-sec-title::before {
-    content: '' !important;
-    display: inline-block !important;
-    width: 3pt !important; height: 12pt !important;
-    background: #6C4F8C !important;
-    border-radius: 2pt !important; flex-shrink: 0 !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .rel-sec-title::after {
-    content: '' !important; flex: 1 !important;
-    height: 0.5pt !important; background: #D0C8E8 !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-
-  /* ── GRID DE CAMPOS ── */
-  .rel-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr 1fr !important;
-    gap: 8pt 16pt !important;
-    margin-bottom: 8pt !important;
-  }
-  .rel-grid-3 { grid-template-columns: 1fr 1fr 1fr !important; }
-
-  .rel-field-label {
-    font-family: Arial, sans-serif !important;
-    font-size: 7pt !important; font-weight: 700 !important;
-    color: #7A6899 !important; text-transform: uppercase !important;
-    letter-spacing: 0.06em !important; margin-bottom: 1pt !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .rel-field-val {
-    font-family: 'Times New Roman', Times, serif !important;
-    font-size: 10.5pt !important; color: #1A1625 !important;
-    font-weight: 400 !important;
-  }
-
-  /* ── TEXTOS LONGOS ── */
-  .rel-text {
-    font-family: 'Times New Roman', Times, serif !important;
-    font-size: 11pt !important; line-height: 1.85 !important;
-    color: #1A1625 !important; text-align: justify !important;
-    text-indent: 1.5em !important;
-    hyphens: auto !important;
-  }
-
-  /* ── ALERTA INSS ── */
-  .inss-alert {
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-    background: #FEF7EC !important;
-    border: 1pt solid #EDCB8A !important;
-    border-radius: 6pt !important;
-    padding: 7pt 12pt !important;
-    margin-bottom: 10pt !important;
-    font-family: Arial, sans-serif !important;
-    font-size: 9pt !important; font-weight: 700 !important; color: #7D5A10 !important;
-    display: flex !important; align-items: center !important; gap: 8pt !important;
-  }
-
-  /* ── CHECKLIST ── */
-  .cl-result-dom { margin-bottom: 8pt !important; page-break-inside: avoid !important; }
-  .cl-result-dom-name {
-    font-family: Arial, sans-serif !important;
-    font-size: 8pt !important; font-weight: 800 !important;
-    color: #6C4F8C !important; text-transform: uppercase !important;
-    letter-spacing: 0.06em !important; margin-bottom: 4pt !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .cl-result-item {
-    display: flex !important; align-items: flex-start !important;
-    gap: 6pt !important; padding: 1.5pt 0 !important;
-    font-family: Arial, sans-serif !important;
-    font-size: 9pt !important; color: #3D3050 !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .cl-result-item::before {
-    content: '✓' !important; color: #2D9E6B !important;
-    font-weight: 900 !important; font-size: 9pt !important;
-    flex-shrink: 0 !important; margin-top: 0 !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .cl-result-item-full {
-    font-family: Arial, sans-serif !important;
-    font-size: 9pt !important; color: #3D3050 !important;
-    padding: 2pt 0 !important; line-height: 1.5 !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .cl-ri-label { font-weight: 700 !important; color: #1A1625 !important; }
-  .cl-ri-estado { font-weight: 600 !important; color: #6C4F8C !important; }
-  .cl-ri-obs { color: #5A5271 !important; font-style: italic !important; }
-
-  /* ── CHECKLIST CONTAINER ── */
-  .cl-print-box {
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-    background: #E8F8F1 !important;
-    border: 1pt solid #A9DFBF !important;
-    border-radius: 6pt !important;
-    padding: 10pt 14pt !important;
-    margin-bottom: 12pt !important;
-    page-break-inside: avoid !important;
-  }
-  .cl-print-box-title {
-    font-family: Arial, sans-serif !important;
-    font-size: 7.5pt !important; font-weight: 800 !important;
-    color: #2D9E6B !important; text-transform: uppercase !important;
-    letter-spacing: 0.08em !important; margin-bottom: 8pt !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .cl-print-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 0 16pt !important;
-  }
-
-  /* ── RODAPÉ ── */
-  .rel-footer {
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-    padding: 8mm 18mm !important;
-    background: #F8F6FC !important;
-    border-top: 1pt solid #D0C8E8 !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: flex-end !important;
-    page-break-inside: avoid !important;
-  }
-  .rel-footer-left {
-    font-family: Arial, sans-serif !important;
-    font-size: 8pt !important; color: #7A6899 !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .rel-assinatura {
-    text-align: center !important;
-  }
-  .rel-assinatura-linha {
-    width: 160pt !important; border-top: 1pt solid #3D2B5A !important;
-    margin: 0 auto 4pt !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .rel-assinatura-nome {
-    font-family: 'Times New Roman', serif !important;
-    font-size: 9.5pt !important; color: #1A1625 !important; font-style: italic !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .rel-assinatura-crp {
-    font-family: Arial, sans-serif !important;
-    font-size: 8pt !important; color: #7A6899 !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-
-  .sem-texto { display: none !important; }
-
-  /* ── SUBSEÇÕES DE ANÁLISE ── */
-  .rel-subsec {
-    margin-bottom: 8pt !important;
-    padding: 8pt 10pt !important;
-    background: #F8F6FC !important;
-    border-left: 3pt solid #9B7DBF !important;
-    border-radius: 0 4pt 4pt 0 !important;
-    page-break-inside: avoid !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  .rel-subsec-title {
-    font-family: Arial, sans-serif !important;
-    font-size: 8pt !important; font-weight: 800 !important;
-    color: #3D2B5A !important; text-transform: uppercase !important;
-    letter-spacing: 0.06em !important; margin-bottom: 6pt !important;
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  .rel-field-block { margin-bottom: 6pt !important; }
-  .rel-field-text {
-    font-family: 'Times New Roman', Times, serif !important;
-    font-size: 10.5pt !important; line-height: 1.75 !important;
-    color: #1A1625 !important; text-align: justify !important;
-  }
-  .rel-text-block {
-    font-family: 'Times New Roman', Times, serif !important;
-    font-size: 11pt !important; line-height: 1.85 !important;
-    color: #1A1625 !important; text-align: justify !important;
-    text-indent: 1.5em !important;
-  }
-
-  /* Quebra de página entre seções longas */
-  .rel-sec.analise-sec { page-break-before: auto !important; }
-
-  /* mostrar/ocultar elementos de tela vs impressão */
-  .print-only { display: block !important; }
-  .print-hide  { display: none !important; }
-  .rel-assinatura-linha { display: block !important; }
-
-  @page {
-    size: A4 portrait;
-    margin: 0;
-  }
+  .topo, .rodape, .proc-acoes, .abas, .voltar, .ia-rodape-acoes, .mov-topo, .copiar, .mov-vermais, #telaBusca, #telaResultados { display: none !important; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  main { padding: 0; max-width: none; }
+  .card, .ia-painel { box-shadow: none; border-color: #bbb; }
+  .proc-grid { display: block; }
+  .proc-ia { margin-bottom: 14px; }
+  .aba-painel { display: block !important; margin-bottom: 14px; break-inside: avoid-page; }
+  .mov-desc.cortado { -webkit-line-clamp: unset; display: block; }
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="logo-mark">C</div>
-  <div class="header-name">
-    <div class="header-name-main">Cinecleide</div>
-    <div class="header-name-sub">Psicóloga · CRP</div>
+<header class="topo">
+  <div class="topo-in">
+    <a class="marca" href="#/" aria-label="Início">
+      <span class="marca-ico" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 21h14"/><path d="M4 7h16"/><path d="M12 5l-1-2h2z"/><path d="M7 7l-3 7a3 3 0 0 0 6 0z"/><path d="M17 7l-3 7a3 3 0 0 0 6 0z"/></svg>
+      </span>
+      <span class="marca-txt">
+        <strong>Consulta Processual</strong>
+        <span>Processos por CPF, CNPJ ou número · explicados por IA</span>
+      </span>
+    </a>
+    <div class="topo-esp"></div>
+    <div class="status-lista" id="statusLista" aria-label="Integrações"></div>
   </div>
-  <div class="header-divider"></div>
-  <div class="header-system">Sistema de Relatórios Interprofissionais</div>
-  <div class="header-spacer"></div>
-  <div class="header-pill" id="headerBadge">0 pacientes</div>
 </header>
 
-<div class="layout">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-top">
-      <div class="search-wrap">
-        <input type="text" id="busca" placeholder="Buscar paciente..." oninput="filtrar()">
-      </div>
-    </div>
-    <div class="sidebar-section-head">
-      <span class="sidebar-section-label">Pacientes</span>
-      <button class="btn-novo" onclick="novoForm()">+ Novo</button>
-    </div>
-    <div class="paciente-list" id="listaPac">
-      <div class="empty-list"><span class="empty-list-icon">🗂️</span>Nenhum paciente cadastrado.<br>Clique em <strong>+ Novo</strong> para começar.</div>
-    </div>
-    <div class="sidebar-footer" id="sfooter">Nenhum relatório salvo</div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main" id="mainArea">
-
-    <!-- WELCOME -->
-    <div class="welcome" id="tWelcome">
-      <div class="welcome-card">
-        <div class="welcome-avatar">💜</div>
-        <h2>Bem-vinda, Cinecleide</h2>
-        <p>Gerencie relatórios interprofissionais com apoio de inteligência artificial. Preencha, visualize e imprima documentos clínicos com agilidade e precisão.</p>
-        <button class="btn-start" onclick="novoForm()">✦ Criar primeiro relatório</button>
-      </div>
-    </div>
-
-    <!-- FORMULÁRIO -->
-    <div class="form-wrap" id="tForm" style="display:none">
-      <div class="page-head">
-        <div class="page-head-icon" id="formIcon">📝</div>
-        <div>
-          <div class="page-head-title" id="formTitulo">Novo relatório</div>
-          <div class="page-head-sub" id="formSub">Preencha os dados e gere os textos com IA.</div>
+<main>
+  <!-- ═══ TELA: BUSCA ═══ -->
+  <section id="telaBusca">
+    <div class="hero">
+      <h1>Consulte processos judiciais</h1>
+      <p>Digite um CPF, um CNPJ ou o número do processo. Veja os dados, as movimentações e peça para a IA explicar tudo em linguagem simples.</p>
+      <div class="card busca-card">
+        <form class="busca-form" id="formBusca" novalidate>
+          <div class="campo">
+            <input id="entrada" name="entrada" type="text" autocomplete="off" spellcheck="false" autocapitalize="characters"
+                   placeholder="CPF, CNPJ ou nº do processo" aria-label="CPF, CNPJ ou número do processo" aria-describedby="tipoChip">
+            <span class="badge tipo-chip" id="tipoChip" hidden></span>
+          </div>
+          <button class="btn btn-prim" type="submit" id="btnBuscar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            Consultar
+          </button>
+        </form>
+        <div class="busca-ajuda">
+          <span><b>CPF</b> 000.000.000-00</span>
+          <span><b>CNPJ</b> 00.000.000/0000-00</span>
+          <span><b>Processo</b> 0000000-00.0000.0.00.0000</span>
         </div>
-      </div>
-
-      <!-- IDENTIFICAÇÃO -->
-      <div class="card">
-        <div class="card-head"><span class="card-head-icon">👤</span> Identificação do paciente</div>
-        <div class="card-body">
-          <div class="frow fr2">
-            <div class="field"><label>Nome completo *</label><input id="f_nome" placeholder="Nome do paciente"></div>
-            <div class="field"><label>Data de nascimento</label><input type="date" id="f_dnasc"></div>
-          </div>
-          <div class="frow fr4">
-            <div class="field"><label>Idade</label><input id="f_idade" placeholder="Ex: 7 anos"></div>
-            <div class="field"><label>Sexo</label>
-              <select id="f_sexo"><option value="">Selecione</option><option>Feminino</option><option>Masculino</option><option>Não especificado</option></select>
-            </div>
-            <div class="field" style="grid-column:span 2"><label>Solicitante</label><input id="f_solicitante" placeholder="Ex: genitora, responsável legal..."></div>
-          </div>
-          <div class="field">
-            <label>Finalidade do relatório</label>
-            <div class="fin-grid">
-              <label class="fin-opt"><input type="checkbox" id="fin_inter"> Compartilhamento interprofissional</label>
-              <label class="fin-opt"><input type="checkbox" id="fin_escolar"> Encaminhamento escolar</label>
-              <label class="fin-opt"><input type="checkbox" id="fin_medico"> Encaminhamento médico</label>
-              <label class="fin-opt"><input type="checkbox" id="fin_judicial"> Uso judicial</label>
-              <label class="fin-opt fin-full"><input type="checkbox" id="fin_inss" onchange="toggleInss(this)"> Encaminhamento para o INSS / BPC</label>
-            </div>
-            <div class="inss-box" id="inssBox">
-              <div class="field"><label>Tipo de benefício</label>
-                <select id="f_inssB"><option value="BPC">BPC — Benefício de Prestação Continuada (LOAS)</option><option value="aposentadoria">Aposentadoria por invalidez</option><option value="auxilio">Auxílio por incapacidade temporária</option><option value="outro">Outro benefício</option></select>
-              </div>
-              <div class="field"><label>CID para o INSS</label><input id="f_inssCid" placeholder="Ex: F84.0, F70..."></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DEMANDA -->
-      <div class="card">
-        <div class="card-head"><span class="card-head-icon">📌</span> Descrição da demanda</div>
-        <div class="card-body">
-          <div class="frow fr3">
-            <div class="field" style="grid-column:span 2"><label>Diagnóstico (CID/DSM)</label><input id="f_diagnostico" placeholder="Ex: TEA (CID-11 6A02)"></div>
-            <div class="field"><label>Ano de início</label><input id="f_anoInicio" placeholder="Ex: 2022"></div>
-          </div>
-          <div class="frow fr3">
-            <div class="field"><label>Investigação inicial</label><input id="f_investigacao" placeholder="Ex: neurodesenvolvimento"></div>
-            <div class="field"><label>Frequência</label>
-              <select id="f_frequencia">
-                <option value="1 vez por semana">1 vez por semana</option>
-                <option value="2 vezes por semana">2 vezes por semana</option>
-                <option value="3 vezes por semana">3 vezes por semana</option>
-                <option value="a cada 15 dias">A cada 15 dias</option>
-                <option value="1 vez por mês">1 vez por mês</option>
-              </select>
-            </div>
-            <div class="field"><label>Modalidade</label>
-              <select id="f_modalidade"><option value="grupo">Grupo</option><option value="individual">Individual</option><option value="familiar">Familiar</option></select>
-            </div>
-          </div>
-          <div class="frow fr2">
-            <div class="field"><label>Duração da sessão</label><input id="f_duracao" placeholder="Ex: 30 minutos"></div>
-            <div class="field"><label>Áreas envolvidas</label><input id="f_areas" placeholder="Ex: Psicologia e Psicopedagogia"></div>
-          </div>
-          <div class="frow">
-            <div class="field"><label>Contexto clínico adicional</label><textarea id="f_contextoClinico" placeholder="Outras informações sobre a demanda e histórico..."></textarea></div>
-          </div>
-          <div class="frow">
-            <div class="field"><label>Instrumentos / abordagens</label><textarea id="f_instrumentos" placeholder="Ex: observação clínica, atividades lúdicas, orientação familiar..."></textarea></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ANÁLISE -->
-      <div class="card">
-        <div class="card-head"><span class="card-head-icon">🔬</span> Análise clínica</div>
-        <div class="card-body">
-          <div class="frow">
-            <div class="field"><label>Histórico gestacional e perinatal</label><textarea id="f_gestacao" placeholder="Ex: gestação sem intercorrências, parto cesárea, APGAR normal..."></textarea></div>
-          </div>
-          <div class="frow">
-            <div class="field"><label>Desenvolvimento neuropsicomotor</label><textarea id="f_desenvolvimento" placeholder="Ex: sentou com 6 meses, andou com 14 meses, primeiras palavras..."></textarea></div>
-          </div>
-          <div class="frow">
-            <div class="field"><label>Comportamento atual (relatado pela família)</label><textarea id="f_comportamento" placeholder="Ex: dificuldade de concentração, comportamentos repetitivos, sono..."></textarea></div>
-          </div>
-
-          <div style="margin:1.25rem 0 8px; display:flex; align-items:center; gap:8px;">
-            <div style="width:3px;height:16px;background:linear-gradient(to bottom,var(--brand),var(--accent));border-radius:2px"></div>
-            <span style="font-size:13px;font-weight:700;color:var(--brand-dark)">Checklist clínico — acompanhamento psicológico</span>
-          </div>
-          <p style="font-size:12px;color:var(--ink-light);margin-bottom:10px">Selecione a faixa etária e marque os itens observados. Os itens marcados serão integrados na análise gerada pela IA.</p>
-
-          <div class="cl-tabs">
-            <button class="cl-tab on" onclick="setFaixa('a',this)">1 a 9 anos</button>
-            <button class="cl-tab" onclick="setFaixa('b',this)">10 a 15 anos</button>
-          </div>
-          <div id="cl_a" class="cl-panel on"></div>
-          <div id="cl_b" class="cl-panel"></div>
-
-          <div class="frow" style="margin-top:1rem">
-            <div class="field"><label>Observações livres — psicológico</label><textarea id="f_psicologico" placeholder="Complementar ao checklist..."></textarea></div>
-          </div>
-          <div class="frow">
-            <div class="field"><label>Observações — psicopedagógico</label><textarea id="f_psicopedagogico" placeholder="Ex: avanços em leitura, escrita, raciocínio lógico..."></textarea></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CONCLUSÃO -->
-      <div class="card">
-        <div class="card-head"><span class="card-head-icon">📝</span> Conclusão e recomendações</div>
-        <div class="card-body">
-          <div class="frow">
-            <div class="field"><label>Síntese clínica</label><textarea id="f_sintese" placeholder="Ex: evolução satisfatória, maior tolerância à frustração..."></textarea></div>
-          </div>
-          <div class="frow">
-            <div class="field"><label>Recomendações e encaminhamentos</label><textarea id="f_recomendacoes" placeholder="Ex: manutenção do acompanhamento, avaliação neurológica..."></textarea></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- IA -->
-      <div class="card">
-        <div class="card-head"><span class="card-head-icon">✨</span> Textos gerados por IA</div>
-        <div class="card-body">
-          <p style="font-size:13px;color:var(--ink-mid);margin-bottom:1rem">Os textos abaixo são gerados automaticamente ao salvar. Use os botões abaixo apenas para regenerar uma seção específica se quiser ajustar.</p>
-          <div class="ia-row">
-            <button class="btn-ia" id="bIA_demanda" onclick="gerarIA('demanda')">⚡ Demanda</button>
-            <button class="btn-ia" id="bIA_procedimento" onclick="gerarIA('procedimento')">⚡ Procedimento</button>
-            <button class="btn-ia" id="bIA_analise" onclick="gerarIA('analise')">⚡ Análise</button>
-            <button class="btn-ia" id="bIA_conclusao" onclick="gerarIA('conclusao')">⚡ Conclusão</button>
-          </div>
-          <div class="frow"><div class="field"><label>Texto — Demanda</label><textarea id="f_txtDemanda" rows="4" placeholder="Gerado pela IA ou escreva manualmente..."></textarea></div></div>
-          <div class="frow"><div class="field"><label>Texto — Procedimento</label><textarea id="f_txtProcedimento" rows="4" placeholder="Gerado pela IA ou escreva manualmente..."></textarea></div></div>
-          <div class="frow"><div class="field"><label>Texto — Análise completa</label><textarea id="f_txtAnalise" rows="10" placeholder="Gerado pela IA ou escreva manualmente..."></textarea></div></div>
-          <div class="frow"><div class="field"><label>Texto — Conclusão</label><textarea id="f_txtConclusao" rows="6" placeholder="Gerado pela IA ou escreva manualmente..."></textarea></div></div>
-          <div class="frow"><div class="field"><label>Profissional(is) responsável(is)</label><input id="f_prof" placeholder="Ex: Dra. Cinecleide — CRP 00/00000 · Psicóloga"></div></div>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button class="btn btn-del" id="bDel" onclick="confirmarDel()" style="display:none">🗑 Excluir</button>
-        <button class="btn btn-sec" onclick="cancelar()">Cancelar</button>
-        <button class="btn btn-prim" onclick="salvar()">✨ Gerar e salvar relatório</button>
+        <div id="buscaMsg"></div>
       </div>
     </div>
 
-    <!-- VISUALIZAÇÃO -->
-    <div class="view-wrap" id="tView" style="display:none">
-      <div class="view-toolbar">
-        <div class="view-toolbar-title" id="vTitulo">Relatório</div>
-        <button class="btn btn-sec" onclick="editarAtual()">✏️ Editar</button>
-        <button class="btn btn-prim" id="btnPdf" onclick="baixarPDF()">⬇️ Baixar PDF</button>
+    <div class="passos">
+      <div class="card passo">
+        <div class="passo-n">1</div>
+        <h3>Digite o documento</h3>
+        <p>CPF ou CNPJ (inclusive o novo CNPJ com letras) para listar todos os processos em que a pessoa ou empresa aparece.</p>
       </div>
-      <div class="relatorio" id="relCard"></div>
+      <div class="card passo">
+        <div class="passo-n">2</div>
+        <h3>Veja os processos</h3>
+        <p>Tribunal, classe, partes, advogados, valor da causa e a linha do tempo completa das movimentações.</p>
+      </div>
+      <div class="card passo ia">
+        <div class="passo-n">3</div>
+        <h3>Entenda com a IA</h3>
+        <p>A IA traduz a situação do processo e mostra o que pode acontecer nos próximos passos.</p>
+      </div>
     </div>
+    <p class="fontes-nota">
+      Dados: Escavador (busca por CPF/CNPJ) e DataJud — API pública do CNJ (consulta por número).
+      <button class="btn-link" type="button" id="btnDemo">Ver demonstração com dados fictícios</button>
+    </p>
+  </section>
 
-  </main>
-</div>
-
-<!-- MODAL -->
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <h3>Excluir relatório</h3>
-    <p>Deseja realmente excluir este relatório? Esta ação não pode ser desfeita.</p>
-    <div class="modal-btns">
-      <button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>
-      <button class="btn btn-del" onclick="deletarOk()">Excluir</button>
+  <!-- ═══ TELA: RESULTADOS ═══ -->
+  <section id="telaResultados" hidden>
+    <div class="voltar"><button class="btn-link" type="button" data-ir="#/">← Nova consulta</button></div>
+    <div id="resDemo"></div>
+    <div class="card res-cab" id="resCab"></div>
+    <div class="stats" id="resStats"></div>
+    <div class="filtros" id="resFiltros">
+      <input type="search" id="fTexto" placeholder="Filtrar por número, parte, classe ou assunto…" aria-label="Filtrar processos">
+      <select id="fTribunal" aria-label="Tribunal"><option value="">Todos os tribunais</option></select>
+      <select id="fSituacao" aria-label="Situação">
+        <option value="">Todas as situações</option>
+        <option value="ativo">Em andamento</option>
+        <option value="suspenso">Suspensos</option>
+        <option value="arquivado">Arquivados / baixados</option>
+      </select>
+      <select id="fPolo" aria-label="Participação">
+        <option value="">Toda participação</option>
+        <option value="ATIVO">Como autor (polo ativo)</option>
+        <option value="PASSIVO">Como réu (polo passivo)</option>
+        <option value="OUTROS">Outras</option>
+      </select>
     </div>
+    <div class="lista" id="resLista"></div>
+    <div class="mais" id="resMais"></div>
+  </section>
+
+  <!-- ═══ TELA: PROCESSO ═══ -->
+  <section id="telaProcesso" hidden>
+    <div class="voltar"><button class="btn-link" type="button" id="btnVoltarProc">← Voltar</button></div>
+    <div id="procConteudo"></div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="rodape-in">
+    <span>Este sistema não é um serviço oficial do Poder Judiciário. Confira sempre no site do tribunal.</span>
+    <span>As explicações da IA são informativas e não substituem a orientação de um advogado ou da Defensoria Pública.</span>
   </div>
+</footer>
+
+<div class="modal-fundo" id="modalSenha" hidden>
+  <form class="card modal" id="formSenha">
+    <h2>Acesso restrito</h2>
+    <p>Este sistema está protegido. Digite a senha de acesso para consultar.</p>
+    <input type="password" id="inputSenha" autocomplete="current-password" placeholder="Senha de acesso" aria-label="Senha de acesso">
+    <button class="btn btn-prim" type="submit">Entrar</button>
+  </form>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-// ═══ STORAGE ═══
-const KEY = 'cinecleide_rel_v1';
-let db = JSON.parse(localStorage.getItem(KEY) || '[]');
-let atual = null;
-let faixa = 'a';
+'use strict';
 
-// ═══ CHECKLIST ═══
-const CL = {
-  a:[
-    {id:'cog',t:'Funções Cognitivas',its:[
-      {id:'a1',l:'Atenção e concentração',d:'Manter foco em tarefas dirigidas; distractibilidade; atenção seletiva e sustentada.'},
-      {id:'a2',l:'Memória de trabalho',d:'Seguir sequências de 2–3 instruções, repetir dígitos, recontar histórias.'},
-      {id:'a3',l:'Memória episódica e semântica',d:'Evocação de eventos cotidianos, reconhecimento de conceitos aprendidos.'},
-      {id:'a4',l:'Funções executivas — planejamento',d:'Organizar etapas; antecipar consequências; iniciar e concluir atividades.'},
-      {id:'a5',l:'Funções executivas — flexibilidade',d:'Adaptação a mudanças de rotina; transição entre atividades.'},
-      {id:'a6',l:'Raciocínio lógico e resolução de problemas',d:'Categorizar, ordenar, analogias simples e problemas concretos.'},
-      {id:'a7',l:'Processamento visuoespacial',d:'Reconhecimento de formas, encaixe, construção com blocos, lateralidade.'},
-      {id:'a8',l:'Velocidade de processamento',d:'Rapidez na execução; tempo de reação; fluência em atividades automatizadas.'},
-      {id:'a9',l:'Leitura e escrita emergentes',d:'Consciência fonológica, reconhecimento de letras/números, produção espontânea.'},
-    ]},
-    {id:'com',t:'Comunicação e Linguagem',its:[
-      {id:'c1',l:'Linguagem expressiva',d:'Vocabulário ativo, extensão de frases, uso de verbos, narração de eventos.'},
-      {id:'c2',l:'Linguagem receptiva',d:'Compreensão de instruções orais simples e compostas, histórias.'},
-      {id:'c3',l:'Pragmática da linguagem',d:'Tomar turnos, manter tópico, adequar discurso ao interlocutor.'},
-      {id:'c4',l:'Comunicação não verbal',d:'Gestos, expressões faciais, contato ocular funcional, apontar.'},
-      {id:'c5',l:'Ecolalia / repetição',d:'Presença de ecolalia imediata ou tardia; uso funcional ou não funcional.'},
-      {id:'c6',l:'Narrativa e coerência discursiva',d:'Contar histórias com coerência; descrever figuras e situações.'},
-    ]},
-    {id:'soc',t:'Socialização e Interação',its:[
-      {id:'s1',l:'Interesse por pares e adultos',d:'Iniciativa de interação, imitação social, atenção compartilhada.'},
-      {id:'s2',l:'Jogo simbólico e brincadeira',d:'Faz de conta, uso criativo de objetos, brincadeiras com regras.'},
-      {id:'s3',l:'Reciprocidade emocional',d:'Resposta às emoções dos outros, empatia básica, compartilhamento.'},
-      {id:'s4',l:'Relações familiares e vínculo',d:'Qualidade do apego, reação à separação, reconhecimento familiar.'},
-      {id:'s5',l:'Resolução de conflitos',d:'Estratégias diante de desentendimentos: negociação, agressividade, busca de adulto.'},
-      {id:'s6',l:'Adaptação a ambientes coletivos',d:'Desempenho em sala, recreio; tolerância a barulho e transições.'},
-    ]},
-    {id:'comp',t:'Comportamento e Regulação',its:[
-      {id:'b1',l:'Regulação emocional',d:'Identificar e expressar emoções; estratégias de autorregulação; duração das crises.'},
-      {id:'b2',l:'Comportamentos repetitivos e estereotipados',d:'Movimentos repetitivos, rituais, insistência em rotinas, interesses restritos.'},
-      {id:'b3',l:'Hiperatividade e impulsividade',d:'Dificuldade de permanecer sentado; agir sem pensar; interromper.'},
-      {id:'b4',l:'Comportamentos oposicionistas',d:'Recusa de regras, argumentação excessiva, desafio a autoridade.'},
-      {id:'b5',l:'Ansiedade e medos',d:'Medos específicos, ansiedade de separação, antecipação ansiosa.'},
-      {id:'b6',l:'Sensibilidade sensorial',d:'Hipo/hipersensibilidade a sons, texturas, luz, cheiros, dor.'},
-      {id:'b7',l:'Sono e alimentação',d:'Qualidade do sono; seletividade alimentar; rituais nas refeições.'},
-      {id:'b8',l:'Tolerância à frustração',d:'Reação a erros, perdas, negativas; aceitar limites sem desregulação.'},
-    ]},
-    {id:'mot',t:'Desenvolvimento Motor e Adaptativo',its:[
-      {id:'m1',l:'Motricidade grossa',d:'Equilíbrio, coordenação, marcha, subir/descer escadas, pular.'},
-      {id:'m2',l:'Motricidade fina',d:'Preensão, manipulação de objetos pequenos, uso de talheres, escrita.'},
-      {id:'m3',l:'Habilidades de autocuidado',d:'Autonomia em higiene, vestuário, alimentação; controle esfincteriano.'},
-      {id:'m4',l:'Praxias e planejamento motor',d:'Imitar gestos; executar sequências motoras como abotoar, amarrar.'},
-    ]},
-  ],
-  b:[
-    {id:'cog',t:'Funções Cognitivas',its:[
-      {id:'b_a1',l:'Atenção seletiva, sustentada e alternada',d:'Foco em tarefas longas (30+ min); resistência a distrações; alternância entre matérias.'},
-      {id:'b_a2',l:'Memória de trabalho',d:'Retenção durante raciocínio; textos longos; instruções múltiplas.'},
-      {id:'b_a3',l:'Memória declarativa',d:'Conteúdos escolares, fatos, sequência de acontecimentos autobiográficos.'},
-      {id:'b_a4',l:'Funções executivas — planejamento',d:'Planejar estudos, organizar materiais, cumprir prazos, decompor tarefas.'},
-      {id:'b_a5',l:'Funções executivas — inibição',d:'Inibir respostas automáticas, esperar a vez, resistir a distratores.'},
-      {id:'b_a6',l:'Flexibilidade cognitiva',d:'Adaptação a mudanças; revisão de estratégias diante do erro.'},
-      {id:'b_a7',l:'Raciocínio abstrato e lógico-matemático',d:'Pensamento hipotético-dedutivo; metáforas, alegorias, ironias.'},
-      {id:'b_a8',l:'Processamento visuoespacial',d:'Mapas, gráficos, geometria, orientação espacial em ambientes complexos.'},
-      {id:'b_a9',l:'Velocidade de processamento e fluência',d:'Rapidez na leitura, escrita e cálculo; resposta adequada em provas.'},
-      {id:'b_a10',l:'Leitura, escrita e cálculo',d:'Fluência leitora, compreensão textual, produção escrita, raciocínio aritmético.'},
-    ]},
-    {id:'com',t:'Comunicação e Linguagem',its:[
-      {id:'b_c1',l:'Linguagem expressiva e vocabulário',d:'Riqueza vocabular, argumentação, defender ideias e opiniões.'},
-      {id:'b_c2',l:'Linguagem receptiva e compreensão',d:'Textos complexos, instruções multietapas, discurso acadêmico e abstrato.'},
-      {id:'b_c3',l:'Pragmática e habilidades conversacionais',d:'Linguagem figurada, sarcasmo, humor; respeito a turnos.'},
-      {id:'b_c4',l:'Comunicação não verbal e leitura social',d:'Expressões faciais, gestos, postura e tom de voz em contextos variados.'},
-      {id:'b_c5',l:'Escrita expressiva e produção textual',d:'Organização de ideias, argumentação, uso de conectivos, adequação ao gênero.'},
-      {id:'b_c6',l:'Inferência e leitura de contexto',d:'Fazer inferências, deduzir intenções, interpretar subtextos.'},
-    ]},
-    {id:'soc',t:'Socialização e Interação',its:[
-      {id:'b_s1',l:'Relações com pares e amizades',d:'Qualidade e quantidade de amizades; manter relações; exclusão social.'},
-      {id:'b_s2',l:'Habilidades sociais e assertividade',d:'Expressar necessidades, recusar pedidos inadequados, negociar.'},
-      {id:'b_s3',l:'Percepção das normas sociais',d:'Regras implícitas de convívio; adequação do comportamento ao contexto.'},
-      {id:'b_s4',l:'Teoria da mente e empatia',d:'Inferir estados mentais; perspectiva em conflitos e dilemas.'},
-      {id:'b_s5',l:'Bullying e vitimização',d:'Agressão ou vitimização; exclusão, humilhação, cyberbullying.'},
-      {id:'b_s6',l:'Relação com figuras de autoridade',d:'Comportamento com professores e pais; aceitação de feedback.'},
-      {id:'b_s7',l:'Identidade e autoconceito',d:'Percepção de si, autoestima, senso de competência acadêmica e social.'},
-    ]},
-    {id:'comp',t:'Comportamento e Regulação',its:[
-      {id:'b_b1',l:'Regulação emocional',d:'Amplitude e duração das reações; estratégias; nomear emoções complexas.'},
-      {id:'b_b2',l:'Comportamentos repetitivos e rituais',d:'Rituais, rotinas rígidas, interesses restritos que comprometem funcionalidade.'},
-      {id:'b_b3',l:'Hiperatividade e impulsividade',d:'Manter-se quieto em contextos estruturados; ações sem avaliar consequências.'},
-      {id:'b_b4',l:'Oposição e desafio',d:'Recusa de regras; conflitos com adultos; comportamento desafiador.'},
-      {id:'b_b5',l:'Ansiedade, preocupações e fobias',d:'Ansiedade generalizada, fobia social, ataques de pânico.'},
-      {id:'b_b6',l:'Humor e afeto',d:'Labilidade emocional, tristeza, anedonia, irritabilidade crônica.'},
-      {id:'b_b7',l:'Sensibilidade sensorial',d:'Respostas atípicas que interferem no desempenho escolar ou social.'},
-      {id:'b_b8',l:'Uso de tecnologia e telas',d:'Tempo de uso, dificuldade de limitar, impacto no sono e relações sociais.'},
-      {id:'b_b9',l:'Sono, alimentação e saúde geral',d:'Qualidade do sono, seletividade alimentar, queixas somáticas recorrentes.'},
-    ]},
-    {id:'mot',t:'Desenvolvimento Motor e Adaptativo',its:[
-      {id:'b_m1',l:'Motricidade grossa e esportes',d:'Coordenação em atividades físicas; participação em esportes coletivos.'},
-      {id:'b_m2',l:'Motricidade fina e escrita manual',d:'Qualidade da letra, velocidade, fadiga, preferência por digitação.'},
-      {id:'b_m3',l:'Autonomia e habilidades da vida diária',d:'Independência em higiene, organização de materiais, deslocamento.'},
-      {id:'b_m4',l:'Praxias e coordenação',d:'Atividades que exigem coordenação precisa: manualidades, instrumentos.'},
-    ]},
-  ]
+/* ═══════════ Utilidades ═══════════ */
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const escBr = (v) => esc(v).replace(/\n/g, '<br>');
+const urlSegura = (u) => (/^https?:\/\//i.test(String(u || '')) ? esc(u) : null);
+
+function fmtData(v, comHora) {
+  if (!v) return '—';
+  const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?/);
+  if (!m) return esc(v);
+  let s = `${m[3]}/${m[2]}/${m[1]}`;
+  if (comHora && m[4] && !(m[4] === '00' && m[5] === '00')) s += ` ${m[4]}:${m[5]}`;
+  return s;
+}
+
+function haQuanto(v) {
+  const m = String(v || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return '';
+  const dias = Math.floor((Date.now() - Date.UTC(+m[1], +m[2] - 1, +m[3])) / 86400000);
+  if (dias < 0) return '';
+  if (dias === 0) return 'hoje';
+  if (dias === 1) return 'ontem';
+  if (dias < 30) return `há ${dias} dias`;
+  const meses = Math.floor(dias / 30.44);
+  if (meses < 12) return `há ${meses} ${meses === 1 ? 'mês' : 'meses'}`;
+  const anos = Math.floor(dias / 365.25);
+  return `há ${anos} ${anos === 1 ? 'ano' : 'anos'}`;
+}
+
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('mostra');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => t.classList.remove('mostra'), 2600);
+}
+
+async function copiar(texto, msg) {
+  try { await navigator.clipboard.writeText(texto); toast(msg || 'Copiado!'); }
+  catch { toast('Não foi possível copiar.'); }
+}
+
+const armazenamento = {
+  ler(k) { try { return sessionStorage.getItem(k) || ''; } catch { return ''; } },
+  gravar(k, v) { try { v ? sessionStorage.setItem(k, v) : sessionStorage.removeItem(k); } catch { /* sem storage */ } }
 };
 
-function buildCL(f){
-  const c=document.getElementById('cl_'+f);
-  if(c.innerHTML.trim())return;
-  CL[f].forEach(dom=>{
-    const d=document.createElement('div');
-    d.className='dominio';
-    d.innerHTML=`<div class="dom-head" onclick="togDom(this)">
-      ${dom.t}
-      <span class="dom-cnt" id="cnt_${f}_${dom.id}">0/${dom.its.length}</span>
-      <span class="dom-arr">▼</span>
-    </div>
-    <div class="dom-body" id="db_${f}_${dom.id}">
-      ${dom.its.map(i=>`<div class="cl-item-row" id="row_${f}_${i.id}">
-        <div class="cl-item-info">
-          <div class="cl-label">${i.l}</div>
-          <div class="cl-detalhe">${i.d}</div>
-        </div>
-        <div class="cl-estados">
-          <button type="button" class="cl-est cl-est-p" data-v="Preservado" onclick="setEstado('${f}','${i.id}','${dom.id}',this)">Preservado</button>
-          <button type="button" class="cl-est cl-est-pp" data-v="Parcialmente preservado" onclick="setEstado('${f}','${i.id}','${dom.id}',this)">Parcial</button>
-          <button type="button" class="cl-est cl-est-c" data-v="Comprometido" onclick="setEstado('${f}','${i.id}','${dom.id}',this)">Comprometido</button>
-          <button type="button" class="cl-est cl-est-na" data-v="Não avaliado" onclick="setEstado('${f}','${i.id}','${dom.id}',this)">N/A</button>
-        </div>
-        <input type="hidden" id="est_${f}_${i.id}" value="">
-        <input type="text" class="cl-obs" id="obs_${f}_${i.id}" placeholder="Observação clínica (opcional)...">
-      </div>`).join('')}
-    </div>`;
-    c.appendChild(d);
-  });
+/* ═══════════ Validação (espelha o servidor) ═══════════ */
+function validarCPF(c) {
+  if (!/^\d{11}$/.test(c) || /^(\d)\1{10}$/.test(c)) return false;
+  const dv = (t) => { let s = 0; for (let i = 0; i < t; i++) s += +c[i] * (t + 1 - i); const r = (s * 10) % 11; return r === 10 ? 0 : r; };
+  return dv(9) === +c[9] && dv(10) === +c[10];
 }
-
-function setEstado(f,itemId,domId,btn){
-  const hidden=document.getElementById('est_'+f+'_'+itemId);
-  const row=document.getElementById('row_'+f+'_'+itemId);
-  const val=btn.getAttribute('data-v');
-  if(hidden.value===val){
-    hidden.value='';
-    btn.classList.remove('on');
-    row.classList.remove('marcado');
-  } else {
-    hidden.value=val;
-    row.querySelectorAll('.cl-est').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on');
-    row.classList.add('marcado');
-  }
-  updCnt(f,domId);
-}
-
-function togDom(h){
-  const b=h.nextElementSibling;
-  b.classList.toggle('open');
-  h.classList.toggle('open');
-}
-
-function setFaixa(f,btn){
-  faixa=f;
-  document.querySelectorAll('.cl-tab').forEach((t,i)=>t.classList.toggle('on',['a','b'][i]===f));
-  document.querySelectorAll('.cl-panel').forEach(p=>p.classList.remove('on'));
-  document.getElementById('cl_'+f).classList.add('on');
-  buildCL(f);
-}
-
-function updCnt(f,domId){
-  const dom=CL[f].find(d=>d.id===domId);
-  const n=dom.its.filter(i=>{const e=document.getElementById('est_'+f+'_'+i.id);return e&&e.value;}).length;
-  const el=document.getElementById('cnt_'+f+'_'+domId);
-  if(el)el.textContent=n+'/'+dom.its.length;
-}
-
-function getCL(){
-  const res=[];
-  CL[faixa].forEach(dom=>{
-    const sel=dom.its.map(i=>{
-      const est=document.getElementById('est_'+faixa+'_'+i.id)?.value||'';
-      const obs=document.getElementById('obs_'+faixa+'_'+i.id)?.value.trim()||'';
-      return est?{label:i.l,detalhe:i.d,estado:est,obs:obs}:null;
-    }).filter(Boolean);
-    if(sel.length)res.push({dominio:dom.t,itens:sel});
-  });
-  return res;
-}
-
-// ═══ UTILS ═══
-const v=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
-const sv=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val||''};
-const chk=id=>{const e=document.getElementById(id);return e?e.checked:false};
-const sChk=(id,v)=>{const e=document.getElementById(id);if(e)e.checked=!!v};
-
-function getFins(){
-  const f=[];
-  if(chk('fin_inter'))f.push('Compartilhamento interprofissional');
-  if(chk('fin_escolar'))f.push('Encaminhamento escolar');
-  if(chk('fin_medico'))f.push('Encaminhamento médico');
-  if(chk('fin_judicial'))f.push('Uso judicial');
-  if(chk('fin_inss'))f.push('INSS — '+v('f_inssB'));
-  return f;
-}
-
-function salvarDB(){localStorage.setItem(KEY,JSON.stringify(db));}
-
-function toast(msg,ok){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast show'+(ok?' ok':'');
-  setTimeout(()=>t.className='toast',3000);
-}
-
-function toggleInss(cb){document.getElementById('inssBox').classList.toggle('show',cb.checked);}
-
-// ═══ TELAS ═══
-function tela(nome){
-  ['tWelcome','tForm','tView'].forEach(t=>document.getElementById(t).style.display=t===nome?'':'none');
-}
-
-function novoForm(id){
-  atual=id||null;
-  const ed=!!id;
-  document.getElementById('formTitulo').textContent=ed?'Editar relatório':'Novo relatório';
-  document.getElementById('formSub').textContent=ed?'Atualize os dados e salve.':'Preencha os dados e gere os textos com IA.';
-  document.getElementById('formIcon').textContent=ed?'✏️':'📝';
-  document.getElementById('bDel').style.display=ed?'':'none';
-  clearForm();
-  buildCL('a'); buildCL('b');
-  if(ed){const p=db.find(x=>x.id===id);if(p)fillForm(p);}
-  tela('tForm');
-  document.querySelector('.main').scrollTop=0;
-}
-
-function clearForm(){
-  ['f_nome','f_dnasc','f_idade','f_sexo','f_solicitante','f_diagnostico','f_anoInicio','f_investigacao','f_frequencia','f_modalidade','f_duracao','f_areas','f_contextoClinico','f_instrumentos','f_gestacao','f_desenvolvimento','f_comportamento','f_psicologico','f_psicopedagogico','f_sintese','f_recomendacoes','f_txtDemanda','f_txtProcedimento','f_txtAnalise','f_txtConclusao','f_prof','f_inssB','f_inssCid'].forEach(id=>sv(id,''));
-  ['fin_inter','fin_escolar','fin_medico','fin_judicial','fin_inss'].forEach(id=>sChk(id,false));
-  document.getElementById('inssBox').classList.remove('show');
-  // limpar estados, observações e marcações do checklist
-  document.querySelectorAll('[id^="est_"]').forEach(e=>{e.value='';});
-  document.querySelectorAll('.cl-obs').forEach(e=>{e.value='';});
-  document.querySelectorAll('.cl-est.on').forEach(e=>e.classList.remove('on'));
-  document.querySelectorAll('.cl-item-row.marcado').forEach(e=>e.classList.remove('marcado'));
-  document.querySelectorAll('.dom-cnt').forEach(e=>{
-    const pts=e.id.split('_');const f=pts[1];const did=pts.slice(2).join('_');
-    const dom=CL[f]?.find(d=>d.id===did);if(dom)e.textContent='0/'+dom.its.length;
-  });
-}
-
-function fillForm(p){
-  sv('f_nome',p.nome);sv('f_dnasc',p.dnasc);sv('f_idade',p.idade);
-  sv('f_sexo',p.sexo);sv('f_solicitante',p.solicitante);
-  sv('f_diagnostico',p.diagnostico);sv('f_anoInicio',p.anoInicio);
-  sv('f_investigacao',p.investigacao);sv('f_frequencia',p.frequencia);
-  sv('f_modalidade',p.modalidade);sv('f_duracao',p.duracao);
-  sv('f_areas',p.areas);sv('f_contextoClinico',p.contextoClinico);
-  sv('f_instrumentos',p.instrumentos);sv('f_gestacao',p.gestacao);
-  sv('f_desenvolvimento',p.desenvolvimento);sv('f_comportamento',p.comportamento);
-  sv('f_psicologico',p.psicologico);sv('f_psicopedagogico',p.psicopedagogico);
-  sv('f_sintese',p.sintese);sv('f_recomendacoes',p.recomendacoes);
-  sv('f_txtDemanda',p.txtDemanda);sv('f_txtProcedimento',p.txtProcedimento);
-  sv('f_txtAnalise',p.txtAnalise);sv('f_txtConclusao',p.txtConclusao);
-  sv('f_prof',p.prof);
-  if(p.inss){sChk('fin_inss',true);sv('f_inssB',p.inss.b);sv('f_inssCid',p.inss.cid);document.getElementById('inssBox').classList.add('show');}
-  (p.fins||[]).forEach(f=>{
-    if(f.includes('interprofissional'))sChk('fin_inter',true);
-    if(f.includes('escolar'))sChk('fin_escolar',true);
-    if(f.includes('médico')||f.includes('medico'))sChk('fin_medico',true);
-    if(f.includes('judicial'))sChk('fin_judicial',true);
-    if(f.includes('INSS'))sChk('fin_inss',true);
-  });
-  faixa=p.faixa||'a';
-  document.querySelectorAll('.cl-tab').forEach((t,i)=>t.classList.toggle('on',['a','b'][i]===faixa));
-  document.querySelectorAll('.cl-panel').forEach(p2=>p2.classList.remove('on'));
-  document.getElementById('cl_'+faixa).classList.add('on');
-  (p.cl||[]).forEach(dom=>{
-    const d=CL[faixa]?.find(x=>x.t===dom.dominio);
-    if(d)dom.itens.forEach(it=>{
-      const ix=d.its.find(x=>x.l===it.label);
-      if(ix){
-        const est=document.getElementById('est_'+faixa+'_'+ix.id);
-        const obs=document.getElementById('obs_'+faixa+'_'+ix.id);
-        const row=document.getElementById('row_'+faixa+'_'+ix.id);
-        if(est&&it.estado){
-          est.value=it.estado;
-          if(obs)obs.value=it.obs||'';
-          if(row){
-            row.classList.add('marcado');
-            const btn=[...row.querySelectorAll('.cl-est')].find(b=>b.getAttribute('data-v')===it.estado);
-            if(btn)btn.classList.add('on');
-          }
-          updCnt(faixa,d.id);
-        }
-      }
-    });
-  });
-}
-
-function cancelar(){
-  if(atual)verRel(atual);
-  else tela('tWelcome');
-}
-
-// Coleta todos os dados do formulário em um objeto
-function coletarDados(id){
-  return {
-    id: id||Date.now().toString(),
-    nome:v('f_nome'),dnasc:v('f_dnasc'),idade:v('f_idade'),sexo:v('f_sexo'),
-    solicitante:v('f_solicitante'),fins:getFins(),
-    inss:chk('fin_inss')?{b:v('f_inssB'),cid:v('f_inssCid')}:null,
-    diagnostico:v('f_diagnostico'),anoInicio:v('f_anoInicio'),
-    investigacao:v('f_investigacao'),frequencia:v('f_frequencia'),
-    modalidade:v('f_modalidade'),duracao:v('f_duracao'),
-    areas:v('f_areas'),contextoClinico:v('f_contextoClinico'),
-    instrumentos:v('f_instrumentos'),gestacao:v('f_gestacao'),
-    desenvolvimento:v('f_desenvolvimento'),comportamento:v('f_comportamento'),
-    psicologico:v('f_psicologico'),psicopedagogico:v('f_psicopedagogico'),
-    sintese:v('f_sintese'),recomendacoes:v('f_recomendacoes'),
-    txtDemanda:v('f_txtDemanda'),txtProcedimento:v('f_txtProcedimento'),
-    txtAnalise:v('f_txtAnalise'),txtConclusao:v('f_txtConclusao'),
-    prof:v('f_prof'),faixa,cl:getCL(),
-    data:new Date().toLocaleDateString('pt-BR')
+function validarCNPJ(c) {
+  if (!/^[0-9A-Z]{12}\d{2}$/.test(c) || /^(\d)\1{13}$/.test(c)) return false;
+  const dv = (t) => {
+    const p = t === 12 ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    let s = 0; for (let i = 0; i < t; i++) s += (c.charCodeAt(i) - 48) * p[i];
+    const r = s % 11; return r < 2 ? 0 : 11 - r;
   };
+  return dv(12) === +c[12] && dv(13) === +c[13];
+}
+function validarCNJ(d) {
+  if (!/^\d{20}$/.test(d)) return false;
+  return BigInt(d.slice(0, 7) + d.slice(9, 20) + d.slice(7, 9)) % 97n === 1n;
 }
 
-// Gera um texto via IA a partir de um prompt
-async function chamarIA(prompt, max_tokens=2000){
-  const res = await fetch('/api/gerar',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({prompt, max_tokens})
-  });
-  if(!res.ok){const e=await res.json();throw new Error(e.error||'Erro na IA');}
-  const data=await res.json();
-  return data.text||'';
+function analisarEntrada(valor) {
+  const s = String(valor || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+  if (!s) return { tipo: null, valor: '' };
+  if (/[A-Z]/.test(s)) return { tipo: 'CNPJ', valor: s, completo: s.length === 14, valido: validarCNPJ(s) };
+  if (s.length <= 11) return { tipo: 'CPF', valor: s, completo: s.length === 11, valido: validarCPF(s) };
+  if (s.length <= 14) return { tipo: 'CNPJ', valor: s, completo: s.length === 14, valido: validarCNPJ(s) };
+  return { tipo: 'PROCESSO', valor: s.replace(/\D/g, ''), completo: s.length === 20, valido: validarCNJ(s) };
 }
 
-// Monta os prompts para cada seção
-function montarPrompts(dados){
-  const nome=dados.nome||'o(a) paciente';
-  const fins=dados.fins.join(', ')||'compartilhamento interprofissional';
-  const inssOn=!!dados.inss;
-  const fl=dados.faixa==='a'?'1 a 9 anos':'10 a 15 anos';
-  const cl=dados.cl||[];
-  const clStr=cl.length
-    ?cl.map(d=>`[${d.dominio}]\n`+d.itens.map(i=>'- '+i.label+': '+i.estado+(i.obs?' ('+i.obs+')':'')).join('\n')).join('\n\n')
-    :'(nenhum item avaliado)';
-
-  const demanda=`Você é neuropsicóloga. Escreva o parágrafo "Descrição da demanda" de um relatório interprofissional:
-Paciente: ${nome} | Diagnóstico: ${dados.diagnostico||'não informado'} | Início: ${dados.anoInicio||'não informado'} | Investigação: ${dados.investigacao||'não informado'} | Finalidade: ${fins}
-Contexto adicional: ${dados.contextoClinico||'não informado'}
-${inssOn?'Mencione que o relatório subsidia solicitação de '+dados.inss.b+' no INSS, CID: '+dados.inss.cid+'.':''}
-Linguagem técnica formal, 3ª pessoa, português brasileiro. Máx. 5 frases. Sem títulos.`;
-
-  const procedimento=`Você é neuropsicóloga. Escreva o parágrafo "Procedimento" de um relatório clínico:
-Modalidade: ${dados.modalidade||'não informado'} | Frequência: ${dados.frequencia||'não informado'} | Duração: ${dados.duracao||'não informado'} | Áreas: ${dados.areas||'não informado'}
-Instrumentos/abordagens: ${dados.instrumentos||'não informado'}
-Linguagem técnica formal, 3ª pessoa, português. Máx. 6 frases. Sem títulos.`;
-
-  const analise=`Você é uma equipe interprofissional experiente (psicóloga e psicopedagoga) elaborando a ANÁLISE CLÍNICA INTERPRETATIVA de ${nome} (faixa etária: ${fl}), com diagnóstico de ${dados.diagnostico||'não informado'}.
-
-IMPORTANTE: Você NÃO deve apenas reescrever ou organizar os dados fornecidos. Sua tarefa é ANALISAR CLINICAMENTE o caso — interpretar a significância dos achados, correlacionar os dados entre si, identificar padrões, relacionar o histórico de desenvolvimento com o quadro atual, e discutir o que os achados do checklist revelam sobre o funcionamento global da criança/adolescente. Produza raciocínio clínico genuíno, não um resumo.
-
-REGRA CRÍTICA: NÃO sugira diagnósticos, hipóteses diagnósticas, nem novas linhas de investigação. Analise apenas o quadro ATUAL com base no diagnóstico já estabelecido e nos dados apresentados.
-
-DADOS PARA ANÁLISE:
-Histórico gestacional/perinatal: ${dados.gestacao||'não informado'}
-Desenvolvimento neuropsicomotor: ${dados.desenvolvimento||'não informado'}
-Comportamento atual relatado pela família: ${dados.comportamento||'não informado'}
-
-ACHADOS DO CHECKLIST CLÍNICO (cada função avaliada como Preservada, Parcialmente preservada ou Comprometida):
-${clStr}
-
-Observações do acompanhamento psicológico: ${dados.psicologico||'não informado'}
-Observações do acompanhamento psicopedagógico: ${dados.psicopedagogico||'não informado'}
-${inssOn?'\nInclua análise do impacto funcional nas atividades de vida diária (AVDs) e participação social, relevante para fins de avaliação do INSS (CID: '+dados.inss.cid+').':''}
-
-ESTRUTURE A ANÁLISE ASSIM:
-1. Parágrafo introdutório: correlacione os dados gestacionais e os marcos do desenvolvimento com o quadro atual, interpretando sua relevância clínica.
-2. "Em acompanhamento Psicológico:" — análise interpretativa dos domínios observados. Discuta o que os achados significam para o funcionamento da criança/adolescente, como os domínios se relacionam entre si, e a significância clínica dos padrões (o que está preservado, parcialmente preservado e comprometido, e o que isso implica funcionalmente). NÃO liste itens — integre numa análise fluida e raciocinada.
-3. "Em acompanhamento Psicopedagógico:" — análise das habilidades cognitivas e de aprendizagem, interpretando como o perfil cognitivo impacta o processo de aprendizagem.
-${inssOn?'4. "Impacto funcional:" — análise objetiva e interpretativa das limitações funcionais nas AVDs e participação social.':''}
-
-Linguagem técnica, interpretativa e aprofundada. Parágrafos corridos, sem listas. 3ª pessoa. Português brasileiro formal.`;
-
-  const conclusao=`Você é neuropsicóloga elaborando a CONCLUSÃO de um relatório de ${nome}, com diagnóstico de ${dados.diagnostico||'não informado'}.
-
-Produza uma síntese conclusiva que INTEGRE a análise clínica, articule a evolução observada e fundamente as recomendações com base no quadro analisado. NÃO sugira novos diagnósticos.
-
-Síntese clínica: ${dados.sintese||'não informado'}
-Recomendações: ${dados.recomendacoes||'não informado'}
-Finalidade: ${fins}
-${inssOn?'Inclua parágrafo técnico fundamentando a condição que justifica a solicitação de '+dados.inss.b+' junto ao INSS, CID '+dados.inss.cid+'.':''}
-
-Inclua: síntese integradora da evolução e do quadro atual, fundamentação das recomendações, e a observação sobre a natureza dinâmica do desenvolvimento. Linguagem técnica e conclusiva, 3ª pessoa, português formal. Parágrafos corridos. Máx. 10 frases.`;
-
-  return {demanda, procedimento, analise, conclusao};
-}
-
-// Mostra/esconde tela de progresso
-function showProgresso(etapa, total, msg){
-  let el=document.getElementById('progressOverlay');
-  if(!el){
-    el=document.createElement('div');
-    el.id='progressOverlay';
-    el.style.cssText='position:fixed;inset:0;background:rgba(26,22,37,0.75);backdrop-filter:blur(6px);z-index:999;display:flex;align-items:center;justify-content:center;';
-    el.innerHTML=`<div style="background:white;border-radius:20px;padding:2.5rem 3rem;max-width:400px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
-      <div style="font-size:40px;margin-bottom:1rem">✨</div>
-      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:#3D2B5A;margin-bottom:8px">Gerando relatório...</div>
-      <div id="progMsg" style="font-size:13px;color:#5A5271;margin-bottom:1.25rem;min-height:20px"></div>
-      <div style="background:#F0EBF8;border-radius:99px;height:8px;overflow:hidden">
-        <div id="progBar" style="height:100%;background:linear-gradient(90deg,#6C4F8C,#9B7DBF);border-radius:99px;transition:width 0.4s ease;width:0%"></div>
-      </div>
-      <div id="progStep" style="font-size:12px;color:#9B92B0;margin-top:8px"></div>
-    </div>`;
-    document.body.appendChild(el);
+function aplicarMascara(s, padrao) {
+  let out = '', i = 0;
+  for (const ch of padrao) {
+    if (i >= s.length) break;
+    out += ch === '#' ? s[i++] : ch;
   }
-  el.style.display='flex';
-  document.getElementById('progMsg').textContent=msg;
-  document.getElementById('progBar').style.width=Math.round((etapa/total)*100)+'%';
-  document.getElementById('progStep').textContent=`Etapa ${etapa} de ${total}`;
+  return out;
 }
 
-function hideProgresso(){
-  const el=document.getElementById('progressOverlay');
-  if(el)el.style.display='none';
+function mascarar(valor) {
+  const a = analisarEntrada(valor);
+  if (a.tipo === 'CPF') return aplicarMascara(a.valor, '###.###.###-##');
+  if (a.tipo === 'CNPJ') return aplicarMascara(a.valor.slice(0, 14), '##.###.###/####-##');
+  if (a.tipo === 'PROCESSO') return aplicarMascara(a.valor.slice(0, 20), '#######-##.####.#.##.####');
+  return '';
 }
 
-// SALVAR: coleta dados → gera IA automaticamente → salva → exibe relatório
-async function salvar(){
-  const nome=v('f_nome');
-  if(!nome){toast('⚠️ Informe o nome do paciente.');return;}
+const NOME_TIPO = { CPF: 'CPF', CNPJ: 'CNPJ', PROCESSO: 'Nº do processo' };
 
-  const id=atual||Date.now().toString();
-  const dados=coletarDados(id);
-  const prompts=montarPrompts(dados);
-  const total=4;
+/* ═══════════ Estado ═══════════ */
+const estado = {
+  status: null,
+  consulta: null,      // resposta de /api/consulta
+  processo: null,      // processo aberto
+  movs: { status: 'ok', erro: null },
+  avisoProcesso: null,
+  explicacoes: new Map(),
+  ia: { status: 'inicial', numero: null, erro: null },
+  ultimaAcao: null,
+  carregandoMais: false
+};
 
+/* ═══════════ API ═══════════ */
+async function api(url, opcoes = {}) {
+  const headers = Object.assign({}, opcoes.headers);
+  const senha = armazenamento.ler('senhaAcesso');
+  if (senha) headers['x-senha-acesso'] = senha;
+  if (opcoes.body) headers['Content-Type'] = 'application/json';
+  let r;
   try {
-    // 1. Demanda
-    showProgresso(1,total,'Redigindo a descrição da demanda...');
-    dados.txtDemanda=await chamarIA(prompts.demanda,1200);
+    r = await fetch(url, Object.assign({}, opcoes, { headers }));
+  } catch {
+    const e = new Error('Não foi possível falar com o servidor. Verifique sua conexão e tente de novo.');
+    e.codigo = 'REDE';
+    throw e;
+  }
+  let dados = null;
+  try { dados = await r.json(); } catch { /* sem corpo JSON */ }
+  if (!r.ok) {
+    const e = new Error((dados && dados.erro) || `Erro ${r.status} no servidor.`);
+    e.codigo = dados && dados.codigo;
+    e.status = r.status;
+    if (e.codigo === 'SENHA') { armazenamento.gravar('senhaAcesso', ''); abrirModalSenha(); }
+    throw e;
+  }
+  return dados;
+}
 
-    // 2. Procedimento
-    showProgresso(2,total,'Descrevendo os procedimentos e abordagens...');
-    dados.txtProcedimento=await chamarIA(prompts.procedimento,1000);
+/* ═══════════ Status das integrações ═══════════ */
+async function carregarStatus() {
+  try {
+    estado.status = await api('/api/status');
+  } catch {
+    estado.status = null;
+  }
+  renderStatus();
+  if (estado.status && estado.status.senhaObrigatoria && !armazenamento.ler('senhaAcesso')) abrirModalSenha();
+}
 
-    // 3. Análise
-    showProgresso(3,total,'Elaborando a análise clínica interpretativa...');
-    dados.txtAnalise=await chamarIA(prompts.analise,2500);
+function renderStatus() {
+  const s = estado.status;
+  const el = $('#statusLista');
+  if (!s) { el.innerHTML = ''; return; }
+  const chip = (ok, rotulo, titulo) => `<span class="status-chip${ok ? '' : ' off'}" title="${esc(titulo)}"><i></i><span class="rot">${esc(rotulo)}</span></span>`;
+  const nomeIA = { groq: 'Groq', anthropic: 'Claude' }[s.ia];
+  el.innerHTML =
+    chip(!!s.buscaDocumento, s.buscaDocumento ? 'CPF/CNPJ' : 'CPF/CNPJ: configurar', s.buscaDocumento ? `Busca por documento via ${s.buscaDocumento}` : 'Configure ESCAVADOR_API_KEY para buscar por CPF/CNPJ') +
+    chip(true, 'Base CNJ', 'Consulta por número via API pública do DataJud (CNJ)') +
+    chip(!!s.ia, s.ia ? `IA: ${nomeIA}` : 'IA: configurar', s.ia ? `Explicações geradas com ${nomeIA}` : 'Configure GROQ_API_KEY ou ANTHROPIC_API_KEY');
+}
 
-    // 4. Conclusão
-    showProgresso(4,total,'Redigindo a conclusão e recomendações...');
-    dados.txtConclusao=await chamarIA(prompts.conclusao,1500);
+/* ═══════════ Senha de acesso ═══════════ */
+function abrirModalSenha() {
+  $('#modalSenha').hidden = false;
+  setTimeout(() => $('#inputSenha').focus(), 30);
+}
 
-    // Atualiza campos de texto no formulário (para edição futura)
-    sv('f_txtDemanda',dados.txtDemanda);
-    sv('f_txtProcedimento',dados.txtProcedimento);
-    sv('f_txtAnalise',dados.txtAnalise);
-    sv('f_txtConclusao',dados.txtConclusao);
+$('#formSenha').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const v = $('#inputSenha').value.trim();
+  if (!v) return;
+  armazenamento.gravar('senhaAcesso', v);
+  $('#inputSenha').value = '';
+  $('#modalSenha').hidden = true;
+  if (estado.ultimaAcao) estado.ultimaAcao();
+});
 
-    // Salva no banco
-    if(atual){const i=db.findIndex(x=>x.id===atual);if(i>=0)db[i]=dados;}
-    else db.unshift(dados);
-    salvarDB();
-    renderLista();
-    atual=dados.id;
+/* ═══════════ Navegação ═══════════ */
+function mostrarTela(id) {
+  for (const t of ['telaBusca', 'telaResultados', 'telaProcesso']) $('#' + t).hidden = t !== id;
+  window.scrollTo(0, 0);
+}
 
-    hideProgresso();
-    verRel(dados.id);
-    toast('✅ Relatório gerado e salvo!',true);
+function rota() {
+  const h = location.hash;
+  if (h === '#/resultados' && estado.consulta) mostrarTela('telaResultados');
+  else if (h === '#/processo' && estado.processo) mostrarTela('telaProcesso');
+  else {
+    mostrarTela('telaBusca');
+    setTimeout(() => $('#entrada').focus(), 30);
+  }
+}
+window.addEventListener('hashchange', rota);
 
-  } catch(e){
-    hideProgresso();
-    toast('❌ Erro ao gerar: '+e.message);
+document.addEventListener('click', (ev) => {
+  const b = ev.target.closest('[data-ir]');
+  if (b) location.hash = b.getAttribute('data-ir');
+});
+
+$('#btnVoltarProc').addEventListener('click', () => {
+  location.hash = estado.consulta ? '#/resultados' : '#/';
+});
+
+/* ═══════════ Busca ═══════════ */
+const entrada = $('#entrada');
+
+function atualizarChip() {
+  const a = analisarEntrada(entrada.value);
+  const chip = $('#tipoChip');
+  if (!a.tipo) { chip.hidden = true; return; }
+  chip.hidden = false;
+  chip.className = 'badge tipo-chip ' + (a.completo ? (a.valido ? 'ok' : 'danger') : 'prim');
+  chip.textContent = NOME_TIPO[a.tipo] + (a.completo ? (a.valido ? ' ✓' : ' inválido') : '');
+}
+
+entrada.addEventListener('input', () => {
+  const fim = entrada.selectionStart === entrada.value.length;
+  const novo = mascarar(entrada.value);
+  if (novo !== entrada.value) {
+    entrada.value = novo;
+    if (fim) entrada.setSelectionRange(novo.length, novo.length);
+  }
+  atualizarChip();
+});
+
+$('#formBusca').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  buscar();
+});
+
+$('#btnDemo').addEventListener('click', () => consultarDocumento(null, true));
+
+function msgBusca(html) { $('#buscaMsg').innerHTML = html; }
+
+function htmlErro(e, extras) {
+  let acoes = '';
+  if (e.codigo === 'SEM_PROVEDOR') {
+    acoes = `<div class="alerta-acoes">
+      <button class="btn btn-sec btn-sm" type="button" data-acao="demo">Ver demonstração</button>
+    </div>`;
+  }
+  return `<div class="alerta erro" role="alert"><span class="alerta-ico" aria-hidden="true">⚠️</span><div><p>${esc(e.message)}</p>${acoes}${extras || ''}</div></div>`;
+}
+
+document.addEventListener('click', (ev) => {
+  const b = ev.target.closest('[data-acao]');
+  if (!b) return;
+  const acao = b.getAttribute('data-acao');
+  if (acao === 'demo') consultarDocumento(null, true);
+  if (acao === 'tentar-movs') carregarMovimentacoes();
+  if (acao === 'explicar') explicar(false);
+  if (acao === 'reexplicar') explicar(true);
+  if (acao === 'copiar-explicacao') copiarExplicacao();
+  if (acao === 'copiar-numero') copiar(b.getAttribute('data-valor'), 'Número copiado!');
+  if (acao === 'abrir-numero') abrirPorNumero(b.getAttribute('data-valor'));
+  if (acao === 'imprimir') window.print();
+  if (acao === 'ir-ia') { $('#painelIA').scrollIntoView({ behavior: 'smooth', block: 'start' }); explicar(false); }
+  if (acao === 'aba') trocarAba(b.getAttribute('data-aba'));
+  if (acao === 'mais-movs') { estado.movsLimite = (estado.movsLimite || 60) + 100; renderMovimentacoes(); }
+  if (acao === 'ver-mais') { const d = b.previousElementSibling; d.classList.toggle('cortado'); b.textContent = d.classList.contains('cortado') ? 'ver mais' : 'ver menos'; }
+  if (acao === 'carregar-mais') carregarMais();
+});
+
+function buscar() {
+  const a = analisarEntrada(entrada.value);
+  if (!a.tipo) { msgBusca(htmlErro(new Error('Digite um CPF, CNPJ ou número de processo.'))); entrada.focus(); return; }
+  if (!a.completo) { msgBusca(htmlErro(new Error(`${NOME_TIPO[a.tipo]} incompleto. Confira os números digitados.`))); entrada.focus(); return; }
+  if (!a.valido) { msgBusca(htmlErro(new Error(`${NOME_TIPO[a.tipo]} inválido: o dígito verificador não confere. Confira o que foi digitado.`))); entrada.focus(); return; }
+  if (a.tipo === 'PROCESSO') { msgBusca(''); abrirPorNumero(mascarar(a.valor)); return; }
+  consultarDocumento(a.valor, false);
+}
+
+function travarBusca(travar, texto) {
+  const b = $('#btnBuscar');
+  b.disabled = travar;
+  if (travar) msgBusca(`<div class="carregando-linha"><span class="spin"></span>${esc(texto)}</div>`);
+}
+
+async function consultarDocumento(documento, demo) {
+  estado.ultimaAcao = () => consultarDocumento(documento, demo);
+  if (location.hash !== '#/' && location.hash !== '') location.hash = '#/';
+  travarBusca(true, demo ? 'Carregando demonstração…' : 'Consultando processos… isso pode levar alguns segundos.');
+  try {
+    const qs = new URLSearchParams(demo ? { demo: '1' } : { documento });
+    const r = await api('/api/consulta?' + qs);
+    r.consultaDocumento = documento;
+    estado.consulta = r;
+    msgBusca('');
+    for (const id of ['fTexto', 'fTribunal', 'fSituacao', 'fPolo']) $('#' + id).value = '';
+    prepararFiltros();
+    renderResultados();
+    location.hash = '#/resultados';
+  } catch (e) {
+    msgBusca(htmlErro(e));
+  } finally {
+    $('#btnBuscar').disabled = false;
   }
 }
 
-function confirmarDel(){document.getElementById('overlay').classList.add('show');}
-function fecharModal(){document.getElementById('overlay').classList.remove('show');}
-function deletarOk(){
-  db=db.filter(x=>x.id!==atual);salvarDB();renderLista();fecharModal();
-  atual=null;tela('tWelcome');toast('Relatório excluído.');
-}
-function editarAtual(){novoForm(atual);}
-
-// ═══ LISTA ═══
-function renderLista(filtro){
-  const arr=filtro?db.filter(p=>p.nome.toLowerCase().includes(filtro.toLowerCase())||(p.diagnostico||'').toLowerCase().includes(filtro.toLowerCase())):db;
-  document.getElementById('headerBadge').textContent=db.length+' paciente'+(db.length!==1?'s':'');
-  document.getElementById('sfooter').textContent=db.length+' relatório'+(db.length!==1?'s':'')+' salvos';
-  const lista=document.getElementById('listaPac');
-  if(!arr.length){lista.innerHTML='<div class="empty-list"><span class="empty-list-icon">🔍</span>'+(filtro?'Nenhum resultado encontrado.':'Nenhum paciente cadastrado.<br>Clique em <strong>+ Novo</strong>.')+'</div>';return;}
-  lista.innerHTML=arr.map(p=>`<div class="pac-item ${p.id===atual?'ativo':''}" onclick="verRel('${p.id}')">
-    <div class="pac-nome">${p.nome}</div>
-    <div class="pac-meta">${[p.idade,p.sexo,p.data].filter(Boolean).join(' · ')}</div>
-    <div class="pac-tags">
-      ${p.diagnostico?`<span class="tag tag-diag">${p.diagnostico.substring(0,22)}${p.diagnostico.length>22?'…':''}</span>`:''}
-      ${p.inss?'<span class="tag tag-inss">INSS</span>':''}
-      ${(p.fins||[]).some(f=>f.includes('escolar'))?'<span class="tag tag-esc">Escola</span>':''}
-    </div>
-  </div>`).join('');
+async function carregarMais() {
+  const c = estado.consulta;
+  if (!c || !c.proximaPagina || estado.carregandoMais) return;
+  estado.carregandoMais = true;
+  renderMais();
+  estado.ultimaAcao = carregarMais;
+  try {
+    const qs = new URLSearchParams({ documento: c.consultaDocumento, pagina: c.proximaPagina });
+    const r = await api('/api/consulta?' + qs);
+    const vistos = new Set(c.processos.map((p) => p.numero));
+    c.processos.push(...r.processos.filter((p) => !vistos.has(p.numero)));
+    c.proximaPagina = r.proximaPagina;
+    prepararFiltros();
+    renderResultados();
+  } catch (e) {
+    toast(e.message);
+  } finally {
+    estado.carregandoMais = false;
+    renderMais();
+  }
 }
 
-function filtrar(){renderLista(v('busca')||undefined);}
-
-// ═══ VISUALIZAÇÃO ═══
-function verRel(id){
-  const p=db.find(x=>x.id===id);if(!p)return;
-  atual=id;renderLista();
-  document.getElementById('vTitulo').textContent=p.nome;
-  document.getElementById('relCard').innerHTML=buildRel(p);
-  tela('tView');document.querySelector('.main').scrollTop=0;
+/* ═══════════ Resultados ═══════════ */
+function badgeSituacao(p) {
+  const cls = { ativo: 'ok', arquivado: '', suspenso: 'warn' }[p.statusCategoria] ?? '';
+  const txt = p.situacao || 'Situação não informada';
+  return `<span class="badge ${cls}">${esc(txt)}</span>`;
 }
 
-function buildRel(p){
-  const dnasc=p.dnasc?new Date(p.dnasc+'T12:00:00').toLocaleDateString('pt-BR'):'—';
-  const fins=(p.fins||[]).join(' · ')||'—';
-  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+function rotuloPapel(pc) {
+  if (!pc) return '';
+  const polo = { ATIVO: 'polo ativo', PASSIVO: 'polo passivo' }[pc.polo];
+  return [pc.tipo, polo].filter(Boolean).join(' · ') || 'Participação não especificada';
+}
 
-  // Checklist — tela (lista vertical)
-  // helper: cor/label do estado
-  const estadoTag=(est)=>{
-    const map={'Preservado':'est-p','Parcialmente preservado':'est-pp','Comprometido':'est-c','Não avaliado':'est-na'};
-    return `<span class="cl-est-badge ${map[est]||'est-na'}">${est}</span>`;
-  };
+function tituloPartes(p) {
+  if (p.segredoJustica && !p.poloAtivo && !p.poloPassivo) return '<span class="badge warn">Partes sob segredo de justiça</span>';
+  if (!p.poloAtivo && !p.poloPassivo) return '<span style="color:var(--ink-3)">Partes não informadas pela fonte</span>';
+  return `<b>${esc(p.poloAtivo || '—')}</b><span class="x">×</span><b>${esc(p.poloPassivo || '—')}</b>`;
+}
 
-  const clHtmlTela=(p.cl||[]).map(dom=>`
-    <div class="cl-result-dom">
-      <div class="cl-result-dom-name">${dom.dominio}</div>
-      ${dom.itens.map(i=>`<div class="cl-result-item-full"><span class="cl-ri-label">${i.label}</span> ${estadoTag(i.estado)}${i.obs?`<span class="cl-ri-obs"> — ${i.obs}</span>`:''}</div>`).join('')}
-    </div>`).join('');
+function prepararFiltros() {
+  const sel = $('#fTribunal');
+  const atual = sel.value;
+  const tribs = [...new Set(estado.consulta.processos.map((p) => p.tribunal).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Todos os tribunais</option>' + tribs.map((t) => `<option${t === atual ? ' selected' : ''}>${esc(t)}</option>`).join('');
+}
 
-  // Checklist — impressão (compacto)
-  const clHtmlPrint=(p.cl||[]).map(dom=>`
-    <div class="cl-result-dom" style="break-inside:avoid">
-      <div class="cl-result-dom-name">${dom.dominio}</div>
-      ${dom.itens.map(i=>`<div class="cl-result-item-full"><span class="cl-ri-label">${i.label}:</span> <span class="cl-ri-estado">${i.estado}</span>${i.obs?`<span class="cl-ri-obs"> — ${i.obs}</span>`:''}</div>`).join('')}
-    </div>`).join('');
+for (const id of ['fTexto', 'fTribunal', 'fSituacao', 'fPolo']) {
+  $('#' + id).addEventListener('input', renderLista);
+}
 
-  // Extrai nome e CRP separados do campo profissional
-  const profParts=(p.prof||'').split('·');
-  const profNome=profParts[0]?.trim()||'Profissional responsável';
-  const profCrp=profParts[1]?.trim()||'';
+function processosFiltrados() {
+  const txt = $('#fTexto').value.trim().toLowerCase();
+  const trib = $('#fTribunal').value;
+  const sit = $('#fSituacao').value;
+  const polo = $('#fPolo').value;
+  return estado.consulta.processos.filter((p) => {
+    if (trib && p.tribunal !== trib) return false;
+    if (sit && p.statusCategoria !== sit) return false;
+    if (polo) {
+      const pp = (p.papelConsultado && p.papelConsultado.polo) || 'OUTROS';
+      if (polo === 'OUTROS' ? (pp === 'ATIVO' || pp === 'PASSIVO') : pp !== polo) return false;
+    }
+    if (txt) {
+      const alvo = [p.numero, p.classe, p.poloAtivo, p.poloPassivo, p.tribunal, p.orgaoJulgador, ...(p.assuntos || [])].join(' ').toLowerCase();
+      if (!alvo.includes(txt)) return false;
+    }
+    return true;
+  });
+}
 
-  return `
-  <div class="rel-header">
-    <div class="rel-header-logo">C</div>
-    <div class="rel-header-text">
-      <div class="rel-clinic-name">Cinecleide — Psicóloga</div>
-      <div class="rel-clinic-sub">Reabilitação Infantil · Transtornos do Neurodesenvolvimento · Patu/RN</div>
-      <div class="rel-doc-type">Relatório Interprofissional Psicológico</div>
+function renderResultados() {
+  const c = estado.consulta;
+  const ps = c.processos;
+  $('#resDemo').innerHTML = c.demo ? '<div class="faixa-demo">🧪 Modo demonstração — todos os nomes, números e dados são fictícios.</div>' : '';
+  const nome = c.envolvido && c.envolvido.nome;
+  const total = c.envolvido && c.envolvido.quantidadeProcessos;
+  $('#resCab').innerHTML = `
+    <div class="res-cab-info">
+      <small>${esc(c.tipoDocumento || 'Documento')} consultado</small>
+      <h1>${esc(nome || c.documento)}</h1>
+      <div class="doc"><span class="mono">${esc(c.documento)}</span>${c.envolvido && c.envolvido.tipoPessoa ? ` · ${c.envolvido.tipoPessoa === 'JURIDICA' ? 'Pessoa jurídica' : 'Pessoa física'}` : ''}</div>
     </div>
-  </div>
+    <div><span class="badge prim">Fonte: ${esc(c.fonte)}</span></div>`;
 
-  <div class="rel-body">
+  const conta = (f) => ps.filter(f).length;
+  const stat = (n, r) => `<div class="card stat"><strong>${n}</strong><span>${esc(r)}</span></div>`;
+  $('#resStats').innerHTML = ps.length ? [
+    stat(total && total > ps.length ? `${ps.length}<small style="font-size:13px;color:var(--ink-3);font-weight:500"> de ${total}</small>` : ps.length, 'processos'),
+    stat(conta((p) => p.statusCategoria === 'ativo'), 'em andamento'),
+    stat(conta((p) => p.statusCategoria === 'arquivado'), 'arquivados'),
+    stat(conta((p) => p.papelConsultado && p.papelConsultado.polo === 'ATIVO'), 'como autor'),
+    stat(conta((p) => p.papelConsultado && p.papelConsultado.polo === 'PASSIVO'), 'como réu')
+  ].join('') : '';
+  $('#resFiltros').hidden = ps.length < 2;
+  renderLista();
+  renderMais();
+}
 
-    <!-- IDENTIFICAÇÃO -->
-    <div class="rel-sec">
-      <div class="rel-sec-title">Identificação do Paciente</div>
-      ${p.inss?`<div class="inss-alert">⚠️ Documento com finalidade previdenciária — INSS · ${p.inss.b} · CID: ${p.inss.cid}</div>`:''}
-      <div class="rel-grid rel-grid-3" style="margin-bottom:10px">
-        <div>
-          <div class="rel-field-label">Nome completo</div>
-          <div class="rel-field-val" style="font-weight:600">${p.nome||'—'}</div>
-        </div>
-        <div>
-          <div class="rel-field-label">Data de nascimento</div>
-          <div class="rel-field-val">${dnasc}</div>
-        </div>
-        <div>
-          <div class="rel-field-label">Idade</div>
-          <div class="rel-field-val">${p.idade||'—'}</div>
-        </div>
-        <div>
-          <div class="rel-field-label">Sexo</div>
-          <div class="rel-field-val">${p.sexo||'—'}</div>
-        </div>
-        <div>
-          <div class="rel-field-label">Solicitante</div>
-          <div class="rel-field-val">${p.solicitante||'—'}</div>
-        </div>
-        <div>
-          <div class="rel-field-label">Diagnóstico (CID/DSM)</div>
-          <div class="rel-field-val">${p.diagnostico||'—'}</div>
-        </div>
+function renderLista() {
+  const c = estado.consulta;
+  if (!c) return;
+  const el = $('#resLista');
+  if (!c.processos.length) {
+    el.innerHTML = `<div class="card vazio"><p style="font-size:17px;font-weight:600;margin:0 0 4px">Nenhum processo encontrado</p>
+      <p style="margin:0">Não localizamos processos para este ${esc(c.tipoDocumento || 'documento')} na base consultada. Isso não garante que não existam processos — alguns tribunais e processos em segredo de justiça não aparecem em bases abertas.</p></div>`;
+    return;
+  }
+  const lista = processosFiltrados();
+  if (!lista.length) {
+    el.innerHTML = '<div class="card vazio">Nenhum processo corresponde aos filtros.</div>';
+    return;
+  }
+  el.innerHTML = lista.map((p) => `
+    <article class="card proc-card" tabindex="0" role="button" data-numero="${esc(p.numero)}" aria-label="Abrir processo ${esc(p.numero)}">
+      <div class="pc-topo"><span class="num">${esc(p.numero)}</span>${badgeSituacao(p)}</div>
+      <h3 class="pc-classe">${esc(p.classe || 'Classe não informada')}</h3>
+      ${p.assuntos && p.assuntos.length ? `<p class="pc-assunto">${esc(p.assuntos.slice(0, 3).join(' · '))}</p>` : ''}
+      <p class="pc-partes">${tituloPartes(p)}</p>
+      <div class="pc-meta">
+        <span>${esc([p.tribunal, p.grau].filter(Boolean).join(' · '))}</span>
+        <span>Início ${fmtData(p.dataInicio)}</span>
+        <span>Última movimentação ${fmtData(p.dataUltimaMovimentacao)}${p.dataUltimaMovimentacao ? ` (${haQuanto(p.dataUltimaMovimentacao)})` : ''}</span>
+        ${p.papelConsultado ? `<span class="papel papel-${esc(String(p.papelConsultado.polo || 'outros').toLowerCase())}">${esc(rotuloPapel(p.papelConsultado))}</span>` : ''}
       </div>
-      <div style="margin-top:8px">
-        <div class="rel-field-label">Finalidade do relatório</div>
-        <div class="rel-field-val">${fins}</div>
+    </article>`).join('');
+}
+
+function renderMais() {
+  const c = estado.consulta;
+  const el = $('#resMais');
+  if (!c || !c.proximaPagina) { el.innerHTML = ''; return; }
+  el.innerHTML = estado.carregandoMais
+    ? '<div class="carregando-linha" style="justify-content:center"><span class="spin"></span>Carregando mais processos…</div>'
+    : '<button class="btn btn-sec" type="button" data-acao="carregar-mais">Carregar mais processos</button>';
+}
+
+$('#resLista').addEventListener('click', (ev) => {
+  const card = ev.target.closest('.proc-card');
+  if (card) abrirDaLista(card.getAttribute('data-numero'));
+});
+$('#resLista').addEventListener('keydown', (ev) => {
+  if (ev.key !== 'Enter' && ev.key !== ' ') return;
+  const card = ev.target.closest('.proc-card');
+  if (card) { ev.preventDefault(); abrirDaLista(card.getAttribute('data-numero')); }
+});
+
+/* ═══════════ Processo ═══════════ */
+function prepararNovoProcesso(p) {
+  estado.processo = p;
+  estado.avisoProcesso = null;
+  estado.aba = 'movs';
+  estado.movsLimite = 60;
+  estado.movsFiltro = '';
+  const cache = estado.explicacoes.get(p.numero);
+  estado.ia = { status: cache ? 'ok' : 'inicial', numero: p.numero, erro: null };
+}
+
+function abrirDaLista(numero) {
+  const p = estado.consulta && estado.consulta.processos.find((x) => x.numero === numero);
+  if (!p) return;
+  prepararNovoProcesso(p);
+  estado.movs = { status: Array.isArray(p.movimentacoes) ? 'ok' : 'carregando', erro: null };
+  renderProcesso();
+  location.hash = '#/processo';
+  if (!Array.isArray(p.movimentacoes)) carregarMovimentacoes();
+}
+
+async function carregarMovimentacoes() {
+  const p = estado.processo;
+  if (!p) return;
+  const numero = p.numero;
+  estado.movs = { status: 'carregando', erro: null };
+  estado.ultimaAcao = carregarMovimentacoes;
+  renderProcesso();
+  try {
+    const qs = new URLSearchParams({ numero, capa: '0' });
+    if (p.demo) qs.set('demo', '1');
+    const r = await api('/api/processo?' + qs);
+    p.movimentacoes = (r.processo && r.processo.movimentacoes) || [];
+    p.fonteMovimentacoes = r.fonte;
+    if (estado.processo !== p) return;
+    estado.avisoProcesso = r.aviso;
+    estado.movs = { status: 'ok', erro: null };
+  } catch (e) {
+    if (estado.processo !== p) return;
+    estado.movs = { status: 'erro', erro: e };
+  }
+  renderProcesso();
+}
+
+async function abrirPorNumero(numero) {
+  prepararNovoProcesso({ numero, carregando: true });
+  estado.movs = { status: 'carregando', erro: null };
+  estado.ultimaAcao = () => abrirPorNumero(numero);
+  renderProcesso();
+  location.hash = '#/processo';
+  window.scrollTo(0, 0);
+  try {
+    const r = await api('/api/processo?' + new URLSearchParams({ numero }));
+    if (estado.processo.numero !== numero) return;
+    prepararNovoProcesso(r.processo);
+    estado.avisoProcesso = r.aviso;
+    estado.movs = { status: 'ok', erro: null };
+  } catch (e) {
+    if (estado.processo.numero !== numero) return;
+    estado.processo = { numero, erro: e };
+  }
+  renderProcesso();
+}
+
+function trocarAba(aba) {
+  estado.aba = aba;
+  for (const b of document.querySelectorAll('.aba')) b.setAttribute('aria-selected', String(b.getAttribute('data-aba') === aba));
+  for (const id of ['dados', 'partes', 'movs']) $('#aba-' + id).hidden = id !== aba;
+}
+
+function renderProcesso() {
+  const p = estado.processo;
+  const el = $('#procConteudo');
+  if (!p) { el.innerHTML = ''; return; }
+
+  if (p.carregando) {
+    el.innerHTML = `<div class="card proc-cab">
+      <div class="proc-num-linha"><span class="num">${esc(p.numero)}</span></div>
+      <div class="carregando-linha" style="margin-top:14px"><span class="spin"></span>Buscando o processo nos tribunais… a base pública do CNJ pode levar até 30 segundos.</div>
+      <div class="esqueleto" style="width:70%"></div><div class="esqueleto" style="width:45%"></div><div class="esqueleto" style="width:60%"></div>
+    </div>`;
+    return;
+  }
+  if (p.erro) {
+    el.innerHTML = `<div class="card proc-cab">
+      <div class="proc-num-linha"><span class="num">${esc(p.numero)}</span></div>
+      <div style="margin-top:14px">${htmlErro(p.erro, `<div class="alerta-acoes"><button class="btn btn-sec btn-sm" type="button" data-acao="abrir-numero" data-valor="${esc(p.numero)}">Tentar novamente</button></div>`)}</div>
+    </div>`;
+    return;
+  }
+
+  const pc = p.papelConsultado;
+  const qtdMovs = Array.isArray(p.movimentacoes) ? p.movimentacoes.length : (p.quantidadeMovimentacoes ?? '…');
+  const url = urlSegura(p.url);
+  el.innerHTML = `
+    ${p.demo ? '<div class="faixa-demo">🧪 Modo demonstração — processo fictício.</div>' : ''}
+    ${estado.avisoProcesso ? `<div class="alerta aviso" style="margin-bottom:12px"><span class="alerta-ico">ℹ️</span><p>${esc(estado.avisoProcesso)}</p></div>` : ''}
+    <div class="card proc-cab">
+      <div class="proc-num-linha">
+        <span class="num">${esc(p.numero)}</span>
+        <button class="copiar" type="button" data-acao="copiar-numero" data-valor="${esc(p.numero)}" title="Copiar número">Copiar</button>
+      </div>
+      <div class="proc-badges">
+        ${p.tribunal ? `<span class="badge prim">${esc(p.tribunal)}</span>` : ''}
+        ${p.grau ? `<span class="badge">${esc(p.grau)}</span>` : ''}
+        ${badgeSituacao(p)}
+        ${p.segredoJustica ? '<span class="badge warn">🔒 Segredo de justiça</span>' : ''}
+      </div>
+      <h1>${esc(p.classe || 'Classe não informada')}</h1>
+      <p class="proc-partes-tit">${tituloPartes(p)}</p>
+      <div class="proc-meta">
+        <div><span>Início</span><b>${fmtData(p.dataInicio)}</b></div>
+        <div><span>Última movimentação</span><b>${fmtData(p.dataUltimaMovimentacao)}</b>${p.dataUltimaMovimentacao ? ` <small>(${haQuanto(p.dataUltimaMovimentacao)})</small>` : ''}</div>
+        ${p.valorCausa ? `<div><span>Valor da causa</span><b>${esc(p.valorCausa)}</b></div>` : ''}
+        ${p.orgaoJulgador ? `<div><span>Órgão julgador</span><b>${esc(p.orgaoJulgador)}</b></div>` : ''}
+      </div>
+      ${pc ? `<div class="papel-banner ${pc.polo === 'PASSIVO' ? 'passivo' : ''}"><b>${esc(pc.nome)}</b> participa como <b>${esc(rotuloPapel(pc))}</b>${pc.polo === 'ATIVO' ? ' — é quem entrou com a ação.' : pc.polo === 'PASSIVO' ? ' — é contra quem a ação foi proposta.' : '.'}</div>` : ''}
+      <div class="proc-acoes">
+        <button class="btn btn-ia" type="button" data-acao="ir-ia">✨ Explicar com IA</button>
+        ${url ? `<a class="btn btn-sec" href="${url}" target="_blank" rel="noopener noreferrer">Abrir no site do tribunal ↗</a>` : ''}
+        <button class="btn btn-sec" type="button" data-acao="imprimir">Imprimir</button>
       </div>
     </div>
-
-    <!-- DEMANDA -->
-    ${p.txtDemanda?`
-    <div class="rel-sec">
-      <div class="rel-sec-title">Descrição da Demanda</div>
-      <p class="rel-text">${p.txtDemanda}</p>
-    </div>`:''}
-
-    <!-- PROCEDIMENTO -->
-    <div class="rel-sec">
-      <div class="rel-sec-title">Procedimento</div>
-      <div class="rel-grid rel-grid-3" style="margin-bottom:${p.txtProcedimento?'12px':'0'}">
-        <div><div class="rel-field-label">Início do acompanhamento</div><div class="rel-field-val">${p.anoInicio||'—'}</div></div>
-        <div><div class="rel-field-label">Frequência</div><div class="rel-field-val">${p.frequencia||'—'}</div></div>
-        <div><div class="rel-field-label">Modalidade</div><div class="rel-field-val">${p.modalidade||'—'}</div></div>
-        <div><div class="rel-field-label">Duração das sessões</div><div class="rel-field-val">${p.duracao||'—'}</div></div>
-        <div><div class="rel-field-label">Áreas envolvidas</div><div class="rel-field-val">${p.areas||'—'}</div></div>
-        <div><div class="rel-field-label">Instrumentos</div><div class="rel-field-val">${p.instrumentos||'—'}</div></div>
+    <div class="proc-grid">
+      <aside class="proc-ia" id="painelIA" aria-label="Explicação por IA"></aside>
+      <div class="proc-principal">
+        <div class="abas" role="tablist">
+          <button class="aba" role="tab" type="button" data-acao="aba" data-aba="movs" aria-selected="${estado.aba === 'movs'}">Movimentações <span class="cont">${esc(qtdMovs)}</span></button>
+          <button class="aba" role="tab" type="button" data-acao="aba" data-aba="dados" aria-selected="${estado.aba === 'dados'}">Dados do processo</button>
+          <button class="aba" role="tab" type="button" data-acao="aba" data-aba="partes" aria-selected="${estado.aba === 'partes'}">Partes <span class="cont">${(p.partes || []).length}</span></button>
+        </div>
+        <div class="card aba-painel" id="aba-movs" role="tabpanel"${estado.aba === 'movs' ? '' : ' hidden'}></div>
+        <div class="card aba-painel" id="aba-dados" role="tabpanel"${estado.aba === 'dados' ? '' : ' hidden'}>${htmlDados(p)}</div>
+        <div class="card aba-painel" id="aba-partes" role="tabpanel"${estado.aba === 'partes' ? '' : ' hidden'}>${htmlPartes(p)}</div>
       </div>
-      ${p.txtProcedimento?`<p class="rel-text">${p.txtProcedimento}</p>`:''}
+    </div>`;
+  renderMovimentacoes();
+  renderPainelIA();
+}
+
+function htmlDados(p) {
+  const linha = (rot, val, largo) => (val ? `<div${largo ? ' class="largo"' : ''}><dt>${esc(rot)}</dt><dd>${val}</dd></div>` : '');
+  const fontes = (p.fontes || []).map((f) => {
+    const u = urlSegura(f.url);
+    const nome = esc(f.descricao || f.sigla || 'Fonte');
+    return u ? `<a href="${u}" target="_blank" rel="noopener noreferrer">${nome} ↗</a>` : nome;
+  }).join('<br>');
+  const relacionados = (p.processosRelacionados || []).map((n) =>
+    `<button class="btn-link mono" type="button" data-acao="abrir-numero" data-valor="${esc(n)}">${esc(n)}</button>`).join(' ');
+  return `<dl class="dados-grid">
+    ${linha('Número', `<span class="mono">${esc(p.numero)}</span>`)}
+    ${linha('Tribunal', esc([p.tribunal, p.tribunalNome].filter(Boolean).join(' — ')))}
+    ${linha('Ramo da Justiça', esc(p.segmento))}
+    ${linha('Grau / instância', esc(p.grau))}
+    ${linha('Classe', esc(p.classe))}
+    ${linha('Área', esc(p.area))}
+    ${linha('Assuntos', esc((p.assuntos || []).join(' · ')), true)}
+    ${linha('Órgão julgador', esc(p.orgaoJulgador))}
+    ${linha('Local', esc(p.local))}
+    ${linha('Situação', esc(p.situacao))}
+    ${linha('Valor da causa', esc(p.valorCausa))}
+    ${linha('Data de início', fmtData(p.dataInicio))}
+    ${linha('Última movimentação', fmtData(p.dataUltimaMovimentacao))}
+    ${linha('Sistema', esc([p.sistema, p.formato].filter(Boolean).join(' · ')))}
+    ${linha('Segredo de justiça', p.segredoJustica ? 'Sim' : 'Não')}
+    ${linha('Dados obtidos de', esc(p.origem))}
+    ${linha('Atualizado na fonte em', p.atualizadoEm ? fmtData(p.atualizadoEm, true) : '')}
+    ${linha('Fontes', fontes, true)}
+    ${linha('Processos relacionados', relacionados, true)}
+  </dl>
+  ${p.observacao ? `<div class="obs">ℹ️ ${esc(p.observacao)}</div>` : ''}`;
+}
+
+function htmlPartes(p) {
+  const partes = p.partes || [];
+  if (!partes.length) {
+    const motivo = p.segredoJustica
+      ? 'Este processo tramita em segredo de justiça: os nomes das partes não são públicos.'
+      : (p.observacao || 'A fonte consultada não informou as partes deste processo.');
+    return `<div class="vazio" style="padding:20px 8px">${esc(motivo)}</div>`;
+  }
+  const consultado = p.papelConsultado && p.papelConsultado.nome;
+  const grupo = (titulo, lista) => (lista.length ? `<div class="polo-grupo"><h3>${esc(titulo)}</h3>${lista.map((pt) => `
+    <div class="parte${consultado && pt.nome === consultado ? ' consultado' : ''}">
+      <div class="parte-nome">${esc(pt.nome)}${consultado && pt.nome === consultado ? ' <span class="badge prim">Consultado</span>' : ''}</div>
+      <div class="parte-tipo">${esc(pt.tipo || 'Parte')}${pt.tipoPessoa ? ` · ${pt.tipoPessoa === 'JURIDICA' ? 'Pessoa jurídica' : 'Pessoa física'}` : ''}</div>
+      ${pt.advogados && pt.advogados.length ? `<div class="parte-adv">Advogado(s): ${pt.advogados.map((a) => `${esc(a.nome)}${a.oab ? ` <span class="mono">(OAB ${esc(a.oab)})</span>` : ''}`).join('; ')}</div>` : ''}
+    </div>`).join('')}</div>` : '');
+  return grupo('Polo ativo — quem entrou com a ação', partes.filter((x) => x.polo === 'ATIVO'))
+    + grupo('Polo passivo — contra quem é a ação', partes.filter((x) => x.polo === 'PASSIVO'))
+    + grupo('Outros participantes', partes.filter((x) => x.polo !== 'ATIVO' && x.polo !== 'PASSIVO'));
+}
+
+function renderMovimentacoes() {
+  const el = $('#aba-movs');
+  if (!el) return;
+  const p = estado.processo;
+  if (estado.movs.status === 'carregando') {
+    el.innerHTML = `<div class="carregando-linha"><span class="spin"></span>Carregando movimentações…</div>
+      <div class="esqueleto" style="width:80%"></div><div class="esqueleto" style="width:55%"></div><div class="esqueleto" style="width:70%"></div>`;
+    return;
+  }
+  if (estado.movs.status === 'erro') {
+    el.innerHTML = htmlErro(estado.movs.erro, '<div class="alerta-acoes"><button class="btn btn-sec btn-sm" type="button" data-acao="tentar-movs">Tentar novamente</button></div>');
+    return;
+  }
+  const todas = p.movimentacoes || [];
+  if (!todas.length) {
+    el.innerHTML = '<div class="vazio" style="padding:20px 8px">Nenhuma movimentação disponível para este processo.</div>';
+    return;
+  }
+  const filtro = (estado.movsFiltro || '').toLowerCase();
+  const filtradas = filtro ? todas.filter((m) => `${m.titulo} ${m.descricao} ${m.fonte}`.toLowerCase().includes(filtro)) : todas;
+  const limite = estado.movsLimite || 60;
+  const visiveis = filtradas.slice(0, limite);
+  el.innerHTML = `
+    <div class="mov-topo">
+      <input class="mov-filtro" type="search" id="movFiltro" placeholder="Buscar nas movimentações…" value="${esc(estado.movsFiltro || '')}" aria-label="Buscar nas movimentações">
+      <small>${filtradas.length} de ${todas.length}${p.fonteMovimentacoes ? ` · fonte: ${esc(p.fonteMovimentacoes)}` : ''}</small>
     </div>
+    <ol class="timeline">${visiveis.map((m) => {
+      const desc = m.descricao || '';
+      const longo = desc.length > 320;
+      return `<li class="mov">
+        <div class="mov-data">${fmtData(m.data, true)}</div>
+        <div class="mov-tit">${esc(m.titulo)}</div>
+        ${desc ? `<div class="mov-desc${longo ? ' cortado' : ''}">${esc(desc)}</div>${longo ? '<button class="btn-link mov-vermais" type="button" data-acao="ver-mais">ver mais</button>' : ''}` : ''}
+        ${m.fonte || m.orgao ? `<div class="mov-fonte">${esc([m.fonte, m.orgao].filter(Boolean).join(' · '))}</div>` : ''}
+      </li>`;
+    }).join('')}</ol>
+    ${filtradas.length > limite ? `<div class="mais"><button class="btn btn-sec btn-sm" type="button" data-acao="mais-movs">Mostrar mais (${filtradas.length - limite} restantes)</button></div>` : ''}`;
+  const inp = $('#movFiltro');
+  inp.addEventListener('input', () => {
+    estado.movsFiltro = inp.value;
+    const pos = inp.selectionStart;
+    renderMovimentacoes();
+    const novo = $('#movFiltro');
+    novo.focus();
+    novo.setSelectionRange(pos, pos);
+  });
+}
 
-    <!-- ANÁLISE -->
-    <div class="rel-sec analise-sec">
-      <div class="rel-sec-title">Análise Clínica</div>
+/* ═══════════ Painel da IA ═══════════ */
+const ICONE_IA = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6L18.5 9.5l-4.7 1.9L12 16l-1.8-4.6L5.5 9.5l4.7-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>';
+const FRASES_CARREGANDO = ['Lendo as movimentações…', 'Identificando a fase do processo…', 'Traduzindo os termos jurídicos…', 'Pensando nos próximos passos…'];
 
-      <!-- DADOS GESTACIONAIS E DESENVOLVIMENTO -->
-      ${(p.gestacao||p.desenvolvimento)?`
-      <div class="rel-subsec">
-        <div class="rel-subsec-title">Informações Maternas e Desenvolvimento</div>
-        ${p.gestacao?`
-        <div class="rel-field-block">
-          <div class="rel-field-label">Histórico gestacional e perinatal</div>
-          <div class="rel-field-text">${p.gestacao}</div>
-        </div>`:''}
-        ${p.desenvolvimento?`
-        <div class="rel-field-block">
-          <div class="rel-field-label">Desenvolvimento neuropsicomotor</div>
-          <div class="rel-field-text">${p.desenvolvimento}</div>
-        </div>`:''}
-      </div>`:''}
+function renderPainelIA() {
+  const el = $('#painelIA');
+  if (!el) return;
+  clearInterval(renderPainelIA.timer);
+  const p = estado.processo;
+  const ia = estado.ia;
+  const iaConfigurada = !estado.status || !!estado.status.ia;
+  const movsProntas = estado.movs.status !== 'carregando';
+  let corpo;
 
-      <!-- COMPORTAMENTO RELATADO PELA FAMÍLIA -->
-      ${p.comportamento?`
-      <div class="rel-subsec">
-        <div class="rel-subsec-title">Comportamento e Funcionamento Atual</div>
-        <div class="rel-field-block">
-          <div class="rel-field-label">Relatado pela família</div>
-          <div class="rel-field-text">${p.comportamento}</div>
-        </div>
-      </div>`:''}
+  if (ia.status === 'carregando' && ia.numero === p.numero) {
+    corpo = `<div class="ia-carregando"><div class="pulso">${ICONE_IA}</div><p id="iaFrase">${FRASES_CARREGANDO[0]}</p>
+      <div class="esqueleto" style="width:90%;margin-left:auto;margin-right:auto"></div><div class="esqueleto" style="width:70%;margin-left:auto;margin-right:auto"></div></div>`;
+    let i = 0;
+    renderPainelIA.timer = setInterval(() => {
+      const f = $('#iaFrase');
+      if (!f) return clearInterval(renderPainelIA.timer);
+      i = (i + 1) % FRASES_CARREGANDO.length;
+      f.textContent = FRASES_CARREGANDO[i];
+    }, 2200);
+  } else if (ia.status === 'ok' && estado.explicacoes.has(p.numero)) {
+    corpo = htmlExplicacao(estado.explicacoes.get(p.numero));
+  } else {
+    const erro = ia.status === 'erro' && ia.numero === p.numero ? htmlErro(ia.erro) + '<div style="height:12px"></div>' : '';
+    corpo = `<div class="ia-cta">${erro}
+      <p>A IA lê os dados e as movimentações deste processo e explica, sem juridiquês:</p>
+      <ul><li>em que fase o processo está e o que isso significa;</li><li>o que aconteceu recentemente;</li><li>o que pode acontecer nos próximos passos e os prazos típicos.</li></ul>
+      <button class="btn btn-ia" type="button" data-acao="explicar" ${!iaConfigurada || !movsProntas ? 'disabled' : ''}>
+        ${movsProntas ? '✨ Explicar com IA' : '<span class="spin"></span> Aguardando movimentações…'}
+      </button>
+      ${iaConfigurada ? '' : '<p style="margin:12px 0 0;font-size:13px">Para ativar, cadastre <b>GROQ_API_KEY</b> (ou <b>ANTHROPIC_API_KEY</b>) nas variáveis de ambiente do Vercel.</p>'}
+    </div>`;
+  }
 
-      <!-- CHECKLIST CLÍNICO -->
-      ${(p.cl||[]).length?`
-        <div class="rel-subsec">
-          <div class="rel-subsec-title">Checklist Clínico Observado — Faixa etária: ${p.faixa==='a'?'1 a 9 anos':'10 a 15 anos'}</div>
-          <!-- versão tela -->
-          <div class="print-hide" style="background:var(--success-bg);border:1.5px solid #A9DFBF;border-radius:10px;padding:12px 14px;">
-            ${clHtmlTela}
-          </div>
-          <!-- versão impressão -->
-          <div class="cl-print-box print-only">
-            <div class="cl-print-box-title">Itens observados</div>
-            ${clHtmlPrint}
-          </div>
-        </div>
-      `:''}
-
-      <!-- ACOMPANHAMENTO PSICOLÓGICO (texto gerado pela IA ou livre) -->
-      ${p.txtAnalise?`
-      <div class="rel-subsec">
-        <div class="rel-subsec-title">Síntese do Acompanhamento Interprofissional</div>
-        <div class="rel-text-block">${p.txtAnalise.replace(/\n\n/g,'</p><p class="rel-text" style="margin-top:0.8em">').replace(/\n/g,'<br>')}</div>
-      </div>
-      `:''}
-
-      <!-- OBSERVAÇÕES LIVRES PSICOLÓGICO -->
-      ${p.psicologico?`
-      <div class="rel-subsec">
-        <div class="rel-subsec-title">Observações — Acompanhamento Psicológico</div>
-        <div class="rel-field-block">
-          <div class="rel-field-text">${p.psicologico}</div>
-        </div>
-      </div>`:''}
-
-      <!-- OBSERVAÇÕES PSICOPEDAGÓGICO -->
-      ${p.psicopedagogico?`
-      <div class="rel-subsec">
-        <div class="rel-subsec-title">Observações — Acompanhamento Psicopedagógico</div>
-        <div class="rel-field-block">
-          <div class="rel-field-text">${p.psicopedagogico}</div>
-        </div>
-      </div>`:''}
-
-      ${!p.gestacao&&!p.desenvolvimento&&!p.comportamento&&!(p.cl||[]).length&&!p.txtAnalise&&!p.psicologico&&!p.psicopedagogico?'<p class="sem-texto">Nenhuma informação de análise preenchida.</p>':''}
-    </div>
-
-    <!-- CONCLUSÃO -->
-    ${p.txtConclusao?`
-    <div class="rel-sec">
-      <div class="rel-sec-title">Conclusão e Recomendações</div>
-      <p class="rel-text">${p.txtConclusao}</p>
-    </div>`:''}
-
-  </div>
-
-  <!-- RODAPÉ -->
-  <div class="rel-footer">
-    <div class="rel-footer-left">
-      Emitido em ${hoje}<br>
-      Patu/RN — Documento clínico confidencial
-    </div>
-    <div class="rel-assinatura">
-      <div class="rel-assinatura-linha"></div>
-      <div class="rel-assinatura-nome">${profNome}</div>
-      ${profCrp?`<div class="rel-assinatura-crp">${profCrp}</div>`:''}
-    </div>
+  el.innerHTML = `<div class="ia-painel">
+    <div class="ia-topo"><div class="ia-topo-l"><span class="ia-ico">${ICONE_IA}</span><div><h2>Entenda este processo</h2><p>Tradução da situação e próximos passos</p></div></div></div>
+    <div class="ia-corpo">${corpo}</div>
   </div>`;
 }
 
-// ═══ IA ═══
-async function gerarIA(tipo){
-  const btn=document.getElementById('bIA_'+tipo);
-  if(!btn)return;
-  btn.disabled=true;
-  const orig=btn.innerHTML;
-  btn.innerHTML='<span class="spin"></span> Gerando...';
-  const dados=coletarDados(atual||'_tmp');
-  const prompts=montarPrompts(dados);
-  const mp={demanda:'f_txtDemanda',procedimento:'f_txtProcedimento',analise:'f_txtAnalise',conclusao:'f_txtConclusao'};
-  const tokens={demanda:1200,procedimento:1000,analise:2500,conclusao:1500};
-  try{
-    const text=await chamarIA(prompts[tipo],tokens[tipo]);
-    sv(mp[tipo],text);
-    toast('✅ Texto regenerado!',true);
-  }catch(e){toast('❌ Erro: '+e.message);}
-  btn.disabled=false;btn.innerHTML=orig;
+const ROTULO_PROB = { alta: 'Probabilidade alta', media: 'Probabilidade média', baixa: 'Probabilidade baixa' };
+const CLASSE_PROB = { alta: 'ia', media: 'prim', baixa: '' };
+
+function htmlExplicacao(r) {
+  const e = r.explicacao || {};
+  const bloco = (titulo, html) => (html ? `<div class="ia-bloco"><h3>${esc(titulo)}</h3>${html}</div>` : '');
+  const par = (t) => (t ? `<p>${escBr(t)}</p>` : '');
+  return `
+    ${e.fase ? `<div class="ia-fase"><span>Fase atual</span><strong>${esc(e.fase)}</strong></div>` : ''}
+    ${bloco('Em resumo', par(e.resumo))}
+    ${bloco('Situação atual', par(e.situacaoAtual))}
+    ${bloco('O que significa a sua posição', par(e.papelDoConsultado))}
+    ${bloco('O que aconteceu recentemente', e.ultimosAcontecimentos && e.ultimosAcontecimentos.length ? `<ul class="ia-tl">${e.ultimosAcontecimentos.map((u) => `<li><time>${u.data ? fmtData(u.data) : '—'}</time><span>${esc(u.traducao)}</span></li>`).join('')}</ul>` : '')}
+    ${bloco('O que pode acontecer agora', e.proximosPassos && e.proximosPassos.length ? `<ol class="ia-passos">${e.proximosPassos.map((s) => `<li>
+      <div class="passo-tit"><strong>${esc(s.titulo)}</strong><span class="badge ${CLASSE_PROB[s.probabilidade] || ''}">${ROTULO_PROB[s.probabilidade] || ''}</span></div>
+      ${s.descricao ? `<p>${escBr(s.descricao)}</p>` : ''}
+      ${s.prazoEstimado ? `<small>⏱ ${esc(s.prazoEstimado)}</small>` : ''}
+    </li>`).join('')}</ol>` : '')}
+    ${bloco('Pontos de atenção', e.pontosDeAtencao && e.pontosDeAtencao.length ? `<ul class="ia-atencao">${e.pontosDeAtencao.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : '')}
+    ${e.glossario && e.glossario.length ? `<div class="ia-bloco"><details class="ia-glossario"><summary>Glossário — ${e.glossario.length} termo${e.glossario.length > 1 ? 's' : ''} explicado${e.glossario.length > 1 ? 's' : ''}</summary><dl>${e.glossario.map((g) => `<dt>${esc(g.termo)}</dt><dd>${esc(g.significado)}</dd>`).join('')}</dl></details></div>` : ''}
+    ${e.recomendacao ? `<div class="ia-reco"><span aria-hidden="true">💡</span><span>${escBr(e.recomendacao)}</span></div>` : ''}
+    <div class="ia-rodape">
+      Gerado por IA (${esc(r.modelo || r.provedor || 'modelo')}) em ${esc(new Date(r.geradoEm).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }))}, com base nos dados disponíveis. Pode conter imprecisões — não substitui a orientação de um advogado ou da Defensoria Pública.
+      <div class="ia-rodape-acoes">
+        <button class="btn btn-sec btn-sm" type="button" data-acao="copiar-explicacao">Copiar explicação</button>
+        <button class="btn btn-sec btn-sm" type="button" data-acao="reexplicar">Gerar novamente</button>
+      </div>
+    </div>`;
 }
 
-// ═══ DOWNLOAD PDF ═══
-async function baixarPDF(){
-  const p=db.find(x=>x.id===atual);
-  if(!p){toast('Nenhum paciente selecionado.');return;}
-  const btn=document.getElementById('btnPdf');
-  btn.disabled=true;
-  btn.innerHTML='<span class="spin"></span> Gerando PDF...';
-  try{
-    const res=await fetch('/api/relatoriopdf',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(p)
-    });
-    if(!res.ok){const e=await res.json();throw new Error(e.error||'Erro');}
-    const textos=await res.json();
-    abrirJanelaPDF(p, textos);
-    toast('✅ PDF pronto!',true);
-  }catch(e){toast('❌ Erro ao gerar PDF: '+e.message);}
-  btn.disabled=false;
-  btn.innerHTML='⬇️ Baixar PDF';
+function compactarProcesso(p) {
+  const campos = ['numero', 'tribunal', 'tribunalNome', 'segmento', 'grau', 'classe', 'assuntos', 'area', 'orgaoJulgador', 'local',
+    'situacao', 'valorCausa', 'dataInicio', 'dataUltimaMovimentacao', 'segredoJustica', 'poloAtivo', 'poloPassivo', 'partes', 'papelConsultado'];
+  const out = {};
+  for (const c of campos) if (p[c] !== undefined && p[c] !== null) out[c] = p[c];
+  out.movimentacoes = (p.movimentacoes || []).slice(0, 40).map((m) => ({ data: m.data, titulo: m.titulo, descricao: String(m.descricao || '').slice(0, 600), fonte: m.fonte }));
+  return out;
 }
 
-function abrirJanelaPDF(p, textos){
-  const dnasc=p.dnasc?new Date(p.dnasc+'T12:00:00').toLocaleDateString('pt-BR'):'—';
-  const fins=(p.fins||[]).join(' · ')||'—';
-  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  const profNome=(p.prof||'Dra. Cinecleide — Psicóloga').split('·')[0].trim();
-  const profCrp=((p.prof||'').split('·')[1]||'CRP 17/4961').trim();
-
-  const estadoCor=(e)=>{
-    if(e==='Preservado') return '#1A7A4A';
-    if(e==='Parcialmente preservado') return '#B07D30';
-    if(e==='Comprometido') return '#C0392B';
-    return '#5A5271';
-  };
-  const estadoLabel=(e)=>{
-    if(e==='Parcialmente preservado') return 'Parcial';
-    return e||'N/A';
-  };
-
-  const clHtml=(p.cl||[]).map(dom=>`
-    <div class="cl-dom">
-      <div class="cl-dom-nome">${dom.dominio.toUpperCase()}</div>
-      ${dom.itens.map(i=>`
-        <div class="cl-item-row">
-          <span class="cl-item-label">${i.label}</span>
-          <span class="cl-item-estado" style="color:${estadoCor(i.estado)}">${estadoLabel(i.estado)}</span>
-        </div>
-        ${i.obs?`<div class="cl-item-obs">${i.obs}</div>`:''}
-      `).join('')}
-    </div>`).join('');
-
-  const analiseParagrafos=(textos.txtAnalise||'').split(/\n\n+/).filter(Boolean).map(t=>`<p>${t}</p>`).join('');
-
-  const html=`<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Relatório — ${p.nome}</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<style>
-  @page { size: A4; margin: 0; }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  body{ font-family:'Source Serif 4',Georgia,serif; font-size:11pt; color:#1A1625; background:white; }
-
-  .header{
-    background:linear-gradient(135deg,#3D2B5A 0%,#6C4F8C 60%,#9B7DBF 100%);
-    padding:18mm 18mm 14mm; display:flex; align-items:flex-start; gap:14px;
-    position:relative; overflow:hidden;
+async function explicar(forcar) {
+  const p = estado.processo;
+  if (!p || !p.numero || p.carregando || p.erro) return;
+  if (estado.movs.status === 'carregando') return;
+  if (!forcar && estado.explicacoes.has(p.numero)) { estado.ia = { status: 'ok', numero: p.numero }; renderPainelIA(); return; }
+  if (estado.ia.status === 'carregando' && estado.ia.numero === p.numero) return;
+  estado.ia = { status: 'carregando', numero: p.numero, erro: null };
+  estado.ultimaAcao = () => explicar(forcar);
+  renderPainelIA();
+  try {
+    const r = await api('/api/explicar', { method: 'POST', body: JSON.stringify({ processo: compactarProcesso(p) }) });
+    estado.explicacoes.set(p.numero, r);
+    if (estado.processo === p) estado.ia = { status: 'ok', numero: p.numero, erro: null };
+  } catch (e) {
+    if (estado.processo === p) estado.ia = { status: 'erro', numero: p.numero, erro: e };
   }
-  .header::after{ content:''; position:absolute; right:-40px; top:-40px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.05); }
-  .header-logo{ width:48pt; height:48pt; border-radius:10pt; background:linear-gradient(145deg,#D4A0B0,rgba(255,255,255,0.3)); display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22pt; color:white; font-weight:600; flex-shrink:0; }
-  .header-nome{ font-family:'Playfair Display',serif; font-size:17pt; color:white; font-weight:600; }
-  .header-sub{ font-size:9pt; color:rgba(255,255,255,0.65); margin-top:3px; }
-  .header-badge{ display:inline-block; margin-top:10px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); border-radius:99px; padding:3px 14px; font-size:8pt; color:rgba(255,255,255,0.9); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; font-family:Arial,sans-serif; }
-
-  .body{ padding:0 18mm; }
-
-  .sec{ margin:0; padding:8mm 0 0; }
-  .sec-titulo{ display:flex; align-items:center; gap:8px; font-family:Arial,sans-serif; font-size:8pt; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#6C4F8C; margin-bottom:10pt; }
-  .sec-titulo::before{ content:''; width:3pt; height:12pt; border-radius:2pt; background:#6C4F8C; flex-shrink:0; }
-  .sec-titulo::after{ content:''; flex:1; height:0.5pt; background:#E4DCF5; }
-
-  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8pt 16pt; margin-bottom:10pt; }
-  .field-lbl{ font-family:Arial,sans-serif; font-size:7.5pt; font-weight:700; color:#5A5271; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2pt; }
-  .field-val{ font-size:11pt; color:#1A1625; }
-  .field-val.bold{ font-weight:600; }
-
-  .bloco{ margin-bottom:8pt; padding:8pt 10pt; background:#F8F6FC; border-left:3pt solid #9B7DBF; page-break-inside:avoid; }
-  .bloco-titulo{ font-family:Arial,sans-serif; font-size:8pt; font-weight:800; color:#3D2B5A; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6pt; }
-  .bloco p,.bloco-texto{ font-size:11pt; line-height:1.85; text-align:justify; margin-bottom:6pt; }
-
-  .cl-box{ background:#E8F8F1; border:0.5pt solid #A9DFBF; padding:10pt 12pt; margin-bottom:8pt; }
-  .cl-box-titulo{ font-family:Arial,sans-serif; font-size:8pt; font-weight:800; color:#1A7A4A; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8pt; }
-  .cl-dom{ margin-bottom:8pt; page-break-inside:avoid; }
-  .cl-dom-nome{ font-family:Arial,sans-serif; font-size:8pt; font-weight:800; color:#6C4F8C; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4pt; }
-  .cl-item-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:8pt; padding:1.5pt 0; }
-  .cl-item-label{ font-family:Arial,sans-serif; font-size:9pt; color:#1A1625; font-weight:500; }
-  .cl-item-estado{ font-family:Arial,sans-serif; font-size:8.5pt; font-weight:700; flex-shrink:0; }
-  .cl-item-obs{ font-family:'Source Serif 4',serif; font-size:8.5pt; color:#5A5271; font-style:italic; padding-left:8pt; margin-bottom:2pt; }
-
-  .analise-texto p{ font-size:11pt; line-height:1.9; text-align:justify; margin-bottom:8pt; text-indent:1.5em; }
-
-  .footer{ background:#F8F6FC; border-top:0.5pt solid #E4DCF5; padding:8mm 18mm; display:flex; justify-content:space-between; align-items:flex-end; margin-top:8mm; }
-  .footer-left{ font-family:Arial,sans-serif; font-size:8.5pt; color:#5A5271; line-height:1.6; }
-  .assinatura{ text-align:center; }
-  .ass-linha{ width:140pt; border-top:0.5pt solid #3D2B5A; margin:0 auto 4pt; }
-  .ass-nome{ font-style:italic; font-size:10pt; }
-  .ass-crp{ font-family:Arial,sans-serif; font-size:8pt; color:#5A5271; }
-
-  .divider{ border:none; border-top:0.5pt solid #E4DCF5; margin:6pt 0; }
-</style>
-</head>
-<body>
-
-<div class="header">
-  <div class="header-logo">C</div>
-  <div>
-    <div class="header-nome">Cinecleide — Psicóloga</div>
-    <div class="header-sub">Reabilitação Infantil · Transtornos do Neurodesenvolvimento · Patu/RN</div>
-    <div class="header-badge">Relatório Interprofissional Psicológico</div>
-  </div>
-</div>
-
-<div class="body">
-
-  <div class="sec">
-    <div class="sec-titulo">Identificação do Paciente</div>
-    ${p.inss?`<div style="background:#FEF7EC;border:0.5pt solid #EDCB8A;border-radius:4pt;padding:7pt 12pt;margin-bottom:10pt;font-family:Arial,sans-serif;font-size:9pt;font-weight:700;color:#7D5A10;">⚠️ Finalidade previdenciária — INSS · ${p.inss.b} · CID: ${p.inss.cid}</div>`:''}
-    <div class="grid3">
-      <div><div class="field-lbl">Nome completo</div><div class="field-val bold">${p.nome||'—'}</div></div>
-      <div><div class="field-lbl">Data de nascimento</div><div class="field-val">${dnasc}</div></div>
-      <div><div class="field-lbl">Idade</div><div class="field-val">${p.idade||'—'}</div></div>
-      <div><div class="field-lbl">Sexo</div><div class="field-val">${p.sexo||'—'}</div></div>
-      <div><div class="field-lbl">Solicitante</div><div class="field-val">${p.solicitante||'—'}</div></div>
-      <div><div class="field-lbl">Diagnóstico (CID/DSM)</div><div class="field-val">${p.diagnostico||'—'}</div></div>
-    </div>
-    <div><div class="field-lbl">Finalidade do relatório</div><div class="field-val">${fins}</div></div>
-  </div>
-
-  ${textos.txtDemanda?`
-  <div class="sec">
-    <div class="sec-titulo">Descrição da Demanda</div>
-    <p style="font-size:11pt;line-height:1.85;text-align:justify;">${textos.txtDemanda}</p>
-  </div>`:''}
-
-  <div class="sec">
-    <div class="sec-titulo">Procedimento</div>
-    <div class="grid3" style="margin-bottom:10pt">
-      <div><div class="field-lbl">Início</div><div class="field-val">${p.anoInicio||'—'}</div></div>
-      <div><div class="field-lbl">Frequência</div><div class="field-val">${p.frequencia||'—'}</div></div>
-      <div><div class="field-lbl">Modalidade</div><div class="field-val">${p.modalidade||'—'}</div></div>
-      <div><div class="field-lbl">Duração</div><div class="field-val">${p.duracao||'—'}</div></div>
-      <div><div class="field-lbl">Áreas</div><div class="field-val">${p.areas||'—'}</div></div>
-      <div><div class="field-lbl">Instrumentos</div><div class="field-val">${p.instrumentos||'—'}</div></div>
-    </div>
-    ${textos.txtProcedimento?`<p style="font-size:11pt;line-height:1.85;text-align:justify;">${textos.txtProcedimento}</p>`:''}
-  </div>
-
-  <div class="sec">
-    <div class="sec-titulo">Análise Clínica</div>
-
-    ${(p.gestacao||p.desenvolvimento)?`
-    <div class="bloco">
-      <div class="bloco-titulo">Informações Maternas e Desenvolvimento</div>
-      ${p.gestacao?`<p class="bloco-texto"><strong>Histórico gestacional/perinatal:</strong> ${p.gestacao}</p>`:''}
-      ${p.desenvolvimento?`<p class="bloco-texto"><strong>Desenvolvimento neuropsicomotor:</strong> ${p.desenvolvimento}</p>`:''}
-    </div>`:''}
-
-    ${p.comportamento?`
-    <div class="bloco">
-      <div class="bloco-titulo">Comportamento e Funcionamento Atual</div>
-      <p class="bloco-texto">${p.comportamento}</p>
-    </div>`:''}
-
-    ${(p.cl||[]).length?`
-    <div class="cl-box">
-      <div class="cl-box-titulo">Checklist Clínico — Faixa etária: ${p.faixa==='a'?'1 a 9 anos':'10 a 15 anos'}</div>
-      ${clHtml}
-    </div>`:''}
-
-    ${textos.txtAnalise?`
-    <div class="bloco">
-      <div class="bloco-titulo">Síntese do Acompanhamento Interprofissional</div>
-      <div class="analise-texto">${analiseParagrafos}</div>
-    </div>`:''}
-
-    ${p.psicologico?`
-    <div class="bloco">
-      <div class="bloco-titulo">Observações — Acompanhamento Psicológico</div>
-      <p class="bloco-texto">${p.psicologico}</p>
-    </div>`:''}
-
-    ${p.psicopedagogico?`
-    <div class="bloco">
-      <div class="bloco-titulo">Observações — Acompanhamento Psicopedagógico</div>
-      <p class="bloco-texto">${p.psicopedagogico}</p>
-    </div>`:''}
-  </div>
-
-  ${textos.txtConclusao?`
-  <div class="sec">
-    <div class="sec-titulo">Conclusão e Recomendações</div>
-    <p style="font-size:11pt;line-height:1.9;text-align:justify;text-indent:1.5em;">${textos.txtConclusao}</p>
-  </div>`:''}
-
-</div>
-
-<div class="footer">
-  <div class="footer-left">
-    Emitido em ${hoje}<br>
-    Patu/RN — Documento clínico confidencial
-  </div>
-  <div class="assinatura">
-    <div class="ass-linha"></div>
-    <div class="ass-nome">${profNome}</div>
-    <div class="ass-crp">${profCrp}</div>
-  </div>
-</div>
-
-${`<scr`}ipt>window.onload=()=>{window.print();}<${`/scr`}ipt>
-</body>
-</html>`;
-
-  const w=window.open('','_blank','width=900,height=700');
-  w.document.write(html);
-  w.document.close();
+  if (estado.processo === p) renderPainelIA();
 }
 
-// ═══ INIT ═══
-buildCL('a');
-renderLista();
+function copiarExplicacao() {
+  const p = estado.processo;
+  const r = p && estado.explicacoes.get(p.numero);
+  if (!r) return;
+  const e = r.explicacao;
+  const linhas = [`Processo ${p.numero}${p.classe ? ' — ' + p.classe : ''}`, ''];
+  if (e.fase) linhas.push(`FASE ATUAL: ${e.fase}`, '');
+  if (e.resumo) linhas.push('EM RESUMO', e.resumo, '');
+  if (e.situacaoAtual) linhas.push('SITUAÇÃO ATUAL', e.situacaoAtual, '');
+  if (e.papelDoConsultado) linhas.push('O QUE SIGNIFICA A SUA POSIÇÃO', e.papelDoConsultado, '');
+  if (e.ultimosAcontecimentos.length) linhas.push('O QUE ACONTECEU RECENTEMENTE', ...e.ultimosAcontecimentos.map((u) => `- ${u.data ? fmtData(u.data) + ': ' : ''}${u.traducao}`), '');
+  if (e.proximosPassos.length) linhas.push('O QUE PODE ACONTECER AGORA', ...e.proximosPassos.map((s, i) => `${i + 1}. ${s.titulo} (${ROTULO_PROB[s.probabilidade]})${s.descricao ? '\n   ' + s.descricao : ''}${s.prazoEstimado ? '\n   Prazo: ' + s.prazoEstimado : ''}`), '');
+  if (e.pontosDeAtencao.length) linhas.push('PONTOS DE ATENÇÃO', ...e.pontosDeAtencao.map((t) => `- ${t}`), '');
+  if (e.recomendacao) linhas.push('RECOMENDAÇÃO', e.recomendacao, '');
+  linhas.push('Explicação gerada por IA — não substitui a orientação de um advogado.');
+  copiar(linhas.join('\n'), 'Explicação copiada!');
+}
+
+/* ═══════════ Início ═══════════ */
+carregarStatus();
+rota();
 </script>
 </body>
 </html>
