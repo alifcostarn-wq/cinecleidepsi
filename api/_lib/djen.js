@@ -79,10 +79,12 @@ async function requisicao(p, itensPorPagina) {
 
 export async function buscarComunicacoesDjen(p) {
   const tentativas = [];
+  let ultimaResposta = '';
   // O DJEN costuma oscilar (HTTP 503); tentamos de novo, com uma página menor.
   for (const itens of [100, 20]) {
     const r = await requisicao(p, itens);
     tentativas.push(r.diagnostico);
+    ultimaResposta = r.corpo;
     if (r.status === 200) {
       let d = {};
       try { d = JSON.parse(r.corpo); } catch { /* corpo inválido */ }
@@ -94,7 +96,12 @@ export async function buscarComunicacoesDjen(p) {
     await new Promise((ok) => setTimeout(ok, 800));
   }
   const ultima = tentativas[tentativas.length - 1];
-  const erro = ultima.status === 403
+  // O DJEN explica o motivo no corpo (ex.: "Sistema em manutencao..."); repassamos ao usuário.
+  let motivo = '';
+  try { motivo = String(JSON.parse(ultimaResposta).message || '').slice(0, 200); } catch { /* corpo não é JSON */ }
+  const erro = motivo && ultima.status !== 403
+    ? new ErroHttp(502, `O Diário de Justiça Eletrônico Nacional (CNJ) informou: "${motivo}"`, 'DJEN')
+    : ultima.status === 403
     ? new ErroHttp(502, 'O Diário de Justiça Eletrônico Nacional recusou a conexão (ele só aceita acessos a partir do Brasil).', 'DJEN_BLOQUEADO')
     : ultima.status === 429
       ? new ErroHttp(429, 'O Diário de Justiça Eletrônico Nacional limitou as consultas. Tente de novo em alguns segundos.', 'DJEN_LIMITE')
