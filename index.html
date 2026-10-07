@@ -249,6 +249,10 @@ main { flex: 1; width: 100%; max-width: 1180px; margin: 0 auto; padding: 22px 16
 .mov-desc.cortado { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .mov-fonte { font-size: 12px; color: var(--ink-3); margin-top: 3px; }
 .mov-vermais { font-size: 12.5px; padding: 2px 0; }
+.mov.pub::before { border-color: var(--ia); }
+.mov.pub .mov-desc { background: var(--surface-2); border: 1px solid var(--line); border-left: 3px solid var(--ia); border-radius: 8px; padding: 10px 12px; margin-top: 6px; color: var(--ink); }
+.mov-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .03em; color: var(--ia); background: var(--ia-soft); border-radius: 6px; padding: 1px 7px; margin-left: 6px; vertical-align: 1px; }
+.proc-assuntos { margin: 0 0 6px; color: var(--ink-2); font-size: 14px; }
 
 /* ── Painel da IA ── */
 .ia-painel { background: var(--surface); border: 1px solid var(--ia-line); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
@@ -1016,6 +1020,7 @@ function renderProcesso() {
         ${p.segredoJustica ? '<span class="badge warn">🔒 Segredo de justiça</span>' : ''}
       </div>
       <h1>${esc(p.classe || 'Classe não informada')}</h1>
+      ${p.assuntos && p.assuntos.length ? `<p class="proc-assuntos">${esc(p.assuntos.slice(0, 4).join(' · '))}</p>` : ''}
       <p class="proc-partes-tit">${tituloPartes(p)}</p>
       <div class="proc-meta">
         <div><span>Início</span><b>${fmtData(p.dataInicio)}</b></div>
@@ -1036,7 +1041,7 @@ function renderProcesso() {
         <div class="abas" role="tablist">
           <button class="aba" role="tab" type="button" data-acao="aba" data-aba="movs" aria-selected="${estado.aba === 'movs'}">Movimentações <span class="cont">${esc(qtdMovs)}</span></button>
           <button class="aba" role="tab" type="button" data-acao="aba" data-aba="dados" aria-selected="${estado.aba === 'dados'}">Dados do processo</button>
-          <button class="aba" role="tab" type="button" data-acao="aba" data-aba="partes" aria-selected="${estado.aba === 'partes'}">Partes <span class="cont">${(p.partes || []).length}</span></button>
+          <button class="aba" role="tab" type="button" data-acao="aba" data-aba="partes" aria-selected="${estado.aba === 'partes'}">Partes <span class="cont">${(p.partes || []).length + (p.advogados || []).length}</span></button>
         </div>
         <div class="card aba-painel" id="aba-movs" role="tabpanel"${estado.aba === 'movs' ? '' : ' hidden'}></div>
         <div class="card aba-painel" id="aba-dados" role="tabpanel"${estado.aba === 'dados' ? '' : ' hidden'}>${htmlDados(p)}</div>
@@ -1082,7 +1087,7 @@ function htmlDados(p) {
 
 function htmlPartes(p) {
   const partes = p.partes || [];
-  if (!partes.length) {
+  if (!partes.length && !(p.advogados || []).length) {
     const motivo = p.segredoJustica
       ? 'Este processo tramita em segredo de justiça: os nomes das partes não são públicos.'
       : (p.observacao || 'A fonte consultada não informou as partes deste processo.');
@@ -1095,9 +1100,13 @@ function htmlPartes(p) {
       <div class="parte-tipo">${esc(pt.tipo || 'Parte')}${pt.tipoPessoa ? ` · ${pt.tipoPessoa === 'JURIDICA' ? 'Pessoa jurídica' : 'Pessoa física'}` : ''}</div>
       ${pt.advogados && pt.advogados.length ? `<div class="parte-adv">Advogado(s): ${pt.advogados.map((a) => `${esc(a.nome)}${a.oab ? ` <span class="mono">(OAB ${esc(a.oab)})</span>` : ''}`).join('; ')}</div>` : ''}
     </div>`).join('')}</div>` : '');
+  const advs = p.advogados || [];
   return grupo('Polo ativo — quem entrou com a ação', partes.filter((x) => x.polo === 'ATIVO'))
     + grupo('Polo passivo — contra quem é a ação', partes.filter((x) => x.polo === 'PASSIVO'))
-    + grupo('Outros participantes', partes.filter((x) => x.polo !== 'ATIVO' && x.polo !== 'PASSIVO'));
+    + grupo('Outros participantes', partes.filter((x) => x.polo !== 'ATIVO' && x.polo !== 'PASSIVO'))
+    + (advs.length ? `<div class="polo-grupo"><h3>Advogados intimados no Diário Oficial</h3>${advs.map((a) => `
+      <div class="parte"><div class="parte-nome">${esc(a.nome)}</div>${a.oab ? `<div class="parte-tipo mono">OAB ${esc(a.oab)}</div>` : ''}</div>`).join('')}</div>` : '')
+    + (p.observacao ? `<div class="obs">ℹ️ ${esc(p.observacao)}</div>` : '');
 }
 
 function renderMovimentacoes() {
@@ -1125,16 +1134,17 @@ function renderMovimentacoes() {
   el.innerHTML = `
     <div class="mov-topo">
       <input class="mov-filtro" type="search" id="movFiltro" placeholder="Buscar nas movimentações…" value="${esc(estado.movsFiltro || '')}" aria-label="Buscar nas movimentações">
-      <small>${filtradas.length} de ${todas.length}${p.fonteMovimentacoes ? ` · fonte: ${esc(p.fonteMovimentacoes)}` : ''}</small>
+      <small>${filtradas.length} de ${todas.length}${p.quantidadePublicacoes ? ` · ${p.quantidadePublicacoes} com texto do Diário` : ''}${p.fonteMovimentacoes ? ` · fonte: ${esc(p.fonteMovimentacoes)}` : ''}</small>
     </div>
     <ol class="timeline">${visiveis.map((m) => {
       const desc = m.descricao || '';
-      const longo = desc.length > 320;
-      return `<li class="mov">
+      const longo = desc.length > (m.publicacao ? 600 : 320);
+      const link = urlSegura(m.link);
+      return `<li class="mov${m.publicacao ? ' pub' : ''}">
         <div class="mov-data">${fmtData(m.data, true)}</div>
-        <div class="mov-tit">${esc(m.titulo)}</div>
+        <div class="mov-tit">${esc(m.titulo)}${m.publicacao ? '<span class="mov-tag">TEXTO DO DIÁRIO</span>' : ''}</div>
         ${desc ? `<div class="mov-desc${longo ? ' cortado' : ''}">${esc(desc)}</div>${longo ? '<button class="btn-link mov-vermais" type="button" data-acao="ver-mais">ver mais</button>' : ''}` : ''}
-        ${m.fonte || m.orgao ? `<div class="mov-fonte">${esc([m.fonte, m.orgao].filter(Boolean).join(' · '))}</div>` : ''}
+        ${m.fonte || m.orgao ? `<div class="mov-fonte">${esc([m.fonte, m.orgao].filter(Boolean).join(' · '))}${link ? ` · <a href="${link}" target="_blank" rel="noopener noreferrer">ver documento ↗</a>` : ''}</div>` : ''}
       </li>`;
     }).join('')}</ol>
     ${filtradas.length > limite ? `<div class="mais"><button class="btn btn-sec btn-sm" type="button" data-acao="mais-movs">Mostrar mais (${filtradas.length - limite} restantes)</button></div>` : ''}`;
@@ -1228,7 +1238,11 @@ function compactarProcesso(p) {
     'situacao', 'valorCausa', 'dataInicio', 'dataUltimaMovimentacao', 'segredoJustica', 'poloAtivo', 'poloPassivo', 'partes', 'papelConsultado'];
   const out = {};
   for (const c of campos) if (p[c] !== undefined && p[c] !== null) out[c] = p[c];
-  out.movimentacoes = (p.movimentacoes || []).slice(0, 40).map((m) => ({ data: m.data, titulo: m.titulo, descricao: String(m.descricao || '').slice(0, 600), fonte: m.fonte }));
+  const resumir = (t, max) => (t.length > max ? t.slice(0, Math.round(max / 3)) + ' […] ' + t.slice(-Math.round((max * 2) / 3)) : t);
+  out.movimentacoes = (p.movimentacoes || []).slice(0, 40).map((m) => ({
+    data: m.data, titulo: m.titulo, fonte: m.fonte, publicacao: !!m.publicacao,
+    descricao: resumir(String(m.descricao || ''), m.publicacao ? 2400 : 600)
+  }));
   return out;
 }
 
