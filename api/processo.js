@@ -25,6 +25,7 @@ export default async function handler(req, res) {
 
     let processo = null;
     const avisos = [];
+    let diagnostico;
     if (escavadorAtivo()) {
       try {
         processo = await buscarProcesso(p.formatado, { capa: q.capa !== '0' });
@@ -43,13 +44,17 @@ export default async function handler(req, res) {
       processo = datajud.status === 'fulfilled' ? datajud.value : null;
       if (temDjen) processo = mesclarDjen(processo || processoDoDjen(p, djen.value, tribunalDoCNJ(p)), djen.value);
       if (datajud.status === 'rejected' && temDjen) avisos.push(datajud.reason.message + ' Mostrando só as publicações do Diário de Justiça.');
-      if (djen.status === 'rejected') avisos.push('Não foi possível carregar as publicações do Diário de Justiça Eletrônico Nacional: ' + djen.reason.message);
+      if (djen.status === 'rejected') {
+        avisos.push('Não foi possível carregar as publicações do Diário de Justiça Eletrônico Nacional: ' + djen.reason.message);
+        diagnostico = djen.reason.diagnostico || djen.reason.message;
+        console.error('DJEN falhou', JSON.stringify(diagnostico));
+      }
     }
 
     if (!processo) {
       throw new ErroHttp(404, 'Processo não encontrado. Confira o número ou tente mais tarde — alguns tribunais demoram a enviar dados ao CNJ.', 'NAO_ENCONTRADO');
     }
-    res.status(200).json({ processo, fonte: processo.origem || 'Escavador', aviso: avisos.join(' ') || null });
+    res.status(200).json({ processo, fonte: processo.origem || 'Escavador', aviso: avisos.join(' ') || null, diagnosticoDjen: diagnostico });
   } catch (e) {
     responderErro(res, e);
   }
