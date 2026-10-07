@@ -8,7 +8,7 @@ Sistema web para consultar processos judiciais por **CPF**, **CNPJ** ou **númer
 |---|---|---|
 | CPF ou CNPJ (inclusive o novo CNPJ alfanumérico) | [API do Escavador](https://api.escavador.com/v2/docs) — reúne processos de todos os tribunais e identifica as partes pelo documento | Pago (créditos por consulta) |
 | Número do processo | Escavador (se configurado) ou [API Pública do DataJud — CNJ](https://datajud-wiki.cnj.jus.br/api-publica/) | DataJud é gratuito |
-| Botão "Explicar com IA" | Groq (Llama 3.3 70B) ou Anthropic (Claude) | Conforme o provedor de IA |
+| Botão "Explicar com IA" | Groq (GPT-OSS 120B) ou Anthropic (Claude) | Conforme o provedor de IA |
 
 > **Por que um provedor pago para CPF/CNPJ?** Os tribunais e o portal JUS.BR só mostram processos por CPF/CNPJ para quem faz login com a conta gov.br da própria pessoa, e a base pública do CNJ (DataJud) não traz os nomes nem os documentos das partes (LGPD). Por isso a busca por documento depende de um agregador como o Escavador.
 
@@ -23,7 +23,7 @@ Em **Project → Settings → Environment Variables**, cadastre:
 | `SENHA_ACESSO` | Recomendada | Protege o sistema com uma senha. Sem ela, qualquer pessoa com o link pode consultar e gastar seus créditos. |
 | `ANTHROPIC_API_KEY` | Opcional | Usa o Claude em vez do Groq. |
 | `IA_PROVEDOR` | Opcional | `groq` ou `anthropic` — escolhe qual usar quando as duas chaves existem (padrão: Groq). |
-| `GROQ_MODEL` / `ANTHROPIC_MODEL` | Opcional | Troca o modelo (padrões: `llama-3.3-70b-versatile` e `claude-opus-5-5`). |
+| `GROQ_MODEL` / `ANTHROPIC_MODEL` | Opcional | Troca o modelo (padrões: `openai/gpt-oss-120b` e `claude-opus-5-5`). Se o modelo do Groq for desativado, o sistema tenta automaticamente `qwen/qwen3.8-27b` e depois `openai/gpt-oss-20b`. |
 | `DATAJUD_API_KEY` | Opcional | Só se o CNJ trocar a chave pública. A chave vigente fica em [datajud-wiki.cnj.jus.br/api-publica/acesso](https://datajud-wiki.cnj.jus.br/api-publica/acesso). |
 
 Depois de salvar as variáveis, faça um novo deploy (Deployments → Redeploy).

@@ -1,5 +1,15 @@
 # ChangeLog
 
+## [2.0.1] — 2026-10-07
+
+### Corrigido
+- **A explicação por IA não funcionava em produção.** O modelo `llama-3.3-70b-versatile` foi desativado pelo Groq em 16/08/2026 (a IA do sistema antigo também já estava parada por isso). O padrão agora é o `openai/gpt-oss-120b`, substituto recomendado pelo próprio Groq.
+
+### Melhorado
+- **Troca automática de modelo:** se o Groq desativar o modelo em uso, o sistema tenta automaticamente o próximo da lista (`openai/gpt-oss-120b` → `qwen/qwen3.8-27b` → `openai/gpt-oss-20b`). Isso também vale quando `GROQ_MODEL` aponta para um modelo que não existe mais.
+- Os modelos de raciocínio usam esforço baixo (`reasoning_effort: low`), o que deixa a resposta mais rápida.
+- O limite de tamanho da resposta da IA subiu de 2.200 para 4.000 tokens, para a explicação não ser cortada no meio.
+
 ## [2.0.0] — 2026-10-07
 
 O sistema de relatórios de psicologia foi substituído por um **sistema de consulta de processos judiciais**, no estilo do JUS.BR.
