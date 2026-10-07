@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       throw new ErroHttp(400, 'Envie os dados do processo para gerar a explicação.', 'SEM_PROCESSO');
     }
     const { sistema, usuario } = montarPedido(processo);
-    const { dados, provedor, modelo } = await gerarJSON({ sistema, usuario, maxTokens: 2200 });
+    const { dados, provedor, modelo } = await gerarJSON({ sistema, usuario, maxTokens: 4000 });
     res.status(200).json({
       explicacao: sanitizarExplicacao(dados),
       provedor,

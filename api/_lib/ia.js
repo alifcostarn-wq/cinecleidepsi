@@ -2,7 +2,9 @@
 // IA_PROVEDOR=groq|anthropic força um deles quando as duas chaves existem.
 import { ErroHttp, fetchComTimeout } from './util.js';
 
-const MODELO_GROQ = 'llama-3.3-70b-versatile';
+// Ordem de preferência no Groq. O Groq desativa modelos com frequência (o llama-3.3-70b-versatile
+// saiu do ar em 16/08/2026); se um modelo não existir mais, o próximo da lista é usado.
+const MODELOS_GROQ = ['openai/gpt-oss-120b', 'qwen/qwen3.8-27b', 'openai/gpt-oss-20b'];
 const MODELO_ANTHROPIC = 'claude-opus-5-5';
 
 export function provedorIA() {
@@ -14,15 +16,23 @@ export function provedorIA() {
   return null;
 }
 
-async function chamarGroq(sistema, usuario, maxTokens, modoJSON) {
-  const modelo = process.env.GROQ_MODEL || MODELO_GROQ;
+function modeloIndisponivel(erro) {
+  const codigo = String((erro && erro.code) || '');
+  const msg = String((erro && erro.message) || '');
+  return codigo === 'model_not_found' || codigo === 'model_decommissioned' || /does not exist|decommissioned|no longer supported/i.test(msg);
+}
+
+async function requisicaoGroq(modelo, sistema, usuario, maxTokens, modoJSON) {
   const corpo = {
     model: modelo,
-    max_tokens: maxTokens,
+    max_completion_tokens: maxTokens,
     temperature: 0.3,
     messages: [{ role: 'system', content: sistema }, { role: 'user', content: usuario }]
   };
   if (modoJSON) corpo.response_format = { type: 'json_object' };
+  // Modelos de raciocínio: pouco raciocínio (resposta mais rápida) e sem devolvê-lo no corpo.
+  if (modelo.startsWith('openai/gpt-oss')) Object.assign(corpo, { reasoning_effort: 'low', include_reasoning: false });
+  else if (modelo.startsWith('qwen/qwen3')) corpo.reasoning_effort = 'none';
 
   const r = await fetchComTimeout('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -30,13 +40,22 @@ async function chamarGroq(sistema, usuario, maxTokens, modoJSON) {
     body: JSON.stringify(corpo)
   }, 45000, 'serviço de IA (Groq)');
   const d = await r.json().catch(() => ({}));
-  if (!r.ok || d.error) {
-    const msg = (d.error && d.error.message) || `HTTP ${r.status}`;
+  if (!r.ok || d.error) return { erro: d.error || { message: `HTTP ${r.status}` } };
+  return { texto: (d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content) || '' };
+}
+
+async function chamarGroq(sistema, usuario, maxTokens) {
+  const candidatos = [...new Set([process.env.GROQ_MODEL, ...MODELOS_GROQ].filter(Boolean))];
+  let ultimoErro = null;
+  for (const modelo of candidatos) {
+    let r = await requisicaoGroq(modelo, sistema, usuario, maxTokens, true);
     // O modo JSON do Groq às vezes rejeita a saída; tentamos de novo sem ele.
-    if (modoJSON && d.error && d.error.code === 'json_validate_failed') return chamarGroq(sistema, usuario, maxTokens, false);
-    throw new ErroHttp(502, 'Erro no serviço de IA (Groq): ' + msg, 'IA');
+    if (r.erro && r.erro.code === 'json_validate_failed') r = await requisicaoGroq(modelo, sistema, usuario, maxTokens, false);
+    if (!r.erro) return { texto: r.texto, modelo };
+    ultimoErro = r.erro;
+    if (!modeloIndisponivel(r.erro)) break;
   }
-  return { texto: (d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content) || '', modelo };
+  throw new ErroHttp(502, 'Erro no serviço de IA (Groq): ' + (ultimoErro.message || 'falha desconhecida'), 'IA');
 }
 
 async function chamarAnthropic(sistema, usuario, maxTokens) {
@@ -68,13 +87,13 @@ function extrairJSON(texto) {
   throw new ErroHttp(502, 'A IA respondeu em um formato inesperado. Tente gerar novamente.', 'IA_FORMATO');
 }
 
-export async function gerarJSON({ sistema, usuario, maxTokens = 2200 }) {
+export async function gerarJSON({ sistema, usuario, maxTokens = 4000 }) {
   const provedor = provedorIA();
   if (!provedor) {
     throw new ErroHttp(501, 'Nenhuma IA configurada. Cadastre GROQ_API_KEY (ou ANTHROPIC_API_KEY) nas variáveis de ambiente do Vercel.', 'SEM_IA');
   }
   const { texto, modelo } = provedor === 'groq'
-    ? await chamarGroq(sistema, usuario, maxTokens, true)
+    ? await chamarGroq(sistema, usuario, maxTokens)
     : await chamarAnthropic(sistema, usuario, maxTokens);
   return { dados: extrairJSON(texto), provedor, modelo };
 }
