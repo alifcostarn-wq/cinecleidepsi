@@ -76,9 +76,19 @@ export function montarPedido(p, hoje = new Date()) {
   const movs = Array.isArray(p.movimentacoes) ? p.movimentacoes.slice(0, LIMITE_MOVIMENTACOES) : [];
   if (movs.length) {
     linhas.push(`Movimentações (da mais recente para a mais antiga, ${movs.length} de ${p.movimentacoes.length}):`);
+    let orcamentoPublicacoes = 9000;
     for (const m of movs) {
-      const desc = m.descricao ? ` — ${corta(m.descricao, 450)}` : '';
-      linhas.push(`- ${corta(m.data, 25) || 's/ data'} | ${corta(m.titulo, 120)}${desc}${m.fonte ? ` [${corta(m.fonte, 60)}]` : ''}`);
+      // Publicações do Diário trazem o texto do ato (decisão, sentença, intimação): mandamos mais
+      // contexto delas, preservando o início e o fim, onde costuma ficar a parte decisória.
+      let desc = '';
+      if (m.descricao) {
+        const max = m.publicacao && orcamentoPublicacoes > 0 ? Math.min(2400, orcamentoPublicacoes) : 450;
+        const t = String(m.descricao).replace(/\s+/g, ' ').trim();
+        desc = t.length > max ? t.slice(0, Math.round(max / 3)) + ' […] ' + t.slice(-Math.round((max * 2) / 3)) : t;
+        if (m.publicacao) orcamentoPublicacoes -= desc.length;
+        desc = ` — ${desc}`;
+      }
+      linhas.push(`- ${corta(m.data, 25) || 's/ data'} | ${m.publicacao ? '[Texto publicado no Diário] ' : ''}${corta(m.titulo, 120)}${desc}${m.fonte ? ` [${corta(m.fonte, 60)}]` : ''}`);
     }
   } else {
     linhas.push('Movimentações: nenhuma disponível.');

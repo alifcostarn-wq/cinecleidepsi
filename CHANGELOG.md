@@ -1,5 +1,23 @@
 # ChangeLog
 
+## [2.1.0] — 2026-10-07
+
+### Implementado
+- **Detalhes do processo na consulta por número, de graça:** além do DataJud, o sistema passa a consultar o **Diário de Justiça Eletrônico Nacional (DJEN)** do CNJ. Com isso aparecem:
+  - **as partes** (polo ativo e passivo) e o título "Autor × Réu" no cabeçalho;
+  - **os advogados** intimados, com número da OAB;
+  - **o texto integral** das intimações, despachos, decisões e sentenças publicadas, destacado na linha do tempo com a etiqueta "TEXTO DO DIÁRIO" e com link para o documento, quando o tribunal informa.
+- As duas bases são consultadas **ao mesmo tempo**, sem deixar a busca mais lenta.
+- Se o DataJud ainda não tiver o processo, mas o DJEN tiver publicações, o processo é exibido só com os dados do DJEN.
+
+### Melhorado
+- **Explicação por IA mais precisa:** a IA passa a receber o texto das publicações (início e fim de cada uma, onde costuma estar a decisão), e não só o nome das movimentações.
+- Os assuntos do processo aparecem no cabeçalho, logo abaixo da classe.
+- **Funções do Vercel em São Paulo (`gru1`):** necessário para acessar o DJEN, que só aceita conexões do Brasil. Também deixa mais rápidas as consultas ao DataJud e ao Escavador.
+
+### Corrigido
+- Acentos codificados em HTML nos textos dos tribunais (como `&ccedil;` e `&atilde;`) agora aparecem corretamente.
+
 ## [2.0.1] — 2026-10-07
 
 ### Corrigido
